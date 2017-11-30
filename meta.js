@@ -18,7 +18,7 @@ module.exports = {
       "type": "string",
       "required": false,
       "message": "Project description",
-      "default": "A ZCF project"
+      "default": "基于ZCF的项目"
     },
     "author": {
       "type": "string",
@@ -27,5 +27,5 @@ module.exports = {
   },
   "filters": {
   },
-  "completeMessage": "To get started:\n\n  cd {{destDirName}}\n  npm install\n  npm run dev"
+  "completeMessage": "开始你的项目：\n\n  cd ./{{destDirName}}/server\n  mvn install\n  cd ../client\n  npm install\n  npm run dev"
 };
