@@ -1,0 +1,19 @@
+/*可以在这里添加你自己的css*/
+img {
+    max-width: 100%;
+    height: auto;
+}
+img[ztype="video"] {
+  display: block;
+  border:1px dashed #ccc !important;
+  background: url(../com.zving/images/video.png) no-repeat center center !important;
+  margin: 0 auto;
+}
+img[ztype="audio"] {
+  display: block;
+  border:1px dashed #ccc;
+  background: url(../com.zving/images/music.png) no-repeat center center;
+  margin: 0 auto;
+  width: 98%;
+  height: 48px;
+}

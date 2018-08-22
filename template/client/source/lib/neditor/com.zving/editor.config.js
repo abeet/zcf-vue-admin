@@ -1,0 +1,24 @@
+(function () {
+  document.write('<script src="../article/editorplugins/zimage.js"></script>');
+  document.write('<script src="../contentcore/editorplugins/zaudio.js"></script>');
+  document.write('<script src="../contentcore/editorplugins/zvideo.js"></script>');
+  document.write('<script src="../contentcore/editorplugins/zfile.js"></script>');
+  document.write('<script src="../contentcore/editorplugins/zcatalog.js"></script>');
+  document.write('<script src="../contentcore/editorplugins/zcontent.js"></script>');
+  document.write('<script src="../contentcore/editorplugins/zresourceurl.js"></script>');
+  document.write('<script src="../contentcore/editorplugins/zcomment.js"></script>');
+  document.write('<script src="../article/editorplugins/articlelogo.js"></script>');
+  document.write('<script src="../article/editorplugins/zarticlesetting.js"></script>');
+  document.write('<script src="../article/editorplugins/zuploadlocalimage.js"></script>');
+  document.write('<script src="../article/editorplugins/zpagebreak.js"></script>');
+  document.write('<script src="../article/editorplugins/zweiboshow.js"></script>');
+  document.write('<script src="../article/editorplugins/zwritingmode.js"></script>');
+  document.write('<script src="../article/editorplugins/zfontface.js"></script>');
+  document.write('<script src="../article/editorplugins/autoformat.js"></script>');
+  document.write('<script src="../atverdise/editorplugins/zatverdise.js"></script>');
+  document.write('<script src="../media/editorplugins/zimagegroup.js"></script>');
+  document.write('<script src="../vote/editorplugins/zvote.js"></script>');
+  document.write('<script src="../wordmanage/editorplugins/zcheckwords.js"></script>');
+  document.write('<script src="../imageplayer/ckeditorplugin/zimageplayer.js"></script>');
+  document.write('<script src="../block/zimgcutting.js"></script>');
+})();

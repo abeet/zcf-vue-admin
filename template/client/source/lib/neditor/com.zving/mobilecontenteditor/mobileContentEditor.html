@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit"/>
+<title></title>
+<meta name="viewport" content="minimal-ui user-scalable=no, width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<link rel="stylesheet" href="../style/bootstrap.css"/>
+<link rel="stylesheet" href="../style/font-awesome.css"/>
+<link rel="stylesheet" href="../style/default.css"/>
+<link rel="stylesheet" href="mobileContentEditor.css"/>
+<script src="../framework/jquery.min.js"></script>
+<script src="../framework/jquery-ui-1.10.4.min.js"></script>
+</head>
+<body>
+<div id="toolbar_menu_outer" class="z-toolbar-anchor z-toolbar-fixed"><div class="z-toolbar" id="toolbar_menu" style="position: fixed;top:0;width:100%;"><div class="z-toolbar-ct"><div class="z-toolbar-overflow"><div class="z-toolbar-nowrap" id="toolbar_menu_body">
+  <a href='javascript:void(0);' ztype='button' buttontype='push' id='designer_save' class='z-btn z-btn-flat' onselectstart='return false' priv="com.zving.cms.Catalog.Content.Edit.10979"><b><span class="icon-save"></span>保存<i></i></b></a><script> //new Zving.Button('designer_save');</script>
+  <a href='javascript:void(0);' ztype='button' buttontype='push' id='designer_save2template' class='z-btn z-btn-flat' onselectstart='return false' priv="com.zving.cms.Catalog.Content.Edit.10979"><b><span class="icon-save"></span>保存为模板<i></i></b></a><script> //new Zving.Button('designer_save');</script>
+  <a href='javascript:void(0);' ztype='button' buttontype='push' id='btn_setPageProps' class='z-btn z-btn-flat' onselectstart='return false'><b><span class="icon-dashboard"></span>表单设置<i></i></b></a><script> //new Zving.Button('btn_setPageProps');</script>
+</div></div></div></div></div><script>//Zving.Page.onReady(function(){new Zving.Toolbar({el:Zving.getDom('toolbar_menu'),fixed:true});});</script>
+<script id="container" name="content" type="text/plain">
+    这里写你的初始化内容
+</script>
+<script type="text/javascript" src="../editor/ueditor.config.js"></script>
+<script type="text/javascript" src="../editor/ueditor.all.js"></script>
+<link rel="stylesheet" href="spectrum.min.css"/>
+<script src="spectrum.min.js"></script>
+<script src="less-1.7.0.min.js"></script>
+<script src="mobileContentEditor.js"></script>
+<script type="text/javascript">
+    var editor = UE.getEditor('container',{
+    	initialFrameHeight : $(window).height()-200
+    });
+</script>
+
+</body>
+<script>
+var snippetsUrl=[
+	{
+		url:'snippets/filter-1.html',
+		icon:'icon-bookmark-empty',
+		name:'标题'
+	},{
+		url:'snippets/filter-2.html',
+		icon:'icon-align-left',
+		name:'正文'
+	},{
+		url:'snippets/filter-3.html',
+		icon:'icon-picture',
+		name:'图片'
+	},{
+		url:'snippets/filter-4.html',
+		icon:'icon-list-alt',
+		name:'模板'
+	},{
+		url:'snippets/filter-5.html',
+		icon:'icon-facetime-video',
+		name:'视频'
+	},{
+		url:'snippets/filter-6.html',
+		icon:'icon-star-empty',
+		name:'上关注'
+	},{
+		url:'snippets/filter-7.html',
+		icon:'icon-eye-open',
+		name:'下阅读'
+	},{
+		url:'snippets/filter-8.html',
+		icon:'icon-minus',
+		name:'分割线'
+	},{
+		url:'snippets/filter-9.html',
+		icon:'icon-camera',
+		name:'表情'
+	},{
+		url:'snippets/filter-10.html',
+		icon:'icon-heart-empty',
+		name:'点赞分享'
+	}
+];
+
+mce({
+	ueditor:editor,
+	snippetsUrl:snippetsUrl
+});
+
+</script>
+</html>
