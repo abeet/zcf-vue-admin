@@ -24,12 +24,12 @@
 </template>
 
 <script>
-import Shortcut from './Shortcut.vue';
-import TreeGrid from '../../../components/TreeGrid.vue';
-import translate from '../../../common/dataTranslate.js';
-import util from '../../../common/util.js';
+import Shortcut from './Shortcut.vue'
+import TreeGrid from '../../../components/TreeGrid.vue'
+import translate from '../../../common/dataTranslate.js'
+import util from '../../../common/util.js'
 export default {
-  data() {
+  data () {
     return {
       hideBtn: true,
       shortcuts: [],
@@ -39,77 +39,77 @@ export default {
         {
           text: '菜单名称',
           // dataIndex: 'name',
-          render: function(row) {
+          render: function (row) {
             return '<i class="' + row.icon + '">&nbsp;' + row.name + '</i>'
           }
         },
         {
           text: '是否启用',
-          render: function(row) {
+          render: function (row) {
             if (row.status === 'Y') {
               return '<i class="fa fa-check icon-success"></i>'
             } else {
               return '<i class="fa fa-times icon-danger"></i>'
             }
-          },
+          }
         },
         {
           text: 'ID',
-          dataIndex: 'ID',
+          dataIndex: 'ID'
         },
         {
           text: 'URL',
-          dataIndex: 'URL',
+          dataIndex: 'URL'
         },
         {
           text: '来源插件',
-          dataIndex: 'pluginName',
-        },
+          dataIndex: 'pluginName'
+        }
       ],
       menus: [],
-      selectedRows: [],
-    };
+      selectedRows: []
+    }
   },
   watch: {
-    shortcuts: function() {
-      let arr = [];
+    shortcuts: function () {
+      let arr = []
       this.shortcuts.forEach(val => {
-        if(val.URL){
-          arr.push(val.ID);
+        if (val.URL) {
+          arr.push(val.ID)
         }
-      });
-      this.preferences.shortcut = arr.length ? arr.join(',') : '';
-    },
+      })
+      this.preferences.shortcut = arr.length ? arr.join(',') : ''
+    }
   },
   methods: {
-    selectMenu() {
+    selectMenu () {
       if (this.selectedRows.length > 8) {
-        util.showErrorMessageBox('最多选择8个快捷链接！');
-        return;
+        util.showErrorMessageBox('最多选择8个快捷链接！')
+        return
       }
-      this.shortcuts = this.selectedRows;
-      this.showMenuList = false;
+      this.shortcuts = this.selectedRows
+      this.showMenuList = false
     },
-    onSelectionChange(selection) {
-      this.selectedRows = selection;
+    onSelectionChange (selection) {
+      this.selectedRows = selection
     },
-    async showMenuListDialog() {
-      this.showMenuList = true;
-      this.dataLoading = true;
+    async showMenuListDialog () {
+      this.showMenuList = true
+      this.dataLoading = true
       let menuRes = await axios
         .get('/api/menus/enabledmenulist', {
-          params: { selectedMenuIDs: this.preferences.shortcut },
+          params: { selectedMenuIDs: this.preferences.shortcut }
         })
-      this.menus = menuRes.data.data;
-      this.dataLoading = false;
-    },
+      this.menus = menuRes.data.data
+      this.dataLoading = false
+    }
   },
   components: {
     'tree-grid': TreeGrid,
-    'shortcut': Shortcut,
+    'shortcut': Shortcut
   },
-  props: ['preferences'],
-};
+  props: ['preferences']
+}
 </script>
 
 <style scoped>

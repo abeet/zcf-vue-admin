@@ -13,19 +13,19 @@
 </template>
 
 <script>
-import ControlNumber from './control/ControlNumber.vue';
+import ControlNumber from './control/ControlNumber.vue'
 
 export default {
-  data() {
+  data () {
     return {
-    };
+    }
   },
   components: {
     'control-number': ControlNumber
   },
-  methods:{
-    changeNumber(val){
-      this.preferences.branchListTreeLevel = val;
+  methods: {
+    changeNumber (val) {
+      this.preferences.branchListTreeLevel = val
     }
   },
   props: ['preferences']

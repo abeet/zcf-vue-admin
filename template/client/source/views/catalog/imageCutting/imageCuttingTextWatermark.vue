@@ -217,204 +217,204 @@
 </template>
 
 <script>
-  import util from '../../../common/util.js'
-  import imageCuttingContainer from './imageCuttingContainer.vue'
-  import { imageLoad, cutBoxOperate, watermarkText, uploadBase64Image, autoTextarea} from './imageCuttingUtil'
+import util from '../../../common/util.js'
+import imageCuttingContainer from './imageCuttingContainer.vue'
+import { imageLoad, cutBoxOperate, watermarkText, uploadBase64Image, autoTextarea} from './imageCuttingUtil'
 
-  let operateInfo = {
-    type: '',
-  }
+let operateInfo = {
+  type: ''
+}
 
-  export default {
-    data () {
-      return {
-        isLoading: false,
-        realWidth: 0,
-        realHeight: 0,
-        previewWrap: {
-          width: 0,
-          height: 0,
-        },
-        confirmLoading: false,
-        textWatermark: {
-          content: '请输入文字！',
-          top: 0,
-          left: 0,
-          width: 98,
-          fontFamily: 'Microsoft YaHei',
-          fontSize: 16,
-          lineHeight: 1.8,
-          color: '#353535',
-          opacity: 1,
-          isBold: false,
-          isItalic: false,
-          isUnderline: false,
-          isTextStroke: false,
-          textStrokeSize: 1,
-          textStrokeColor: '#ffffff'
-        },
-        isInputMode: false
-      }
-    },
-    props: {
-      imagePath: {
-        type: String,
-        default: '',
-        required: true
+export default {
+  data () {
+    return {
+      isLoading: false,
+      realWidth: 0,
+      realHeight: 0,
+      previewWrap: {
+        width: 0,
+        height: 0
       },
-      activeTab: {
-        type: String,
-        default: ''
+      confirmLoading: false,
+      textWatermark: {
+        content: '请输入文字！',
+        top: 0,
+        left: 0,
+        width: 98,
+        fontFamily: 'Microsoft YaHei',
+        fontSize: 16,
+        lineHeight: 1.8,
+        color: '#353535',
+        opacity: 1,
+        isBold: false,
+        isItalic: false,
+        isUnderline: false,
+        isTextStroke: false,
+        textStrokeSize: 1,
+        textStrokeColor: '#ffffff'
       },
-      siteID:{
-        type: [String,Number],
-        required:true
-      },
-      path:{
-        type:String,
-        default:'',
-        required:true
-      }
-    },
-    watch: {
-      activeTab (val) {
-        if (val === 'textWatermark') {
-          this.init()
-        }
-      },
-      imagePath(){
-        if (this.activeTab === 'rotate') {
-          this.init()
-        }
-      }
-    },
-    computed: {
-      previewImageTop () {
-        if (this.realHeight >= this.previewWrap.height) return 0
-
-        return (this.previewWrap.height - this.realHeight) / 2
-      },
-      previewImageLeft () {
-        if (this.realWidth >= this.previewWrap.width) return 0
-
-        return (this.previewWrap.width - this.realWidth) / 2
-      }
-    },
-    methods: {
-      async init () {
-        this.isLoading = true
-        let img
-        try {
-          img = await imageLoad(this.imagePath)
-        } catch (e) {
-          return
-        }
-
-        this.realWidth = img.width
-        this.realHeight = img.height
-
-        Object.assign(this.textWatermark, {
-          content: '请输入文字！',
-          top: 0,
-          left: 0,
-          width: 98,
-          fontFamily: 'Microsoft YaHei',
-          fontSize: 16,
-          lineHeight: 1.8,
-          color: '#353535',
-          opacity: 1,
-          isBold: false,
-          isItalic: false,
-          isUnderline: false,
-          isTextStroke: false,
-          textStrokeSize: 1,
-          textStrokeColor: '#ffffff'
-        })
-
-        Object.assign(this.previewWrap, {
-          width: this.$refs['previewWrap'].offsetWidth,
-          height: this.$refs['previewWrap'].offsetHeight
-        })
-
-        this.isLoading = false
-      },
-      handleBoxStart (type, e) {
-        operateInfo ={
-          type: type,
-          startPosition: { x: e.pageX, y: e.pageY },
-          originalCutBox: {
-            top: this.textWatermark.top,
-            left: this.textWatermark.left,
-            width: this.textWatermark.width,
-            height: this.textWatermark.fontSize * 1.8,
-          },
-          container: {
-            width: this.realWidth,
-            height: this.realHeight
-          }
-        }
-      },
-      handleBoxMove (e) {
-        if(!operateInfo.type || !['move', 'left', 'right'].includes(operateInfo.type)){
-          return;
-        }
-
-        let box = cutBoxOperate(operateInfo, {
-          pageX: e.pageX,
-          pageY: e.pageY
-        }, false, false)
-
-        Object.assign(this.textWatermark, box)
-      },
-      handleBoxEnd () {
-        operateInfo = {
-          type: ''
-        }
-      },
-      handleInputStart () {
-        this.isInputMode = true
-      },
-      handleInput (e) {
-        console.log(e.target.innerText)
-        this.textWatermark.content = e.target.innerText
-      },
-      handleInputEnd (e) {
-        this.isInputMode = false
-        this.textWatermark.content = e.target.innerText
-        // console.log(this.textWatermark.content)
-      },
-      async handleConfirm () {
-        console.log(this.textWatermark)
-        this.confirmLoading = true
-
-        if (!this.textWatermark.content) {
-          this.confirmLoading = false
-          util.showError('请输入水印文字！')
-          return
-        }
-        // TODO： 文字渲染到canvas上，位置、换行与下划线 有bug，查canvas资料
-        const newImg = await watermarkText(this.$refs['watermarkCanvas'], this.textWatermark, this.imagePath)
-
-        const res = await uploadBase64Image(newImg, this.path,this.siteID)
-
-        util.showResponseMessage(res.data)
-        if(res.data.status === 1){
-          this.$emit('update:imagePath',res.data.previewPath)
-          this.$emit('update:path',res.data.path)
-          this.init()
-        }
-
-        this.confirmLoading = false;
-      }
-    },
-    created () {
-    },
-    mounted () {
-      console.log(this.$refs['watermarkContentInput'])
-      autoTextarea(this.$refs['watermarkContentInput'])
-    },
-    components: {
-      'cutting-container': imageCuttingContainer
+      isInputMode: false
     }
+  },
+  props: {
+    imagePath: {
+      type: String,
+      default: '',
+      required: true
+    },
+    activeTab: {
+      type: String,
+      default: ''
+    },
+    siteID: {
+      type: [String, Number],
+      required: true
+    },
+    path: {
+      type: String,
+      default: '',
+      required: true
+    }
+  },
+  watch: {
+    activeTab (val) {
+      if (val === 'textWatermark') {
+        this.init()
+      }
+    },
+    imagePath () {
+      if (this.activeTab === 'rotate') {
+        this.init()
+      }
+    }
+  },
+  computed: {
+    previewImageTop () {
+      if (this.realHeight >= this.previewWrap.height) return 0
+
+      return (this.previewWrap.height - this.realHeight) / 2
+    },
+    previewImageLeft () {
+      if (this.realWidth >= this.previewWrap.width) return 0
+
+      return (this.previewWrap.width - this.realWidth) / 2
+    }
+  },
+  methods: {
+    async init () {
+      this.isLoading = true
+      let img
+      try {
+        img = await imageLoad(this.imagePath)
+      } catch (e) {
+        return
+      }
+
+      this.realWidth = img.width
+      this.realHeight = img.height
+
+      Object.assign(this.textWatermark, {
+        content: '请输入文字！',
+        top: 0,
+        left: 0,
+        width: 98,
+        fontFamily: 'Microsoft YaHei',
+        fontSize: 16,
+        lineHeight: 1.8,
+        color: '#353535',
+        opacity: 1,
+        isBold: false,
+        isItalic: false,
+        isUnderline: false,
+        isTextStroke: false,
+        textStrokeSize: 1,
+        textStrokeColor: '#ffffff'
+      })
+
+      Object.assign(this.previewWrap, {
+        width: this.$refs['previewWrap'].offsetWidth,
+        height: this.$refs['previewWrap'].offsetHeight
+      })
+
+      this.isLoading = false
+    },
+    handleBoxStart (type, e) {
+      operateInfo = {
+        type: type,
+        startPosition: { x: e.pageX, y: e.pageY },
+        originalCutBox: {
+          top: this.textWatermark.top,
+          left: this.textWatermark.left,
+          width: this.textWatermark.width,
+          height: this.textWatermark.fontSize * 1.8
+        },
+        container: {
+          width: this.realWidth,
+          height: this.realHeight
+        }
+      }
+    },
+    handleBoxMove (e) {
+      if (!operateInfo.type || !['move', 'left', 'right'].includes(operateInfo.type)) {
+        return
+      }
+
+      let box = cutBoxOperate(operateInfo, {
+        pageX: e.pageX,
+        pageY: e.pageY
+      }, false, false)
+
+      Object.assign(this.textWatermark, box)
+    },
+    handleBoxEnd () {
+      operateInfo = {
+        type: ''
+      }
+    },
+    handleInputStart () {
+      this.isInputMode = true
+    },
+    handleInput (e) {
+      console.log(e.target.innerText)
+      this.textWatermark.content = e.target.innerText
+    },
+    handleInputEnd (e) {
+      this.isInputMode = false
+      this.textWatermark.content = e.target.innerText
+      // console.log(this.textWatermark.content)
+    },
+    async handleConfirm () {
+      console.log(this.textWatermark)
+      this.confirmLoading = true
+
+      if (!this.textWatermark.content) {
+        this.confirmLoading = false
+        util.showError('请输入水印文字！')
+        return
+      }
+      // TODO： 文字渲染到canvas上，位置、换行与下划线 有bug，查canvas资料
+      const newImg = await watermarkText(this.$refs['watermarkCanvas'], this.textWatermark, this.imagePath)
+
+      const res = await uploadBase64Image(newImg, this.path, this.siteID)
+
+      util.showResponseMessage(res.data)
+      if (res.data.status === 1) {
+        this.$emit('update:imagePath', res.data.previewPath)
+        this.$emit('update:path', res.data.path)
+        this.init()
+      }
+
+      this.confirmLoading = false
+    }
+  },
+  created () {
+  },
+  mounted () {
+    console.log(this.$refs['watermarkContentInput'])
+    autoTextarea(this.$refs['watermarkContentInput'])
+  },
+  components: {
+    'cutting-container': imageCuttingContainer
   }
+}
 </script>

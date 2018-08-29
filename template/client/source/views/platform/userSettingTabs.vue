@@ -31,13 +31,13 @@ import entrustManageDialog from './components/EntrustManageDialog.vue'
 import changePasswordDialog from './components/ChangePasswordDialog.vue'
 
 export default {
-  data() {
+  data () {
     return {
       activeName: 'UserPreferences'
     }
   },
   methods: {
-    handleClick(tab) {
+    handleClick (tab) {
       if (tab.name === 'UserPreferences') {
         return
       }
@@ -46,22 +46,22 @@ export default {
         return
       }
       if (tab.name === 'ChangePassword') {
-        return
+
       }
     },
-    confirm() {
+    confirm () {
       this.$refs.UserPreferences.savePreferences()
     },
-    confirmChangePassword() {
+    confirmChangePassword () {
       this.$refs.ChangePassword.changePassword()
     }
   },
   computed: {
     show: {
-      get() {
+      get () {
         return this.showDialog
       },
-      set(val) {
+      set (val) {
         this.$emit('update:showDialog', val)
       }
     }

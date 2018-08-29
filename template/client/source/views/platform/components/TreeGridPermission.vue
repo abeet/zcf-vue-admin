@@ -40,148 +40,148 @@
 </style>
 
 <script>
-  export default {
-    data() {
-      return {
-        isAllChecked: false,
-      }
+export default {
+  data () {
+    return {
+      isAllChecked: false
+    }
+  },
+  // 由于用了JSON来做拷贝对象的转换方式，所以请使用比较简单的数组，不要用层层嵌套
+  props: {
+    'value': {
+      type: Array,
+      required: true,
+      default: []
     },
-//由于用了JSON来做拷贝对象的转换方式，所以请使用比较简单的数组，不要用层层嵌套
-    props: {
-      'value': {
-        type: Array,
-        required: true,
-        default: []
-      },
-      'columns': {
-        type: Array,
-        required: true,
-        default: []
+    'columns': {
+      type: Array,
+      required: true,
+      default: []
+    }
+  },
+  computed: {},
+  methods: {
+    selectedAllHandler () {
+      let responseData = JSON.parse(JSON.stringify(this.value))
+      if (this.isAllChecked) {
+        this.isAllChecked = false
+      } else {
+        this.isAllChecked = true
       }
-    },
-    computed: {},
-    methods: {
-      selectedAllHandler() {
-        let responseData = JSON.parse(JSON.stringify(this.value))
-        if (this.isAllChecked) {
-          this.isAllChecked = false;
-        } else {
-          this.isAllChecked = true;
-        }
-        responseData.forEach(row => {
-          this.columns.forEach((column, index) => {
-            if(!column.noCheckBox){
-              if (row[column.dataIndex].value != this.isAllChecked&&!row[column.dataIndex].disabled) {
-                row[column.dataIndex].value = this.isAllChecked;
-              }
-            }
-          })
-        })
-        this.$emit("input",responseData);
-      },
-      renderHeaderFunc(h, { column, $index }) {
-        if ($index < 1||this.columns[$index].noCheckBox) {
-          return column.label
-        } else {
-          return h(
-            'el-checkbox',
-            {
-              props: {
-                label: column.label,
-                type: 'checkbox'
-              },
-              on: {
-                change: val => this.onColumnClick(val, this.columns[$index]),
-              }
-            },
-            column.label
-          )
-        }
-      },
-      onColumnClick(isChecked, column) {
-        let responseData = JSON.parse(JSON.stringify(this.value))
-        let key = column.dataIndex
-        responseData.forEach(val => {
-          if(!val[key].disabled){
-            val[key].value = isChecked
-            //遍历所有选项，判断选项是否需要勾选
-            let isRowNodeChecked = false;
-            if (isChecked) {
-              isRowNodeChecked = true;
-            } else {
-              this.columns.forEach((col, index) => {
-                if (index > 0&&!col.noCheckBox) {
-                  if (val[col.dataIndex].value) {
-                    isRowNodeChecked = true
-                  }
-                }
-              })
-            }
-            if (val[this.columns[0].dataIndex].value != isRowNodeChecked&&!val[this.columns[0].dataIndex].disabled) {
-              val[this.columns[0].dataIndex].value = isRowNodeChecked;
-            }
-          }
-        })
-         this.$emit("input",responseData);
-      },
-      checkBoxChangeHandler(isChecked, row, dataIndex) {
-        let responseData = JSON.parse(JSON.stringify(this.value))
-        let isRowNodeChecked = false;
-        if (isChecked) {
-          isRowNodeChecked = true;
-        } else {
-          this.columns.forEach((val, index) => {
-            if (index > 0&&!val.noCheckBox) {
-              if (row[val.dataIndex].value) {
-                isRowNodeChecked = true;
-              }
-            }
-          })
-        }
-        let parentID = row.parentID;
-        let ID=row.ID
-        let firstDataIndex = this.columns[0].dataIndex;
-          //遍历所有节点,找到节点以及他的父节点
-        responseData.forEach(val=>{
-          if(val.ID===ID){
-            val[dataIndex].value=isChecked
-            if ( val.hasChildren ||  val._level > 0 || isChecked) {
-              if ( val[firstDataIndex].value != isRowNodeChecked&&! val[firstDataIndex].disabled) {
-                val[firstDataIndex].value = isRowNodeChecked;
-              }
-            }
-          }else if (val.ID == parentID && val[firstDataIndex].value != isRowNodeChecked&& !val[firstDataIndex].disabled) {
-            val[firstDataIndex].value = isRowNodeChecked;
-          }
-        })
-         this.$emit("input",responseData)
-      },
-      onRowCheckClick(isChecked, row) {
-        let responseData = JSON.parse(JSON.stringify(this.value))
-        let ID = row.ID
-        let parentID = row.parentID
+      responseData.forEach(row => {
         this.columns.forEach((column, index) => {
-          //父级节点全选择时，需要把子节点也全选择了
-          if (ID != 0&&!column.noCheckBox) {
-            responseData.forEach(val => {
-              if ((val.parentID === ID||val.ID === ID) && !val[column.dataIndex].disabled) {
-                val[column.dataIndex].value = isChecked;
-              }
-              if (isChecked) {
-                if (val.ID === parentID && val[this.columns[0].dataIndex].value != isChecked && !val[column.dataIndex].disabled) {
-                  val[this.columns[0].dataIndex].value = isChecked;
+          if (!column.noCheckBox) {
+            if (row[column.dataIndex].value != this.isAllChecked && !row[column.dataIndex].disabled) {
+              row[column.dataIndex].value = this.isAllChecked
+            }
+          }
+        })
+      })
+      this.$emit('input', responseData)
+    },
+    renderHeaderFunc (h, { column, $index }) {
+      if ($index < 1 || this.columns[$index].noCheckBox) {
+        return column.label
+      } else {
+        return h(
+          'el-checkbox',
+          {
+            props: {
+              label: column.label,
+              type: 'checkbox'
+            },
+            on: {
+              change: val => this.onColumnClick(val, this.columns[$index])
+            }
+          },
+          column.label
+        )
+      }
+    },
+    onColumnClick (isChecked, column) {
+      let responseData = JSON.parse(JSON.stringify(this.value))
+      let key = column.dataIndex
+      responseData.forEach(val => {
+        if (!val[key].disabled) {
+          val[key].value = isChecked
+          // 遍历所有选项，判断选项是否需要勾选
+          let isRowNodeChecked = false
+          if (isChecked) {
+            isRowNodeChecked = true
+          } else {
+            this.columns.forEach((col, index) => {
+              if (index > 0 && !col.noCheckBox) {
+                if (val[col.dataIndex].value) {
+                  isRowNodeChecked = true
                 }
               }
             })
           }
-        })
-         this.$emit("input",responseData);
-      },
-      loadChildren(row) {
-        this.$emit('load-children', row)
-      }
+          if (val[this.columns[0].dataIndex].value != isRowNodeChecked && !val[this.columns[0].dataIndex].disabled) {
+            val[this.columns[0].dataIndex].value = isRowNodeChecked
+          }
+        }
+      })
+      this.$emit('input', responseData)
     },
-    components: {
+    checkBoxChangeHandler (isChecked, row, dataIndex) {
+      let responseData = JSON.parse(JSON.stringify(this.value))
+      let isRowNodeChecked = false
+      if (isChecked) {
+        isRowNodeChecked = true
+      } else {
+        this.columns.forEach((val, index) => {
+          if (index > 0 && !val.noCheckBox) {
+            if (row[val.dataIndex].value) {
+              isRowNodeChecked = true
+            }
+          }
+        })
+      }
+      let parentID = row.parentID
+      let ID = row.ID
+      let firstDataIndex = this.columns[0].dataIndex
+      // 遍历所有节点,找到节点以及他的父节点
+      responseData.forEach(val => {
+        if (val.ID === ID) {
+          val[dataIndex].value = isChecked
+          if (val.hasChildren || val._level > 0 || isChecked) {
+            if (val[firstDataIndex].value != isRowNodeChecked && !val[firstDataIndex].disabled) {
+              val[firstDataIndex].value = isRowNodeChecked
+            }
+          }
+        } else if (val.ID == parentID && val[firstDataIndex].value != isRowNodeChecked && !val[firstDataIndex].disabled) {
+          val[firstDataIndex].value = isRowNodeChecked
+        }
+      })
+      this.$emit('input', responseData)
+    },
+    onRowCheckClick (isChecked, row) {
+      let responseData = JSON.parse(JSON.stringify(this.value))
+      let ID = row.ID
+      let parentID = row.parentID
+      this.columns.forEach((column, index) => {
+        // 父级节点全选择时，需要把子节点也全选择了
+        if (ID != 0 && !column.noCheckBox) {
+          responseData.forEach(val => {
+            if ((val.parentID === ID || val.ID === ID) && !val[column.dataIndex].disabled) {
+              val[column.dataIndex].value = isChecked
+            }
+            if (isChecked) {
+              if (val.ID === parentID && val[this.columns[0].dataIndex].value != isChecked && !val[column.dataIndex].disabled) {
+                val[this.columns[0].dataIndex].value = isChecked
+              }
+            }
+          })
+        }
+      })
+      this.$emit('input', responseData)
+    },
+    loadChildren (row) {
+      this.$emit('load-children', row)
     }
+  },
+  components: {
   }
+}
 </script>

@@ -7,23 +7,23 @@
 </template>
 
 <script>
-import SystemPreferencesExtend from '../../platform/components/UserPreferencesExtendAction.vue';
-import CatalogPreferencesExtend from '../../catalog/components/UserPreferencesExtendAction.vue';
-import BlockPreferencesExtend from '../../block/components/UserPreferencesExtendAction.vue';
-import ArticlePreferencesExtend from '../../article/components/UserPreferencesExtendAction.vue';
+import SystemPreferencesExtend from '../../platform/components/UserPreferencesExtendAction.vue'
+import CatalogPreferencesExtend from '../../catalog/components/UserPreferencesExtendAction.vue'
+import BlockPreferencesExtend from '../../block/components/UserPreferencesExtendAction.vue'
+import ArticlePreferencesExtend from '../../article/components/UserPreferencesExtendAction.vue'
 
 export default {
-  data(){
+  data () {
     return {
-      UIExtends:['system-preference','catalog-preference','block-preference','article-preference'],
+      UIExtends: ['system-preference', 'catalog-preference', 'block-preference', 'article-preference']
     }
   },
   components: {
-    'system-preference':SystemPreferencesExtend,
-    'catalog-preference':CatalogPreferencesExtend,
-    'block-preference':BlockPreferencesExtend,
-    'article-preference':ArticlePreferencesExtend,
+    'system-preference': SystemPreferencesExtend,
+    'catalog-preference': CatalogPreferencesExtend,
+    'block-preference': BlockPreferencesExtend,
+    'article-preference': ArticlePreferencesExtend
   },
-  props: ['preferences'],
+  props: ['preferences']
 }
 </script>

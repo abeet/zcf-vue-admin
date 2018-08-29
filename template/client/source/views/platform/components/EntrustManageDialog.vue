@@ -41,10 +41,10 @@
 </template>
 
 <script>
-import TreeSelect from '../../../components/TreeSelect.vue';
-import util from '../../../common/util.js';
+import TreeSelect from '../../../components/TreeSelect.vue'
+import util from '../../../common/util.js'
 export default {
-  data() {
+  data () {
     return {
       branchInnerCode: '',
       userName: '',
@@ -52,27 +52,27 @@ export default {
       treeItemsOptions: {
         children: 'children',
         label: 'name',
-        key: 'branchInnerCode',
+        key: 'branchInnerCode'
       },
       users: [],
       isAgent: false,
       isEntrust: false,
       loading: true
-    };
+    }
   },
   components: {
-    'tree-select': TreeSelect,
+    'tree-select': TreeSelect
   },
   methods: {
-    commitSearch() {
-      this.$refs.userTable.getData();
+    commitSearch () {
+      this.$refs.userTable.getData()
     },
-    getUsersURL() {
+    getUsersURL () {
       if (this.isAgent) {
-        return ['/api/application/entrustusers', {}];
+        return ['/api/application/entrustusers', {}]
       } else {
         if (this.isEntrust) {
-          return ['/api/application/agentusers', {}];
+          return ['/api/application/agentusers', {}]
         } else {
           return [
             '/api/users',
@@ -80,53 +80,53 @@ export default {
               params: {
                 pageSize: 10,
                 userName: this.userName,
-                branchInnerCode: this.branchInnerCode,
-              },
-            },
-          ];
+                branchInnerCode: this.branchInnerCode
+              }
+            }
+          ]
         }
       }
     },
-    async initEntrust() {
-      let data = await axios.get('/api/application/entrustinit').then(res => res.data);
-      this.isAgent = data.agent ? data.agent : false;
-      this.isEntrust = data.entrust ? data.entrust : false;
+    async initEntrust () {
+      let data = await axios.get('/api/application/entrustinit').then(res => res.data)
+      this.isAgent = data.agent ? data.agent : false
+      this.isEntrust = data.entrust ? data.entrust : false
     },
-    async addEntrustUser(userName) {
+    async addEntrustUser (userName) {
       let data = await axios.put('/api/application/addentrust', { userName: userName }).then(res => res.data)
       if (data.status === 1) {
-        util.showSuccess(data.message);
-        this.loadEntrustListData();
+        util.showSuccess(data.message)
+        this.loadEntrustListData()
       } else {
-        util.showErrorMessageBox(data.message);
+        util.showErrorMessageBox(data.message)
       }
     },
-    async cancelEntrustUser() {
-      let data = await axios.put('/api/application/cancelentrust').then(res => res.data);
+    async cancelEntrustUser () {
+      let data = await axios.put('/api/application/cancelentrust').then(res => res.data)
       if (data.status === 1) {
-        util.showSuccess(data.message);
-        this.loadEntrustListData();
+        util.showSuccess(data.message)
+        this.loadEntrustListData()
       } else {
-        util.showErrorMessageBox(data.message);
+        util.showErrorMessageBox(data.message)
       }
     },
-    async changeLoginUserHandler(userName) {
+    async changeLoginUserHandler (userName) {
       let data = await axios.get(`/api/changeaccount?userName=${userName}`).then(res => res.data)
       if (data.status === 1) {
-        window.location = 'index.html';
+        window.location = 'index.html'
       } else {
-        util.showErrorMessageBox(data.message);
+        util.showErrorMessageBox(data.message)
       }
     },
-    async loadEntrustListData() {
-      let branchData = await axios.get('/api/branches').then(res => res.data);
-      this.branches = branchData.data;
-      await this.initEntrust();
-      await this.$refs.userTable.getData();
-      this.loading = false;
-    },
-  },
-};
+    async loadEntrustListData () {
+      let branchData = await axios.get('/api/branches').then(res => res.data)
+      this.branches = branchData.data
+      await this.initEntrust()
+      await this.$refs.userTable.getData()
+      this.loading = false
+    }
+  }
+}
 </script>
 
 <style scoped>

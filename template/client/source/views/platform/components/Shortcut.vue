@@ -16,43 +16,43 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
-      shortcuts: [],
-    };
+      shortcuts: []
+    }
   },
   methods: {
-    async getShortcutList() {
+    async getShortcutList () {
       let shortcutRes = await axios
         .get('/api/users/shortcuts', { params: { menuIDs: this.menuIds } })
-      this.shortcuts = shortcutRes.data.data;
+      this.shortcuts = shortcutRes.data.data
     },
-    openUserSetting() {
-      let self = this;
-      document.dispatchEvent(window.openUserSettingDialog);
-      window.refreshShortcut = new Event('refreshshortcut');
-      document.addEventListener('refreshshortcut', function() {
-        self.getShortcutList();
-      });
+    openUserSetting () {
+      let self = this
+      document.dispatchEvent(window.openUserSettingDialog)
+      window.refreshShortcut = new Event('refreshshortcut')
+      document.addEventListener('refreshshortcut', function () {
+        self.getShortcutList()
+      })
     },
-    redirectUrl(url) {
+    redirectUrl (url) {
       if (url) {
-        document.dispatchEvent(window.closeUserSettingDialog);
-        window.location.hash = url;
-        localStorage.lastRoutePath = url;
+        document.dispatchEvent(window.closeUserSettingDialog)
+        window.location.hash = url
+        localStorage.lastRoutePath = url
       }
-    },
+    }
   },
   watch: {
-    menuIds: function() {
-      this.getShortcutList();
-    },
+    menuIds: function () {
+      this.getShortcutList()
+    }
   },
-  created: async function() {
-    this.getShortcutList();
+  created: async function () {
+    this.getShortcutList()
   },
-  props: ['menuIds', 'layoutCol', 'hideBtn'],
-};
+  props: ['menuIds', 'layoutCol', 'hideBtn']
+}
 </script>
 
 <style scoped>

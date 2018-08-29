@@ -224,138 +224,138 @@ var menus = {
 }
 
 var getPluginList = {
-    data: [
-        {
-            id: 'com.zving.advertise',
-            name: '广告'
-        },
-        {
-            id: 'com.zving.browsepriv',
-            name: '浏览权限管理'
-        },
-        {
-            id: 'com.zving.comment',
-            name: '评论'
-        },
-        {
-            id: 'com.zving.contentadvance',
-            name: '多维分类'
-        },
-        {
-            id: 'com.zving.contentassess',
-            name: '内容绩效评估'
-        },
-        {
-            id: 'com.zving.contentcore',
-            name: '内容核心'
-        },
-        {
-            id: 'com.zving.contentextend',
-            name: '内容字段扩展'
-        },
-        {
-            id: 'com.zving.customform',
-            name: '自定义表单'
-        },
-        {
-            id: 'com.zving.dbgather',
-            name: '数据库采集'
-        },
-        {
-            id: 'com.zving.imageplayer',
-            name: '图片播放器'
-        },
-        {
-            id: 'com.zving.links',
-            name: '友情链接'
-        },
-        {
-            id: 'com.zving.member',
-            name: '会员'
-        },
-        {
-            id: 'com.zving.message',
-            name: '消息模板'
-        },
-        {
-            id: 'com.zving.messageboard',
-            name: '留言板'
-        },
-        {
-            id: 'com.zving.pageweaver',
-            name: '页面制作器'
-        },
-        {
-            id: 'com.zving.platform',
-            name: '基础平台'
-        },
-        {
-            id: 'com.zving.product',
-            name: '产品定义'
-        },
-        {
-            id: 'com.zving.search',
-            name: '全文检索支持'
-        },
-        {
-            id: 'com.zving.sitegroup',
-            name: '网站群管理'
-        },
-        {
-            id: 'com.zving.sitestyle',
-            name: '站点风格'
-        },
-        {
-            id: 'com.zving.stat',
-            name: '统计分析'
-        },
-        {
-            id: 'com.zving.vote',
-            name: '投票'
-        },
-        {
-            id: "com.zving.weixin",
-            name: "微信插件"
-        },
-        {
-            id: 'com.zving.wordmanage',
-            name: '内容词汇管理'
-        },
-        {
-            id: 'com.zving.workflow',
-            name: '工作流支持'
-        },
-        {
-            id: 'com.zving.workspace',
-            name: '我的工作台'
-        }
-    ],
-    status: 1,
-    message: ""
+  data: [
+    {
+      id: 'com.zving.advertise',
+      name: '广告'
+    },
+    {
+      id: 'com.zving.browsepriv',
+      name: '浏览权限管理'
+    },
+    {
+      id: 'com.zving.comment',
+      name: '评论'
+    },
+    {
+      id: 'com.zving.contentadvance',
+      name: '多维分类'
+    },
+    {
+      id: 'com.zving.contentassess',
+      name: '内容绩效评估'
+    },
+    {
+      id: 'com.zving.contentcore',
+      name: '内容核心'
+    },
+    {
+      id: 'com.zving.contentextend',
+      name: '内容字段扩展'
+    },
+    {
+      id: 'com.zving.customform',
+      name: '自定义表单'
+    },
+    {
+      id: 'com.zving.dbgather',
+      name: '数据库采集'
+    },
+    {
+      id: 'com.zving.imageplayer',
+      name: '图片播放器'
+    },
+    {
+      id: 'com.zving.links',
+      name: '友情链接'
+    },
+    {
+      id: 'com.zving.member',
+      name: '会员'
+    },
+    {
+      id: 'com.zving.message',
+      name: '消息模板'
+    },
+    {
+      id: 'com.zving.messageboard',
+      name: '留言板'
+    },
+    {
+      id: 'com.zving.pageweaver',
+      name: '页面制作器'
+    },
+    {
+      id: 'com.zving.platform',
+      name: '基础平台'
+    },
+    {
+      id: 'com.zving.product',
+      name: '产品定义'
+    },
+    {
+      id: 'com.zving.search',
+      name: '全文检索支持'
+    },
+    {
+      id: 'com.zving.sitegroup',
+      name: '网站群管理'
+    },
+    {
+      id: 'com.zving.sitestyle',
+      name: '站点风格'
+    },
+    {
+      id: 'com.zving.stat',
+      name: '统计分析'
+    },
+    {
+      id: 'com.zving.vote',
+      name: '投票'
+    },
+    {
+      id: 'com.zving.weixin',
+      name: '微信插件'
+    },
+    {
+      id: 'com.zving.wordmanage',
+      name: '内容词汇管理'
+    },
+    {
+      id: 'com.zving.workflow',
+      name: '工作流支持'
+    },
+    {
+      id: 'com.zving.workspace',
+      name: '我的工作台'
+    }
+  ],
+  status: 1,
+  message: ''
 }
 
-axiosMock.onGet('/api/menus').reply(200, menus);
+axiosMock.onGet('/api/menus').reply(200, menus)
 
 axiosMock.onPut('/api/menus').reply((res) => {
-  if(res.params && res.params.reset){
+  if (res.params && res.params.reset) {
     return [200, {
       data: null,
       status: 1,
       message: '重置成功！'
-    }];
+    }]
   }
-});
+})
 
 axiosMock.onPut('/api/menus/status').reply(200, {
   data: null,
   status: 1,
   message: '更新成功'
-});
+})
 
 axiosMock.onPut('/api/menus/position').reply(200, {
   data: null,
   status: 1,
   message: '更新成功'
-});
+})
 
-axiosMock.onGet('/api/menus/getpluginlist').reply(200, getPluginList);
+axiosMock.onGet('/api/menus/getpluginlist').reply(200, getPluginList)

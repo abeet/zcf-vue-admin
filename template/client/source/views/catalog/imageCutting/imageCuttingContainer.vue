@@ -44,19 +44,19 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {}
-    },
-    props: {
-      loading: {
-        type: Boolean,
-        default: false
-      }
-    },
-    computed: {},
-    methods: {},
-    created () {
+export default {
+  data () {
+    return {}
+  },
+  props: {
+    loading: {
+      type: Boolean,
+      default: false
     }
+  },
+  computed: {},
+  methods: {},
+  created () {
   }
+}
 </script>

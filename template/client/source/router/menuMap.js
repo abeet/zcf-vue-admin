@@ -1,4 +1,4 @@
-var menuMap = {
+const menuMap = {
   "/editorWorkspace":"ContentCore.EditWorkSpace",
   "/catalogIndex":"ContentCore.Catalog",
   "/settings":"MainMenus.AdminWorkspace",

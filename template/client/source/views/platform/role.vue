@@ -147,7 +147,7 @@ import ModulesPermission from './components/ModulesPermission.vue'
 import BlockPermission from './components/BlockPermission.vue'
 
 export default {
-  data() {
+  data () {
     return {
       rolePermissionTypes: [],
       branchLoading: true,
@@ -199,7 +199,7 @@ export default {
       selectedUsers: []
     }
   },
-  created() {
+  created () {
     Promise.all([
       axios.get('/api/branches').then(res => res.data),
       axios.get(`/api/permissions/id/none/type/none/types`).then(res => res.data)
@@ -210,13 +210,13 @@ export default {
     })
   },
   methods: {
-    goBranchHandler() {
+    goBranchHandler () {
       this.$router.push({
         path: '/platform/branch'
       })
     },
     // 当在左上机构树上点击
-    async onRoleBranchTreeCheckChange(branch) {
+    async onRoleBranchTreeCheckChange (branch) {
       this.currentBranch = branch
       this.currentRole = {}
       this.userDataTableValues = []
@@ -227,13 +227,13 @@ export default {
       this.roleLoading = false
     },
     // 当在左下机构树上点击
-    onRoleTreeCheckChange(role) {
+    onRoleTreeCheckChange (role) {
       this.currentRole = role
       this.userDataTableValues = []
       this.onRoleTabsClick()
     },
     // 当在右上页签上点击
-    async onRoleTabsClick() {
+    async onRoleTabsClick () {
       if (!this.currentBranch || !this.currentBranch.branchInnerCode || !this.currentRole || !this.currentRole.roleCode) {
         return
       }
@@ -245,7 +245,7 @@ export default {
         this.roleInfoLoading = false
       }
     },
-    addRoleClickHandler() {
+    addRoleClickHandler () {
       this.editRoleMode = 1
       // console.info(this.currentBranch.branchInnerCode)
       this.tmpRole = {
@@ -256,7 +256,7 @@ export default {
       }
       this.roleDialog = true
     },
-    editRoleClickHandler() {
+    editRoleClickHandler () {
       this.editRoleMode = 2
       // console.info(this.currentRole)
       this.tmpRole = {
@@ -268,7 +268,7 @@ export default {
 
       this.roleDialog = true
     },
-    async deleteRoleClickHandler() {
+    async deleteRoleClickHandler () {
       try {
         await this.$confirm('确定删除吗，删除后无法恢复。是否继续删除？', '删除确认', {
           confirmButtonText: '确定',
@@ -294,7 +294,7 @@ export default {
 
       util.showNotification(data)
     },
-    async okHandler() {
+    async okHandler () {
       let addForm = async () => {
         let data = await axios.post('/api/roles', this.tmpRole).then(res => res.data)
         if (data.status !== 1) {
@@ -344,7 +344,7 @@ export default {
 
       util.showNotification(res)
     },
-    async addUsersToRoleClickHandler() {
+    async addUsersToRoleClickHandler () {
       this.selectUsers = []
       this.selectedUsers = []
       this.selectMode = 1
@@ -356,17 +356,17 @@ export default {
       this.selectUsers = data.data
       this.selectLoading = false
     },
-    deleteUsersToRoleClickHandler() {
+    deleteUsersToRoleClickHandler () {
       this.selectUsers = Object.assign([], this.userDataTableValues)
       this.selectedUsers = []
       this.selectMode = 2
       this.selectLoading = false
       this.selectDialog = true
     },
-    usersSelectionChangeHandler(selection) {
+    usersSelectionChangeHandler (selection) {
       this.selectedUsers = selection
     },
-    async selectConfirmClickHandler() {
+    async selectConfirmClickHandler () {
       this.confirmLoading = true
 
       let deleteUsers = async () => {
@@ -428,4 +428,3 @@ export default {
   }
 }
 </script>
-

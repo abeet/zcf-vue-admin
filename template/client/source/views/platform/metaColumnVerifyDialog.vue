@@ -108,22 +108,22 @@
 export default {
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
       }
     }
   },
   props: { datas: String, show: Boolean },
-  data() {
+  data () {
     return {
-      validateRule: { items: [], lengthSymbol: '', lengthValue: 0, regex: '', script: '' } /**校验规则表单数据 */
+      validateRule: { items: [], lengthSymbol: '', lengthValue: 0, regex: '', script: '' } /** 校验规则表单数据 */
     }
   },
   methods: {
-    beforeDialogOpen() {
+    beforeDialogOpen () {
       if (!this.datas) {
         this.validateRule.items = []
         this.validateRule.script = ''
@@ -150,23 +150,23 @@ export default {
         }
       }
     },
-    lengthChangeHandler(val) {
+    lengthChangeHandler (val) {
       if (!val) {
         this.validateRule.lengthSymbol = ''
         this.validateRule.lengthValue = 0
       }
     },
-    regexChangeHandler(val) {
+    regexChangeHandler (val) {
       if (!val) {
         this.validateRule.regex = ''
       }
     },
-    scriptChangeHandler(val) {
+    scriptChangeHandler (val) {
       if (!val) {
         this.validateRule.script = ''
       }
     },
-    confirmClickHandler() {
+    confirmClickHandler () {
       let scriptIndex = this.validateRule.items.findIndex(val => val.startsWith('Script'))
       if (scriptIndex !== -1) {
         this.validateRule.items[scriptIndex] = `Script=${this.validateRule.script}`
@@ -185,5 +185,3 @@ export default {
   }
 }
 </script>
-
-

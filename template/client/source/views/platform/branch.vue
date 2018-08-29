@@ -81,7 +81,7 @@ const columns = [
   },
   {
     text: '机构主管',
-    render(row) {
+    render (row) {
       let names = []
 
       row.managers.forEach(val => {
@@ -102,13 +102,13 @@ const columns = [
 ]
 
 export default {
-  data() {
+  data () {
     return {
       branchPermissionTypes: [],
       privType: 'B',
       columns,
       branch: [],
-      currentTab:'menuPermission',
+      currentTab: 'menuPermission',
       dataLoading: true,
       selectedRows: [],
       deleteLoading: false,
@@ -148,10 +148,10 @@ export default {
     }
   },
   methods: {
-    onSelectionChange(selection) {
+    onSelectionChange (selection) {
       this.selectedRows = selection
     },
-    async fetchUsers() {
+    async fetchUsers () {
       if (!this.users || !this.users.length) {
         let data = await axios.get(`/api/users`).then(res => res.data)
         this.users = data.data
@@ -160,7 +160,7 @@ export default {
         this.branchModal = true
       }
     },
-    addClick() {
+    addClick () {
       this.editMode = 1
 
       this.tmpBranch = {
@@ -175,7 +175,7 @@ export default {
 
       this.fetchUsers()
     },
-    editClick(row) {
+    editClick (row) {
       this.editMode = 2
       this.tmpBranch = Object.assign({}, row.branchCode ? row : this.selectedRows[0], {
         managerselected: []
@@ -185,7 +185,7 @@ export default {
       })
       this.fetchUsers()
     },
-    async okHandler() {
+    async okHandler () {
       let addForm = async () => {
         this.tmpBranch.manager = this.tmpBranch.managerselected.join(',')
         let data = await axios.post('/api/branches', this.tmpBranch).then(res => res.data)
@@ -282,7 +282,7 @@ export default {
       }
       util.showNotification(res)
     },
-    async deleteClick() {
+    async deleteClick () {
       let isHasAdmin = this.selectedRows.find(val => val.treeLevel === 1)
 
       if (isHasAdmin) {
@@ -305,13 +305,13 @@ export default {
         return
       }
       let rowIds = []
-      this.selectedRows.forEach(function(row) {
+      this.selectedRows.forEach(function (row) {
         rowIds.push(row.branchInnerCode)
       })
       if (!rowIds.length) {
         return
       }
-      let data = await axios.delete('/api/branches/'+ rowIds.join(',')).then(res => res.data)
+      let data = await axios.delete('/api/branches/' + rowIds.join(',')).then(res => res.data)
       this.selectedRows = []
       util.showNotification(data)
       if (data.status === 1) {
@@ -320,31 +320,29 @@ export default {
         this.branch = data.data
       }
     },
-    async setPermissionsClick() {
+    async setPermissionsClick () {
       this.tmpBranch = Object.assign({}, this.selectedRows[0], {
         managerselected: []
       })
       this.permissionLoading = true
       this.permissionModal = true
       this.editBranchModal = true
-
     }
   },
-  async created() {
+  async created () {
     try {
       let datas = await Promise.all([
         axios.get('/api/branches').then(res => res.data),
         axios.get(`/api/permissions/id/none/type/none/types`).then(res => res.data)
-      ]);
+      ])
 
       this.branch = datas[0].data
       console.log(this.branch)
       this.branchPermissionTypes = datas[1].data
       this.dataLoading = false
-    }catch (e) {
+    } catch (e) {
 
     }
-
   },
   components: {
     'tree-select': TreeSelect,

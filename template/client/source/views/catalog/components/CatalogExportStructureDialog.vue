@@ -14,12 +14,12 @@ import util from '../../../common/util.js'
 export default {
   props: {
     catalogId: {
-      type: [Number,String],
+      type: [Number, String],
       default: 0,
       required: true
     },
     dimensionId: {
-      type: [Number,String],
+      type: [Number, String],
       default: 0,
       required: true
     },
@@ -27,30 +27,30 @@ export default {
       type: Boolean,
       default: false,
       required: true
-    },
+    }
   },
-  data() {
+  data () {
     return {
       dataLoading: false,
-      catalogStructure: '' /**栏目结构 */
+      catalogStructure: '' /** 栏目结构 */
     }
   },
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
       }
     }
   },
   methods: {
-    dialogOpen() {
+    dialogOpen () {
       this.getExportStructure()
     },
-    /**导出栏目结构 */
-    async getExportStructure() {
+    /** 导出栏目结构 */
+    async getExportStructure () {
       this.dataLoading = true
       try {
         let res = await axios.get(`/api/catalogs/${this.catalogId}/exportstructure`, {
@@ -67,9 +67,8 @@ export default {
         }
       } catch (e) {
         this.dataLoading = false
-        return
       }
-    },
+    }
   }
 }
 </script>

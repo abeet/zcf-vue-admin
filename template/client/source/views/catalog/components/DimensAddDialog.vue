@@ -36,15 +36,15 @@ export default {
   },
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
       }
     }
   },
-  data() {
+  data () {
     return {
       tmpDimens: {},
       dimensionRules: {
@@ -69,9 +69,9 @@ export default {
     }
   },
   methods: {
-    //别名设置：取名称首字母
-    setAlias() {
-      if(this.tmpDimens.code.trim()){
+    // 别名设置：取名称首字母
+    setAlias () {
+      if (this.tmpDimens.code.trim()) {
         return
       }
       this.tmpDimens.code = util.getSpell(
@@ -79,16 +79,16 @@ export default {
         true
       )
     },
-    dialogOpen() {
+    dialogOpen () {
       this.handlerLoading = false
       this.tmpDimens = Object.assign({}, this.datas)
     },
-    async confirmHandler() {
+    async confirmHandler () {
       try {
         this.handlerLoading = true
         await util.validateForm(this.$refs['form'])
         let res = ''
-        if (!!this.tmpDimens.ID) {
+        if (this.tmpDimens.ID) {
           res = await axios.put(`/api/dimens/${this.tmpDimens.ID}`, this.tmpDimens)
         } else {
           res = await axios.post('/api/dimens', this.tmpDimens)
@@ -101,7 +101,6 @@ export default {
         }
       } catch (e) {
         this.handlerLoading = false
-        return
       }
     }
   }

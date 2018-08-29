@@ -119,24 +119,24 @@ import metaColumnVerifyDialog from './metaColumnVerifyDialog.vue'
 export default {
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
       }
     }
   },
   props: { title: String, modelId: [Number, String], datas: Object, show: Boolean },
-  data() {
+  data () {
     return {
       confirmLoading: false,
-      tmpField: {} /**form表单临时对象 */,
-      fieldGroup: [] /**分组数据 */,
-      controlTypes: [] /**控件类型数据*/,
-      dataTypes: [] /**数据类型数据 */,
+      tmpField: {} /** form表单临时对象 */,
+      fieldGroup: [] /** 分组数据 */,
+      controlTypes: [] /** 控件类型数据 */,
+      dataTypes: [] /** 数据类型数据 */,
       fieldRules: {
-        /**表单校验规则 */
+        /** 表单校验规则 */
         groupID: [
           {
             trigger: 'change',
@@ -180,22 +180,22 @@ export default {
           }
         ]
       },
-      sdt: {} /**特色控件类型和数据类型键值对 */,
-      dataTypeDisabled: false /**数据类型是否不可编辑 */,
+      sdt: {} /** 特色控件类型和数据类型键值对 */,
+      dataTypeDisabled: false /** 数据类型是否不可编辑 */,
       fieldOptionsDlg: {
-        /**选项列表弹框属性 */
+        /** 选项列表弹框属性 */
         isShowModal: false,
         listOptions: ''
       },
       fieldValidateRulesDlg: {
-        /**校验规则弹框属性 */
+        /** 校验规则弹框属性 */
         isShowModal: false,
         verifyRule: ''
       }
     }
   },
   methods: {
-    beforeDialogOpen() {
+    beforeDialogOpen () {
       if (this.datas.ID) {
         this.tmpField = Object.assign({}, this.datas)
         !!this.tmpField.addTime && Object.assign(this.tmpField, { addTime: util.formatDate(this.tmpField.addTime, 'yyyy-MM-dd hh:mm:ss') })
@@ -228,8 +228,8 @@ export default {
       this.loadDataTypes()
       this.dataTypeChangeHandler(this.tmpField.controlType)
     },
-    /**是否必填开关改变事件 */
-    mandatoryChangeHandler(val) {
+    /** 是否必填开关改变事件 */
+    mandatoryChangeHandler (val) {
       if (val === 'Y') {
         if (this.tmpField.verifyRule.includes('NotNull')) {
           return
@@ -246,8 +246,8 @@ export default {
         }
       }
     },
-    /**控件类型改变事件 */
-    dataTypeChangeHandler(val) {
+    /** 控件类型改变事件 */
+    dataTypeChangeHandler (val) {
       if (this.sdt[val]) {
         this.tmpField.dataType = this.sdt[val]
         this.dataTypeDisabled = true
@@ -256,36 +256,36 @@ export default {
         this.tmpField.dataType = 'ShortText'
       }
     },
-    async loadSDT() {
+    async loadSDT () {
       let res = await axios.get('/metamodels/0/columns/sdt')
       this.sdt = res.data.data
     },
-    /**加载分组数据 */
-    async loadFieldGroup() {
+    /** 加载分组数据 */
+    async loadFieldGroup () {
       let res = await axios.get(`/metamodels/${this.modelId}/groups`)
       this.fieldGroup = res.data.data && res.data.data.length ? res.data.data : [{ ID: '', name: '' }]
     },
-    /**加载控件类型数据 */
-    async loadControlTypes() {
+    /** 加载控件类型数据 */
+    async loadControlTypes () {
       let res = await axios.get(`/metamodels/0/columns/controlTypes`)
       this.controlTypes = res.data.data && res.data.data.length ? res.data.data : [{ value: '', key: '' }]
     },
-    /**加载数据类型数据 */
-    async loadDataTypes() {
+    /** 加载数据类型数据 */
+    async loadDataTypes () {
       let res = await axios.get('/metamodels/0/columns/dataTypes')
       this.dataTypes = res.data.data && res.data.data.length ? res.data.data : [{ value: '', key: '' }]
     },
-    /**选项列表弹框回调 */
-    getFieldOptions(data) {
+    /** 选项列表弹框回调 */
+    getFieldOptions (data) {
       this.tmpField.listOptions = data
     },
-    /**选项列表弹框打开事件 */
-    openFieldOptionsClickHandler() {
+    /** 选项列表弹框打开事件 */
+    openFieldOptionsClickHandler () {
       this.fieldOptionsDlg.isShowModal = true
       this.fieldOptionsDlg.listOptions = this.tmpField.listOptions
     },
-    /**校验规则弹框回调 */
-    getFieldValidateRules(data) {
+    /** 校验规则弹框回调 */
+    getFieldValidateRules (data) {
       if (this.tmpField.mandatoryFlag === 'Y') {
         if (!data.includes('NotNull')) {
           data = data.length > 0 ? `NotNull&&${data}` : 'NotNull'
@@ -293,13 +293,13 @@ export default {
       }
       this.tmpField.verifyRule = data
     },
-    /**校验规则弹框打开事件 */
-    openFieldValidateRulesClickHandler() {
+    /** 校验规则弹框打开事件 */
+    openFieldValidateRulesClickHandler () {
       this.fieldValidateRulesDlg.isShowModal = true
       this.fieldValidateRulesDlg.verifyRule = this.tmpField.verifyRule
     },
-    /**添加字段或修改字段保存事件 */
-    async confirmClickHandler() {
+    /** 添加字段或修改字段保存事件 */
+    async confirmClickHandler () {
       this.confirmLoading = true
       try {
         await util.validateForm(this.$refs['fieldForm'])
@@ -318,7 +318,6 @@ export default {
       } catch (e) {
         util.showErrorNotification(e)
         this.confirmLoading = false
-        return
       }
     }
   },
@@ -328,5 +327,3 @@ export default {
   }
 }
 </script>
-
-

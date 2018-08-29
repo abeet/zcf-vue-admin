@@ -11,43 +11,43 @@
 <script>
 import util from '../../../common/util.js'
 export default {
-  props:{
-    dimensionId:{
-      type:Number,
-      default:0,
-      required:true,
+  props: {
+    dimensionId: {
+      type: Number,
+      default: 0,
+      required: true
     },
-    show:{
-      type:Boolean,
-      default:false,
-      required:false
-    },
+    show: {
+      type: Boolean,
+      default: false,
+      required: false
+    }
   },
-  data() {
+  data () {
     return {
-      sortNumber: 1 /**移动位数 */,
-      submitLoading:false,
+      sortNumber: 1 /** 移动位数 */,
+      submitLoading: false
     }
   },
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
       }
     }
   },
   methods: {
-    dialogOpen(){
+    dialogOpen () {
       this.sortNumber = 1
       this.submitLoading = false
     },
-    /**提交排序 */
-    async confirm() {
+    /** 提交排序 */
+    async confirm () {
       if (!this.sortNumber) {
-        util.showResponseMessage({message:'分类未移动顺序'})
+        util.showResponseMessage({message: '分类未移动顺序'})
         return
       }
       this.submitLoading = true
@@ -62,7 +62,6 @@ export default {
         }
       } catch (e) {
         this.submitLoading = false
-        return
       }
     }
   }

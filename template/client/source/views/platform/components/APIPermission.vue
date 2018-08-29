@@ -20,12 +20,12 @@ import TreePermission from './TreePermission.vue'
 import util from '../../../common/util.js'
 import Privilege from '../../../common/privilege.js'
 export default {
-  data() {
+  data () {
     return {
-      selectAllLoading:false,
-      dataLoading:true,
+      selectAllLoading: false,
+      dataLoading: true,
       permission: [],
-      permissionBak:[],
+      permissionBak: [],
       permissionTree: [],
       defaultProps: {
         children: 'children',
@@ -33,10 +33,10 @@ export default {
         permission: 'items'
       },
       handlerLoading: false
-    };
+    }
   },
   methods: {
-    async getData() {
+    async getData () {
       this.checkPriv()
       if (this.id) {
         this.dataLoading = true
@@ -47,59 +47,59 @@ export default {
         this.dataLoading = false
       }
     },
-       selectAllClickHandler() {
-        this.selectAllLoading = true
-        let handle = (tree,flag) => {
-          let result = []
-          let disabledResult=[]
-          for (let i = 0; i < tree.length; i++) {
-            if (tree[i].code) {
-              result.push(tree[i].code)
-              if(tree[i].disabled&&!flag){
-                this.permissionBak.forEach(val=>{
-                  if(val==tree[i].code){
-                    disabledResult.push(tree[i].code)
+    selectAllClickHandler () {
+      this.selectAllLoading = true
+      let handle = (tree, flag) => {
+        let result = []
+        let disabledResult = []
+        for (let i = 0; i < tree.length; i++) {
+          if (tree[i].code) {
+            result.push(tree[i].code)
+            if (tree[i].disabled && !flag) {
+              this.permissionBak.forEach(val => {
+                if (val == tree[i].code) {
+                  disabledResult.push(tree[i].code)
+                }
+              })
+            }
+          }
+          if (tree[i].items && tree[i].items.length > 0) {
+            tree[i].items.forEach(val => {
+              result.push(val.code)
+              if (val.disabled && !flag) {
+                this.permissionBak.forEach(code => {
+                  if (code == val.code) {
+                    disabledResult.push(val.code)
                   }
                 })
               }
-            }
-            if (tree[i].items && tree[i].items.length > 0) {
-              tree[i].items.forEach(val => {
-                 result.push(val.code)
-                if(val.disabled&&!flag){
-                  this.permissionBak.forEach(code=>{
-                    if(code==val.code){
-                      disabledResult.push(val.code)
-                    }
-                  })
-                }
-              });
-            }
-            if (tree[i].children && tree[i].children.length > 0) {
-              if(flag){
-                let tmp = handle(tree[i].children,true);
-                result = result.concat(tmp);
-              }else{
-                let tmp = handle(tree[i].children,false);
-                disabledResult = disabledResult.concat(tmp);
-              }
+            })
+          }
+          if (tree[i].children && tree[i].children.length > 0) {
+            if (flag) {
+              let tmp = handle(tree[i].children, true)
+              result = result.concat(tmp)
+            } else {
+              let tmp = handle(tree[i].children, false)
+              disabledResult = disabledResult.concat(tmp)
             }
           }
-          if(flag){
-            return result
-          }else{
-            return disabledResult
-          }
-        };
-        let allPermissions = handle(this.permissionTree,true);
-        if(!!this.permission && !!this.permission.length && this.permission.length == allPermissions.length){
-          allPermissions = []
         }
-        allPermissions = allPermissions.concat(handle(this.permissionTree,false))
-        this.permission = _.uniq(allPermissions)
-        setTimeout(()=>{           this.selectAllLoading = false         },1000)
-      },
-    async saveClickHandler() {
+        if (flag) {
+          return result
+        } else {
+          return disabledResult
+        }
+      }
+      let allPermissions = handle(this.permissionTree, true)
+      if (!!this.permission && !!this.permission.length && this.permission.length == allPermissions.length) {
+        allPermissions = []
+      }
+      allPermissions = allPermissions.concat(handle(this.permissionTree, false))
+      this.permission = _.uniq(allPermissions)
+      setTimeout(() => { this.selectAllLoading = false }, 1000)
+    },
+    async saveClickHandler () {
       this.handlerLoading = true
       try {
         let priv = {}
@@ -112,31 +112,30 @@ export default {
       } catch (e) {
         util.showErrorNotification(e)
         this.handlerLoading = false
-        return
       }
     },
-    checkPriv(){
-      if(this.type=='B'&&!Privilege.hasPriv("Platform.Branch.SetPrivRange")){
-          this.savePriv=true
-      }else if(this.type=='U'&&!Privilege.hasPriv("Platform.User.SetPriv")){
-          this.savePriv=true
-      }else if(this.type=='R'&&!Privilege.hasPriv("Platform.Role.SetPriv")){
-          this.savePriv=true
+    checkPriv () {
+      if (this.type == 'B' && !Privilege.hasPriv('Platform.Branch.SetPrivRange')) {
+        this.savePriv = true
+      } else if (this.type == 'U' && !Privilege.hasPriv('Platform.User.SetPriv')) {
+        this.savePriv = true
+      } else if (this.type == 'R' && !Privilege.hasPriv('Platform.Role.SetPriv')) {
+        this.savePriv = true
       }
     }
   },
   watch: {
-    id: function(value, oldValue){
-      if(value){
-        this.getData();
-      }else{
-        this.permission = [];
-        this.permissionTree = [];
+    id: function (value, oldValue) {
+      if (value) {
+        this.getData()
+      } else {
+        this.permission = []
+        this.permissionTree = []
       }
     }
   },
-  created() {
-    this.getData();
+  created () {
+    this.getData()
   },
   props: {
     id: {
@@ -145,7 +144,7 @@ export default {
       default: ''
     },
     type: {
-      type:String,
+      type: String,
       required: true
     }
   },

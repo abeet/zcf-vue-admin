@@ -3,7 +3,7 @@ const metadatas = [
   { id: 2, name: '商品信息', code: 'goods', ownerType: 4, memo: 'memo', targetTable: 'tmpTable' },
   { id: 3, name: '文章信息', code: 'article', ownerType: 5, memo: 'memo', targetTable: 'tmpTable' },
   { id: 4, name: '用户信息', code: 'user', ownerType: 6, memo: 'memo', targetTable: 'tmpTable' }
-];
+]
 
 const metadataTypes = [
   { id: 1, name: '系统元数据'},
@@ -12,18 +12,18 @@ const metadataTypes = [
   { id: 4, name: '栏目扩展模型'},
   { id: 5, name: '内容扩展模型'},
   { id: 6, name: '自定义内容类型'}
-];
+]
 
 axiosMock.onGet('/api/metadatas').reply(200, {
   status: 1,
   message: '',
   data: metadatas
-});
+})
 axiosMock.onGet('/api/metadatas/types').reply(200, {
   status: 1,
   message: '',
   data: metadataTypes
-});
+})
 
 axiosMock.onPost(/api\/metadatas$/).reply(200, {
   status: 1,
@@ -32,23 +32,23 @@ axiosMock.onPost(/api\/metadatas$/).reply(200, {
     id: Math.round(Math.random() * 10000)
     // ...
   }
-});
+})
 
-axiosMock.onPut(/api\/metadatas\/\d+$/).reply(200, { status: 1, message: '更新成功！'});
+axiosMock.onPut(/api\/metadatas\/\d+$/).reply(200, { status: 1, message: '更新成功！'})
 
-axiosMock.onDelete(/api\/metadatas\/.+$/).reply(200, { status: 1, message: '删除成功！'});
+axiosMock.onDelete(/api\/metadatas\/.+$/).reply(200, { status: 1, message: '删除成功！'})
 
 const groups = [
   {id: 1, name: '分组一', code: 'group1'},
   {id: 2, name: '分组二', code: 'group2'},
   {id: 3, name: '分组三', code: 'group3'}
-];
+]
 
 axiosMock.onGet(/api\/metadatas\/\d+\/groups$/).reply(200, {
   status: 1,
   message: '',
   data: groups
-});
+})
 
 axiosMock.onPost(/api\/metadatas\/\d+\/groups$/).reply(200, {
   status: 1,
@@ -57,15 +57,18 @@ axiosMock.onPost(/api\/metadatas\/\d+\/groups$/).reply(200, {
     id: Math.round(Math.random() * 10000)
     // ...
   }
-});
+})
 
-axiosMock.onPut(/api\/metadatas\/\d+\/groups\/\d+$/).reply(200, { status: 1, message: '更新成功！'});
+axiosMock.onPut(/api\/metadatas\/\d+\/groups\/\d+$/).reply(200, { status: 1, message: '更新成功！'})
 
-axiosMock.onDelete(/api\/metadatas\/groups\/\d+$/).reply(200, { status: 1, message: '删除成功！'});
+axiosMock.onDelete(/api\/metadatas\/groups\/\d+$/).reply(200, { status: 1, message: '删除成功！'})
 
 const fields = [
   {
-    id: 1, name: '字段一', code: 'field1', groupID: 1,
+    id: 1,
+    name: '字段一',
+    code: 'field1',
+    groupID: 1,
     controlType: 'Text',
     dataType: 'MediumText',
     mandatoryFlag: 'N',
@@ -80,7 +83,10 @@ const fields = [
     memo: ''
   },
   {
-    id: 2, name: '字段二', code: 'field2', groupID: 2,
+    id: 2,
+    name: '字段二',
+    code: 'field2',
+    groupID: 2,
     controlType: 'Text',
     dataType: 'MediumText',
     mandatoryFlag: 'N',
@@ -95,7 +101,10 @@ const fields = [
     memo: ''
   },
   {
-    id: 3, name: '字段三', code: 'field3', groupID: 3,
+    id: 3,
+    name: '字段三',
+    code: 'field3',
+    groupID: 3,
     controlType: 'Text',
     dataType: 'MediumText',
     mandatoryFlag: 'N',
@@ -109,13 +118,13 @@ const fields = [
     styleText: '',
     memo: ''
   }
-];
+]
 
 axiosMock.onGet(/api\/metadatas\/\d+\/columns$/).reply(200, {
   status: 1,
   message: '',
   data: fields
-});
+})
 
 axiosMock.onPost(/api\/metadatas\/\d+\/columns$/).reply(200, {
   status: 1,
@@ -123,11 +132,11 @@ axiosMock.onPost(/api\/metadatas\/\d+\/columns$/).reply(200, {
   data: {
     id: Math.round(Math.random() * 10000)
   }
-});
+})
 
-axiosMock.onPut(/api\/metadatas\/\d+\/columns\/.+$/).reply(200, { status: 1, message: '更新成功！'});
+axiosMock.onPut(/api\/metadatas\/\d+\/columns\/.+$/).reply(200, { status: 1, message: '更新成功！'})
 
-axiosMock.onDelete(/api\/metadatas\/columns\/.+$/).reply(200, { status: 1, message: '删除成功！'});
+axiosMock.onDelete(/api\/metadatas\/columns\/.+$/).reply(200, { status: 1, message: '删除成功！'})
 
 const controlTypes = [
   {id: 1, value: '文本框', key: 'text'},
@@ -137,13 +146,13 @@ const controlTypes = [
   {id: 5, value: '日期选择框', key: 'Date'},
   {id: 6, value: '日期时间选择框', key: 'DateTime'},
   {id: 7, value: '下拉框', key: 'Select'}
-];
+]
 
 axiosMock.onGet(/api\/metadatas\/\d+\/columns\/controlTypes$/).reply(200, {
   status: 1,
   message: '',
   data: controlTypes
-});
+})
 
 const dataTypes = [
   {id: 1, value: '字符串(200)', key: 'MediumText'},
@@ -153,13 +162,13 @@ const dataTypes = [
   {id: 5, value: '长整型', key: 'Long'},
   {id: 6, value: '双字节浮点', key: 'Double'},
   {id: 7, value: '日期时间', key: 'Datetime'}
-];
+]
 
 axiosMock.onGet(/api\/metadatas\/\d+\/columns\/dataTypes$/).reply(200, {
   status: 1,
   message: '',
   data: dataTypes
-});
+})
 
 const fieldOptionsCodeTypes = [
   { id: 1, codeName: '广告版位审核状态', codeType: 'ADPStatus'},
@@ -192,13 +201,13 @@ const fieldOptionsCodeTypes = [
   { id: 28, codeName: '链接检查错误类型', codeType: 'LinkCheckErrorType'},
   { id: 29, codeName: '留言审核类型', codeType: 'MessageVerify'},
   { id: 30, codeName: 'Password.NoIncludeUserInfo', codeType: 'NotIncludeUserInfo'}
-];
+]
 
 axiosMock.onGet(/api\/metadatas\/\d+\/columns\/codeTypes$/).reply(200, {
   status: 1,
   message: '',
   data: fieldOptionsCodeTypes
-});
+})
 
 const pkDatas = [
   {id: 1, PKValue: '1001', field1: 'a', field2: 'b', field3: 'c' },
@@ -206,13 +215,13 @@ const pkDatas = [
   {id: 3, PKValue: '1003', field1: 'c', field2: 'd', field3: 'e' },
   {id: 4, PKValue: '1004', field1: 'd', field2: 'e', field3: 'f' },
   {id: 5, PKValue: '1005', field1: 'e', field2: 'f', field3: 'g' }
-];
+]
 
 axiosMock.onGet(/api\/metadatas\/\d+\/datas$/).reply(200, {
   status: 1,
   message: '',
   data: pkDatas
-});
+})
 
 axiosMock.onPost(/api\/metadatas\/\d+\/datas$/).reply(200, {
   status: 1,
@@ -220,11 +229,11 @@ axiosMock.onPost(/api\/metadatas\/\d+\/datas$/).reply(200, {
   data: {
     id: Math.round(Math.random() * 10000)
   }
-});
+})
 
-axiosMock.onPut(/api\/metadatas\/\d+\/datas\/\d+$/).reply(200, { status: 1, message: '更新成功！'});
+axiosMock.onPut(/api\/metadatas\/\d+\/datas\/\d+$/).reply(200, { status: 1, message: '更新成功！'})
 
-axiosMock.onDelete(/api\/metadatas\/\d+\/datas\/\d+$/).reply(200, { status: 1, message: '删除成功！'});
+axiosMock.onDelete(/api\/metadatas\/\d+\/datas\/\d+$/).reply(200, { status: 1, message: '删除成功！'})
 
 axiosMock.onGet(/api\/metadatas\/\d+\/templates$/).reply(200, {
   status: 1,
@@ -240,9 +249,9 @@ axiosMock.onGet(/api\/metadatas\/\d+\/templates$/).reply(200, {
       template: '@{FieldGroup.Name}@{FieldGroup.Code}@{Field.Name}@{Field.Code}@{Field.ControlHtml}'
     }
   ]
-});
+})
 
-axiosMock.onPut(/api\/metadatas\/\d+\/templates\/updated$/).reply(200, { status: 1, message: '更新成功！'});
+axiosMock.onPut(/api\/metadatas\/\d+\/templates\/updated$/).reply(200, { status: 1, message: '更新成功！'})
 
 axiosMock.onGet(/api\/metadatas\/fields\/options\/.+$/).reply(200, {
   data: [{
@@ -254,4 +263,4 @@ axiosMock.onGet(/api\/metadatas\/fields\/options\/.+$/).reply(200, {
   }],
   status: 1,
   message: ''
-});
+})

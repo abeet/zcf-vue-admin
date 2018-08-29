@@ -17,25 +17,25 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       roleSelectTable: [],
       selectedRows: [],
-      openTimes:0,
+      openTimes: 0
     }
   },
   computed: {
     roleSelectDialog: {
-      get() {
+      get () {
         return this.roleSelectShow
       },
-      set(val) {
+      set (val) {
         this.$emit('update:roleSelectShow', val)
-      },
-    },
+      }
+    }
   },
-  watch:{
-    roleSelectTable(){
+  watch: {
+    roleSelectTable () {
       if (this.roleSelectShow) {
         let list = this.roleCodes.split(',')
         for (let i = 0; i < list.length; i++) {
@@ -49,28 +49,28 @@ export default {
     }
   },
   methods: {
-    //选择角色列表数据
-    async dialogOpen() {
-      if(this.openTimes > 0){
+    // 选择角色列表数据
+    async dialogOpen () {
+      if (this.openTimes > 0) {
         this.$refs.datatable.getData()
       }
       this.openTimes += 1
     },
-    //当前行
-    onRoleSelectSelectionChange(selection) {
+    // 当前行
+    onRoleSelectSelectionChange (selection) {
       this.selectedRows = selection
     },
-    //确定点击
-    confirmRoleSelectClick() {
+    // 确定点击
+    confirmRoleSelectClick () {
       let roleCodes = []
       this.selectedRows.forEach(row => {
         roleCodes.push(row.roleCode)
       })
       this.$emit('callback', roleCodes.join(','))
       this.roleSelectDialog = false
-    },
+    }
   },
-  props: ['roleSelectShow', 'roleCodes'],
+  props: ['roleSelectShow', 'roleCodes']
 }
 </script>
 <style>

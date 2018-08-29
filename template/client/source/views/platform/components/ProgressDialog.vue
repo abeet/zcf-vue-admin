@@ -6,32 +6,32 @@
 </template>
 
 <script>
-  export default {
-    methods: {
-      closeHandler(val){
-//        console.log(val);
-        this.$emit('close', val);
-      }
+export default {
+  methods: {
+    closeHandler (val) {
+      //        console.log(val);
+      this.$emit('close', val)
+    }
+  },
+  props: {
+    'isShowModal': {
+      type: Boolean,
+      required: true
     },
-    props: {
-      'isShowModal': {
-        type: Boolean,
-        required: true
-      },
-      'percentage': {
-        type: Number,
-        required: true
-      },
-      'text': {
-        type: String,
-        default: ''
-      },
-      'title': {
-        type: String,
-        default: ''
-      }
+    'percentage': {
+      type: Number,
+      required: true
+    },
+    'text': {
+      type: String,
+      default: ''
+    },
+    'title': {
+      type: String,
+      default: ''
     }
   }
+}
 </script>
 
 <style>

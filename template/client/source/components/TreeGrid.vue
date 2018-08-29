@@ -50,100 +50,100 @@ export default {
   props: {
     isShowSummary: {
       type: Boolean,
-      default: function() {
+      default: function () {
         return false
       }
     },
     // 该属性是确认父组件传过来的数据是否已经是树形结构了，如果是，则不需要进行树形格式化
     treeStructure: {
       type: Boolean,
-      default: function() {
+      default: function () {
         return false
       }
     },
     // 这是相应的字段展示
     columns: {
       type: Array,
-      default: function() {
+      default: function () {
         return []
       }
     },
     // 这是数据源
     dataSource: {
       type: Array,
-      default: function() {
+      default: function () {
         return []
       }
     },
     // 这个作用是根据自己需求来的，比如在操作中涉及相关按钮编辑，删除等，需要向服务端发送请求，则可以把url传过来
     requestUrl: {
       type: String,
-      default: function() {
+      default: function () {
         return ''
       }
     },
     // 这个是是否展示操作列
     treeType: {
       type: String,
-      default: function() {
+      default: function () {
         return 'normal'
       }
     },
     // 是否默认展开所有树
     defaultExpandAll: {
       type: Boolean,
-      default: function() {
+      default: function () {
         return true
       }
     },
     // 是否需要多选框列
     needCheckbox: {
       type: Boolean,
-      default: function() {
+      default: function () {
         return true
       }
     },
     // 序号表头名称
     serialNumberName: {
       type: String,
-      default: function() {
+      default: function () {
         return ' '
       }
     },
-    //是否取消点击行自动选中的功能
-    strict:{
-      type:Boolean,
-      default:false
+    // 是否取消点击行自动选中的功能
+    strict: {
+      type: Boolean,
+      default: false
     },
-    //是否需要序号
-    isNeedIndex:{
-      type:Boolean,
-      default:true
+    // 是否需要序号
+    isNeedIndex: {
+      type: Boolean,
+      default: true
     },
-    //数据获取url
-    dataReadUrl:{
-      type:[Array,String],
-      default:''
+    // 数据获取url
+    dataReadUrl: {
+      type: [Array, String],
+      default: ''
     },
-    //是否开启拖曳功能
-    draggable:{
-      type:Boolean,
-      default:false
+    // 是否开启拖曳功能
+    draggable: {
+      type: Boolean,
+      default: false
     },
-    //是否自动获取数据
-    autoGetData:{
-      type:Boolean,
-      default:true
-    },
+    // 是否自动获取数据
+    autoGetData: {
+      type: Boolean,
+      default: true
+    }
   },
-  data() {
+  data () {
     return {
       selection: [],
-      tableData:[]
+      tableData: []
     }
   },
   watch: {
-    dataSource(val) {
+    dataSource (val) {
       if (this.treeStructure) {
         const data = translate.MSDataTransfer.treeToArray(val, null, null, this.defaultExpandAll)
 
@@ -156,26 +156,25 @@ export default {
       this.selection = val.filter(val => val.checked)
 
       this.tableData = data
-      return
     }
   },
-  mounted() {
+  mounted () {
   },
-  updated(){
-    if(!this.strict){
+  updated () {
+    if (!this.strict) {
       return
     }
-    this.tableData.forEach(row =>{
+    this.tableData.forEach(row => {
       // console.log(row)
-      if(row.checked){
-        this.$refs.dataTable.toggleRowSelection(row,true)
+      if (row.checked) {
+        this.$refs.dataTable.toggleRowSelection(row, true)
       }
     })
     this.sortTableByCheck()
   },
   methods: {
-    getData(){
-      return new Promise(async (resolve,reject)=>{
+    getData () {
+      return new Promise(async (resolve, reject) => {
         await this.$refs.dataTable.getData()
         if (this.treeStructure) {
           const data = translate.MSDataTransfer.treeToArray(this.tableData, null, null, this.defaultExpandAll)
@@ -190,32 +189,32 @@ export default {
         resolve()
       })
     },
-    afterTableSort(data){
-      this.$emit('after-sort',data)
+    afterTableSort (data) {
+      this.$emit('after-sort', data)
     },
-    selectMethod(command) {
+    selectMethod (command) {
       this.$parent[command.method](command.row)
     },
-    tableMethods(method,row){
+    tableMethods (method, row) {
       this.$parent[method](row)
     },
-    sortTableByCheck(){
+    sortTableByCheck () {
       let table = this.tableData
       let row = []
       let oldRow = []
-      for(let j = 0; j< table.length ; j++){
-        for(let i = 1; i < table.length ; i++){
+      for (let j = 0; j < table.length; j++) {
+        for (let i = 1; i < table.length; i++) {
           row = table[i]
-          oldRow = table[i-1]
-          if(row._level === oldRow._level && row.checked && !oldRow.checked){
+          oldRow = table[i - 1]
+          if (row._level === oldRow._level && row.checked && !oldRow.checked) {
             table[i] = oldRow
-            table[i-1] = row
+            table[i - 1] = row
           }
         }
       }
     },
     // 单元格内容
-    cell(row, column) {
+    cell (row, column) {
       if (column.render) {
         return column.render(row)
       }
@@ -227,17 +226,17 @@ export default {
       return ''
     },
     // 显示行
-    showTr(row, index) {
+    showTr (row, index) {
       let show = row.row._parent ? row.row._parent._expanded && row.row._parent._show : true
       Vue.set(row.row, '_show', show)
       return show ? '' : 'display:none;'
     },
     // 展开下级
-    toggle(trIndex) {
+    toggle (trIndex) {
       this.tableData[trIndex]._expanded = !this.tableData[trIndex]._expanded
     },
     // 显示层级关系的空格和图标
-    spaceIconShow(index) {
+    spaceIconShow (index) {
       let me = this
       if (me.treeStructure && index === 0) {
         return true
@@ -245,18 +244,18 @@ export default {
       return false
     },
     // 点击展开和关闭的时候，图标的切换
-    toggleIconShow(index, record) {
+    toggleIconShow (index, record) {
       let me = this
       if (me.treeStructure && index === 0 && record.children && record.children.length > 0) {
         return true
       }
       return false
     },
-    onSelectionChange(rows) {
+    onSelectionChange (rows) {
       this.$emit('selection-change', rows)
     },
-    cellClick(row,column,cell,event) {
-      if(column.property!==this.columns[0].dataIndex){
+    cellClick (row, column, cell, event) {
+      if (column.property !== this.columns[0].dataIndex) {
         return
       }
       this.$emit('cell-click', row)

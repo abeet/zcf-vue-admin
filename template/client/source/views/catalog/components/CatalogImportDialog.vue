@@ -40,75 +40,75 @@
 <script>
 import util from '../../../common/util.js'
 export default {
-  props:{
-    catalogId:{
-      type: [Number,String],
-      default:0,
+  props: {
+    catalogId: {
+      type: [Number, String],
+      default: 0
     },
-    contentType:{
-      type:String,
-      default:'',
-      required:false
+    contentType: {
+      type: String,
+      default: '',
+      required: false
     },
     dimensionId: {
-      type: [Number,String],
+      type: [Number, String],
       default: 0,
-      required:true
+      required: true
     },
-    contentTypes:{
+    contentTypes: {
       type: Array,
-      required:true
+      required: true
     },
     show: {
       type: Boolean,
       default: false,
       required: true
-    },
+    }
   },
-  data(){
+  data () {
     return {
-      catalogStructure: '' /**栏目结构 */,
-      catalogStructureInput: '' /**用户输入的栏目结构 */,
+      catalogStructure: '' /** 栏目结构 */,
+      catalogStructureInput: '' /** 用户输入的栏目结构 */,
       submitLoading: false,
-      previewCatalogTree: [] /**栏目预览树 */,
+      previewCatalogTree: [] /** 栏目预览树 */,
       previewTreeLoading: false,
-      step: 1 /**上一步下一步 */,
-      batchImportContentType: '' /**导入栏目类型 */,
+      step: 1 /** 上一步下一步 */,
+      batchImportContentType: '' /** 导入栏目类型 */,
       defaultProps: {
         /** 树节点默认配置 */
         children: 'children',
-        label: 'name',
-      },
+        label: 'name'
+      }
     }
   },
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
       }
     }
   },
-  methods:{
-    dialogOpen(){
+  methods: {
+    dialogOpen () {
       this.submitLoading = false
       this.catalogStructureInput = ''
       this.batchImportContentType = this.contentType
       this.previewCatalogTree = []
       this.step = 1
     },
-    /**树节点渲染 */
-    renderContent: function(createElement, { node, data, store }) {
+    /** 树节点渲染 */
+    renderContent: function (createElement, { node, data, store }) {
       let params = {
-        h:createElement,
-        treeObj:{ node, data, store }
+        h: createElement,
+        treeObj: { node, data, store }
       }
       return util.renderTreeContent(params)
     },
-    /**检查填写的字符串格式是否正确,替换掉特殊字符,保留中文*/
-    checkFormat() {
+    /** 检查填写的字符串格式是否正确,替换掉特殊字符,保留中文 */
+    checkFormat () {
       let str = this.catalogStructureInput
       str = str.replace('\t', '  ')
       str = str.replace(/\r\b\f/g, '')
@@ -120,13 +120,13 @@ export default {
       this.catalogStructureInput = str
       return true
     },
-    /**批量导入栏目上一步 */
-    prevClickHandler() {
+    /** 批量导入栏目上一步 */
+    prevClickHandler () {
       this.step = 1
       this.previewCatalogTree = []
     },
-    /**批量导入栏目下一步 */
-    async nextClickHandler() {
+    /** 批量导入栏目下一步 */
+    async nextClickHandler () {
       if (!this.catalogStructureInput) {
         this.$emit('dialog', '导入栏目不能为空')
         return
@@ -144,7 +144,7 @@ export default {
       this.submitLoading = true
       try {
         let res = await axios.put('/api/catalogs/checkimportcatalog', {
-          batchColumn: this.catalogStructureInput,
+          batchColumn: this.catalogStructureInput
         })
         this.submitLoading = false
         if (res.data.status === 1) {
@@ -152,8 +152,8 @@ export default {
           let resp = await axios.get('/api/catalogs/importtreedatabind', {
             params: {
               parentID: this.catalogId,
-              batchColumn: encodeURIComponent(this.catalogStructureInput),
-            },
+              batchColumn: encodeURIComponent(this.catalogStructureInput)
+            }
           })
           this.previewTreeLoading = false
           if (resp.data.status === 1) {
@@ -167,16 +167,15 @@ export default {
         }
       } catch (e) {
         this.submitLoading = false
-        return
       }
     },
-    /**提交批量添加栏目 */
-    async confirm() {
+    /** 提交批量添加栏目 */
+    async confirm () {
       let params = {
         parentID: this.catalogId,
         contentType: this.batchImportContentType,
         batchColumn: this.catalogStructureInput,
-        dimensionID: this.dimensionId,
+        dimensionID: this.dimensionId
       }
       this.submitLoading = true
       try {
@@ -186,14 +185,13 @@ export default {
           this.isShow = false
           await util.showProgress(res.data.taskID, `正在导入栏目`)
           this.$emit('callback')
-        }else {
+        } else {
           util.showResponseMessage(res.data)
         }
       } catch (e) {
         this.submitLoading = false
-        return
       }
-    },
+    }
   }
 }
 </script>

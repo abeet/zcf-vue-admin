@@ -365,226 +365,224 @@
 </template>
 
 <script>
-  import util from '../../../common/util.js'
-  import imageCuttingContainer from './imageCuttingContainer.vue'
-  import { operateType, imageLoad, cutBoxOperate, cutImage, uploadBase64Image } from './imageCuttingUtil'
-  import _ from 'lodash'
+import util from '../../../common/util.js'
+import imageCuttingContainer from './imageCuttingContainer.vue'
+import { operateType, imageLoad, cutBoxOperate, cutImage, uploadBase64Image } from './imageCuttingUtil'
+import _ from 'lodash'
 
-  let operateInfo = {
-    type: '',
-  }
+let operateInfo = {
+  type: ''
+}
 
-  export default {
-    data () {
-      return {
-        isLoading: true,
-        realWidth: 0,
-        realHeight: 0,
-        scaling: 100,
-        previewWrap: {
-          width: 0,
-          height: 0,
-        },
-        cutBox: {
-          width: 40,
-          height: 40,
-          top: 0,
-          left: 0,
-        },
-        isLockSize: false,
-        isLockRatio: false,
-        confirmLoading: false
-      }
+export default {
+  data () {
+    return {
+      isLoading: true,
+      realWidth: 0,
+      realHeight: 0,
+      scaling: 100,
+      previewWrap: {
+        width: 0,
+        height: 0
+      },
+      cutBox: {
+        width: 40,
+        height: 40,
+        top: 0,
+        left: 0
+      },
+      isLockSize: false,
+      isLockRatio: false,
+      confirmLoading: false
+    }
+  },
+  props: {
+    imagePath: {
+      type: String,
+      default: '',
+      required: true
     },
-    props: {
-      imagePath: {
-        type: String,
-        default: '',
-        required: true,
-      },
-      activeTab: {
-        type: String,
-        default: ''
-      },
-      siteID:{
-        type: [String,Number],
-        required:true
-      },
-      path:{
-        type:String,
-        default:'',
-        required:true
-      }
+    activeTab: {
+      type: String,
+      default: ''
     },
-    computed: {
-      previewImageWidth () {
-        return parseInt(this.scaling / 100 * this.realWidth)
-      },
-      previewImageHeight () {
-        return parseInt(this.scaling / 100 * this.realHeight)
-      },
-      previewImageTop () {
-        if (this.previewImageHeight >= this.previewWrap.height) return 0
-
-        return (this.previewWrap.height - this.previewImageHeight) / 2
-      },
-      previewImageLeft () {
-        if (this.previewImageWidth >= this.previewWrap.width) return 0
-
-        return (this.previewWrap.width - this.previewImageWidth) / 2
-      },
-      bottomShadeHeight () {
-        return this.previewImageHeight - this.cutBox.top - this.cutBox.height
-      },
-      rightShadeWidth () {
-        return this.previewImageWidth - this.cutBox.left - this.cutBox.width
-      },
-      cutBoxRatio: {
-        get () {
-          if(this.cutBox.width === this.cutBox.height) return '1:1'
-          if(this.cutBox.width === this.cutBox.height / 2) return '1:2'
-          if(this.cutBox.width / 2 === this.cutBox.height ) return '2:1'
-          if(this.cutBox.width / 4 === this.cutBox.height / 3) return '4:3'
-          if(this.cutBox.width / 3 === this.cutBox.height / 4) return '3:4'
-          if(this.cutBox.width / 16 === this.cutBox.height / 9) return '16:9'
-          return ''
-        },
-        set (val) {
-          let ratio1 = parseInt(val.split(':')[0])
-          let ratio2 = parseInt(val.split(':')[1])
-          let _size = this.previewImageWidth > this.previewImageHeight ? this.previewImageHeight : this.previewImageWidth
-          let _min = ratio1 > ratio2 ? _size / ratio1 : _size / ratio2
-
-          this.cutBox = {
-            width: parseInt(_min * ratio1),
-            height: parseInt(_min * ratio2),
-            top: 0,
-            left: 0,
-          }
-        }
-      }
+    siteID: {
+      type: [String, Number],
+      required: true
     },
-    methods: {
-      handleRealSizeClick () {
-        this.scaling = 100
+    path: {
+      type: String,
+      default: '',
+      required: true
+    }
+  },
+  computed: {
+    previewImageWidth () {
+      return parseInt(this.scaling / 100 * this.realWidth)
+    },
+    previewImageHeight () {
+      return parseInt(this.scaling / 100 * this.realHeight)
+    },
+    previewImageTop () {
+      if (this.previewImageHeight >= this.previewWrap.height) return 0
+
+      return (this.previewWrap.height - this.previewImageHeight) / 2
+    },
+    previewImageLeft () {
+      if (this.previewImageWidth >= this.previewWrap.width) return 0
+
+      return (this.previewWrap.width - this.previewImageWidth) / 2
+    },
+    bottomShadeHeight () {
+      return this.previewImageHeight - this.cutBox.top - this.cutBox.height
+    },
+    rightShadeWidth () {
+      return this.previewImageWidth - this.cutBox.left - this.cutBox.width
+    },
+    cutBoxRatio: {
+      get () {
+        if (this.cutBox.width === this.cutBox.height) return '1:1'
+        if (this.cutBox.width === this.cutBox.height / 2) return '1:2'
+        if (this.cutBox.width / 2 === this.cutBox.height) return '2:1'
+        if (this.cutBox.width / 4 === this.cutBox.height / 3) return '4:3'
+        if (this.cutBox.width / 3 === this.cutBox.height / 4) return '3:4'
+        if (this.cutBox.width / 16 === this.cutBox.height / 9) return '16:9'
+        return ''
       },
-      // 初始化
-      async init () {
-        this.isLoading = true
-        let img
-        try {
-          img = await imageLoad(this.imagePath)
-        } catch (e) {
-          await util.showErrorMessageBox('图片加载错误！')
-          this.$emit('close', false)
-          // console.log(e.toString())
-          return
-        }
+      set (val) {
+        let ratio1 = parseInt(val.split(':')[0])
+        let ratio2 = parseInt(val.split(':')[1])
+        let _size = this.previewImageWidth > this.previewImageHeight ? this.previewImageHeight : this.previewImageWidth
+        let _min = ratio1 > ratio2 ? _size / ratio1 : _size / ratio2
 
-        this.realWidth = img.width
-        this.realHeight = img.height
-
-        this.scaling = 100
-
-        Object.assign(this.previewWrap, {
-          width: this.$refs['previewWrap'].offsetWidth,
-          height: this.$refs['previewWrap'].offsetHeight,
-        })
-
-        Object.assign(this.cutBox, {
-          width: this.previewImageWidth,
-          height: this.previewImageHeight,
-          top: 0,
-          left: 0,
-        })
-
-        this.isLoading = false
-      },
-      handleCutBoxStart (key, e) {
-        operateInfo ={
-          type: key,
-          startPosition: { x: e.pageX, y: e.pageY },
-          originalCutBox: _.cloneDeep(this.cutBox),
-          container: {
-            width: this.previewImageWidth,
-            height: this.previewImageHeight
-          }
-        }
-      },
-      handleCutBoxMove (e) {
-        if(!operateInfo.type || !operateType.includes(operateInfo.type) ){
-          return;
-        }
-
-        this.cutBox = cutBoxOperate(operateInfo, {
-          pageX: e.pageX,
-          pageY: e.pageY
-        }, this.isLockSize, this.isLockRatio)
-
-      },
-      handleCutBoxEnd () {
-        operateInfo = {
-          type: ''
-        }
-      },
-      handleDefinedSize (w, h) {
         this.cutBox = {
-          width: w,
-          height: h,
+          width: parseInt(_min * ratio1),
+          height: parseInt(_min * ratio2),
           top: 0,
-          left: 0,
+          left: 0
         }
-      },
-      async handleConfirm (e) {
-        this.confirmLoading = true;
-
-        const newImg = await cutImage(this.$refs['cutCanvas1'], this.$refs['cutCanvas2'], {
-          previewImageHeight: this.previewImageHeight,
-          previewImageWidth: this.previewImageWidth
-        }, this.cutBox, this.imagePath)
-
-        console.log(newImg)
-
-        const res = await uploadBase64Image(newImg, this.path,this.siteID)
-        // TODO: 上传完成后的处理
-        util.showResponseMessage(res.data)
-        if(res.data.status === 1){
-          this.$emit('update:imagePath',res.data.previewPath)
-          this.$emit('update:path',res.data.path)
-          this.init()
-        }
-
-        this.confirmLoading = false;
-
-      },
-      handleCancel (e) {
-
       }
+    }
+  },
+  methods: {
+    handleRealSizeClick () {
+      this.scaling = 100
     },
-    watch: {
-      scaling () {
-        this.cutBox = {
+    // 初始化
+    async init () {
+      this.isLoading = true
+      let img
+      try {
+        img = await imageLoad(this.imagePath)
+      } catch (e) {
+        await util.showErrorMessageBox('图片加载错误！')
+        this.$emit('close', false)
+        // console.log(e.toString())
+        return
+      }
+
+      this.realWidth = img.width
+      this.realHeight = img.height
+
+      this.scaling = 100
+
+      Object.assign(this.previewWrap, {
+        width: this.$refs['previewWrap'].offsetWidth,
+        height: this.$refs['previewWrap'].offsetHeight
+      })
+
+      Object.assign(this.cutBox, {
+        width: this.previewImageWidth,
+        height: this.previewImageHeight,
+        top: 0,
+        left: 0
+      })
+
+      this.isLoading = false
+    },
+    handleCutBoxStart (key, e) {
+      operateInfo = {
+        type: key,
+        startPosition: { x: e.pageX, y: e.pageY },
+        originalCutBox: _.cloneDeep(this.cutBox),
+        container: {
           width: this.previewImageWidth,
-          height: this.previewImageHeight,
-          top: 0,
-          left: 0,
-        }
-      },
-      activeTab (val) {
-        if (val === 'cut') {
-          this.init()
-        }
-      },
-      imagePath(){
-        if (this.activeTab === 'cut') {
-          this.init()
+          height: this.previewImageHeight
         }
       }
     },
-    created () {
+    handleCutBoxMove (e) {
+      if (!operateInfo.type || !operateType.includes(operateInfo.type)) {
+        return
+      }
+
+      this.cutBox = cutBoxOperate(operateInfo, {
+        pageX: e.pageX,
+        pageY: e.pageY
+      }, this.isLockSize, this.isLockRatio)
     },
-    components: {
-      'cutting-container': imageCuttingContainer,
+    handleCutBoxEnd () {
+      operateInfo = {
+        type: ''
+      }
     },
+    handleDefinedSize (w, h) {
+      this.cutBox = {
+        width: w,
+        height: h,
+        top: 0,
+        left: 0
+      }
+    },
+    async handleConfirm (e) {
+      this.confirmLoading = true
+
+      const newImg = await cutImage(this.$refs['cutCanvas1'], this.$refs['cutCanvas2'], {
+        previewImageHeight: this.previewImageHeight,
+        previewImageWidth: this.previewImageWidth
+      }, this.cutBox, this.imagePath)
+
+      console.log(newImg)
+
+      const res = await uploadBase64Image(newImg, this.path, this.siteID)
+      // TODO: 上传完成后的处理
+      util.showResponseMessage(res.data)
+      if (res.data.status === 1) {
+        this.$emit('update:imagePath', res.data.previewPath)
+        this.$emit('update:path', res.data.path)
+        this.init()
+      }
+
+      this.confirmLoading = false
+    },
+    handleCancel (e) {
+
+    }
+  },
+  watch: {
+    scaling () {
+      this.cutBox = {
+        width: this.previewImageWidth,
+        height: this.previewImageHeight,
+        top: 0,
+        left: 0
+      }
+    },
+    activeTab (val) {
+      if (val === 'cut') {
+        this.init()
+      }
+    },
+    imagePath () {
+      if (this.activeTab === 'cut') {
+        this.init()
+      }
+    }
+  },
+  created () {
+  },
+  components: {
+    'cutting-container': imageCuttingContainer
   }
+}
 </script>

@@ -49,7 +49,7 @@
 <script>
 import TreeGrid from '../../components/TreeGrid.vue'
 export default {
-  data() {
+  data () {
     return {
       filterText: '',
       apiTree: [
@@ -91,21 +91,21 @@ export default {
     }
   },
   watch: {
-    filterText(val) {
+    filterText (val) {
       this.$refs.apiTree.filter(val)
     }
   },
   methods: {
-    apiTreeFilter(){
+    apiTreeFilter () {
       this.$refs.apiTree.filter(this.filterText)
     },
-    renderContent(createElement, { node, data, store }) {
+    renderContent (createElement, { node, data, store }) {
       let className = data.ID < 0 ? 'fa fa-tv' : 'fa fa-plug'
       let icon = createElement('i', { attrs: { class: className } })
       let label = createElement('span', ' ' + node.label)
       return createElement('span', [icon, label])
     },
-    handleNodeClick(data) {
+    handleNodeClick (data) {
       if (data.ID == -1 || data.ID == this.info.ID) {
         return
       }
@@ -113,7 +113,7 @@ export default {
       this.inputparameters = data.inputs
       this.outputparameters = data.outputs
     },
-    filterNode(value, data) {
+    filterNode (value, data) {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     }
@@ -121,7 +121,7 @@ export default {
   components: {
     TreeGrid
   },
-  async created() {
+  async created () {
     const res = await axios.get('/api/apis')
     this.apiTree[0].children = res.data.data
   }

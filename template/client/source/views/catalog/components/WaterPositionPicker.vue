@@ -24,7 +24,7 @@
 </template>
 <script>
 export default {
-  data() {
+  data () {
     return {
       selectedIsActive: {
         isActive1: false,
@@ -36,27 +36,27 @@ export default {
         isActive7: false,
         isActive8: false,
         isActive9: true
-      } //水印位置样式绑定flag
+      } // 水印位置样式绑定flag
     }
   },
   computed: {
     waterPosition: {
-      get() {
+      get () {
         return this.position
       },
-      set(val) {
+      set (val) {
         this.$emit('update:position', val)
       }
     }
   },
   watch: {
-    waterPosition(val) {
+    waterPosition (val) {
       this.selectPosition(val)
     }
   },
   methods: {
     // 选中水印位置
-    selectPosition(ref) {
+    selectPosition (ref) {
       for (let i = 0; i < 9; i++) {
         this.selectedIsActive['isActive' + (i + 1)] = false
       }

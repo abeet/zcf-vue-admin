@@ -76,47 +76,46 @@
   </div>
 </template>
 <script>
-  export default {
-    data () {
-      return {
-        security: {
-          IsOpenThreeSecurity: false,
-          PasswordMinLength: 6,
-          PasswordMaxLength: 30,
-          PasswordCharacterSpecification: 1,
-          NotIncludeUserInfo: [],
-          IsOpenRecentlyCheck: false,
-          RepeatCount: 0,
-          SpecifyOverTimeLock: false,
-          MaxLoginCount: 0,
-          OverLoginCountType: '',
-          LockTime: 0,
-          Expiration: 0,
-          NextLoginUpdatePwd: false
-        },
-        ruleValidate: {
+export default {
+  data () {
+    return {
+      security: {
+        IsOpenThreeSecurity: false,
+        PasswordMinLength: 6,
+        PasswordMaxLength: 30,
+        PasswordCharacterSpecification: 1,
+        NotIncludeUserInfo: [],
+        IsOpenRecentlyCheck: false,
+        RepeatCount: 0,
+        SpecifyOverTimeLock: false,
+        MaxLoginCount: 0,
+        OverLoginCountType: '',
+        LockTime: 0,
+        Expiration: 0,
+        NextLoginUpdatePwd: false
+      },
+      ruleValidate: {
 
-        }
       }
-    },
-    methods: {
-    async saveClickHandler() {
-      const data = await axios.put('/api/securitys/all', { data:this.security })
-        this.$notify({
-          title: '成功',
-          message: '操作成功！',
-          type: 'success',
-          duration: 2000
-        });
     }
   },
-  async created() {
+  methods: {
+    async saveClickHandler () {
+      const data = await axios.put('/api/securitys/all', { data: this.security })
+      this.$notify({
+        title: '成功',
+        message: '操作成功！',
+        type: 'success',
+        duration: 2000
+      })
+    }
+  },
+  async created () {
     let data = await axios.get('/api/securitys')
     data = data.data
-      if (data.IsOpenThreeSecurity) {
-        this.security = data;
-      }
-
+    if (data.IsOpenThreeSecurity) {
+      this.security = data
+    }
   }
 }
 </script>

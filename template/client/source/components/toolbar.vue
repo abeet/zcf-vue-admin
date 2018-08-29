@@ -193,16 +193,16 @@
 import Vue from 'vue'
 
 export default {
-  data() {
+  data () {
     return {
       hiddenChildren: [],
-      dropDownItems: [],
+      dropDownItems: []
     }
   },
   props: {
     size: {
       type: String,
-      default: 'normal',
+      default: 'normal'
     },
     align: {
       type: String,
@@ -210,11 +210,11 @@ export default {
     }
   },
   methods: {
-    shrink(wrapWidth, contentWidth) {
+    shrink (wrapWidth, contentWidth) {
       let overflowWidth = contentWidth - wrapWidth
       for (let n = this.$children.length - 1; n >= 0; n--) {
         const components = ['content-publish-button', 'content-add-button', 'content-attributes-button']
-        if(components.includes(this.$children[n].$options['_componentTag'])) {
+        if (components.includes(this.$children[n].$options['_componentTag'])) {
           const buttons = this.$children[n].$children
 
           for (let x = buttons.length - 1; x >= 0; x--) {
@@ -248,28 +248,27 @@ export default {
         this.createDropDown()
       }
     },
-    createDropDown() {
-
+    createDropDown () {
       const length = this.$children.length
       const lastComponent = this.$children[length - 1]
 
-      if(lastComponent.$options.componentName !== 'ElDropdown') return
+      if (lastComponent.$options.componentName !== 'ElDropdown') return
 
       const menu = lastComponent.$children.find(val => val.$options.componentName === 'ElDropdownMenu')
 
-      if(!menu) return
+      if (!menu) return
 
       this.hiddenChildren.forEach((val) => {
         val.$el.style.display = 'none'
-        const text =val.$el.innerText.trim().split('\n'),
+        const text = val.$el.innerText.trim().split('\n'),
           title = text.length ? text[0] : '',
           icon = val.$el.querySelector('i') ? val.$el.querySelector('i').className : ''
 
         const item = new (Vue.extend({
           template: '<el-dropdown-item><el-button @click="clickHandler" type="text"><i class="' + icon + ' f16"></i>' + title + '</el-button></el-dropdown-item>',
           methods: {
-            clickHandler: function(){
-              val.$el.click();
+            clickHandler: function () {
+              val.$el.click()
             }
           }
         }))()
@@ -277,22 +276,20 @@ export default {
         item.$mount()
 
         menu.$el.appendChild(item.$el)
-
       }, this)
     },
-    handleDropDownClick(item) {
-
-      item.$el.click();
+    handleDropDownClick (item) {
+      item.$el.click()
     }
   },
-  created() {
+  created () {
   },
-  mounted() {
+  mounted () {
     let body = this.$el.querySelector('.el-toolbar-body')
 
     if (body.offsetWidth > this.$el.offsetWidth) {
       this.shrink(this.$el.offsetWidth, body.offsetWidth)
     }
-  },
+  }
 }
 </script>

@@ -10,15 +10,15 @@
         "build": "cross-env NODE_ENV=prod gulp build",
         "webserver": "cross-env NODE_ENV=dev gulp webserver",
         "webpack": "cross-env NODE_ENV=prod webpack",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "lint": "./node_modules/.bin/eslint --fix --ext .js,.vue ./source/views ./source/components"
     },
     "dependencies": {
         "axios": "0.x",
         "axios-mock-adapter": "1.x",
         "lodash": "4.x",
+        "mockjs": "1.x",
         "normalize.css": "^7.0.0",
         "sortablejs": "1.7.0",
-        "mockjs": "1.x",
         "vue": "2.5.x",
         "vue-echarts": "3.x",
         "vue-i18n": "7.x",
@@ -27,11 +27,11 @@
     },
     "devDependencies": {
         "babel-core": "^6.26.0",
+        "babel-eslint": "8.2.6",
         "babel-loader": "^7.1.2",
-        "babel-polyfill": "^6.26.0",
         "babel-plugin-transform-class-properties": "^6.24.1",
         "babel-plugin-transform-object-rest-spread": "^6.26.0",
-        "babel-plugin-transform-runtime": "^6.23.0",
+        "babel-plugin-transform-runtime": "^7.0.0-beta.3",
         "babel-polyfill": "^6.26.0",
         "babel-preset-env": "^1.6.1",
         "browser-sync": "^2.18.13",

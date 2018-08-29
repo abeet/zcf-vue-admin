@@ -17,98 +17,98 @@
 ;
 
 export default {
-  data() {
+  data () {
     return {
       inputValue: '',
       treeOptions: { key: 'ID', label: 'name', children: 'children' },
       siteTreeData: [],
       isOpenTree: false,
-      filterText: '',
-    };
+      filterText: ''
+    }
   },
   watch: {
-    filterText(val) {
-      this.$refs.siteTree.filter(val);
-    },
+    filterText (val) {
+      this.$refs.siteTree.filter(val)
+    }
   },
   methods: {
-    inputClickHandler() {
+    inputClickHandler () {
       if (this.disabled) {
-        return;
+        return
       }
-      this.isOpenTree = !this.isOpenTree;
+      this.isOpenTree = !this.isOpenTree
     },
-    async wrapClickHandler() {
+    async wrapClickHandler () {
       if (this.disabled) {
-        return;
+        return
       }
       if (!this.isOpenTree) {
-        this.isOpenTree = true;
+        this.isOpenTree = true
       }
       if (this.isOpenTree) {
         let obj = {
           name: this.name,
-          path: this.path,
-        };
-        let getSiteListTreeData = await axios.get('/api/sites', obj);
-        this.siteTreeData = getSiteListTreeData.data.data;
+          path: this.path
+        }
+        let getSiteListTreeData = await axios.get('/api/sites', obj)
+        this.siteTreeData = getSiteListTreeData.data.data
       }
     },
-    treeNodeClickHandler(data) {
-      let val = {};
+    treeNodeClickHandler (data) {
+      let val = {}
       if (data[this.treeOptions.key] > 0) {
-        val[this.treeOptions.label] = data[this.treeOptions.label];
-        val[this.treeOptions.key] = data[this.treeOptions.key];
-        this.$emit('callback', data[this.treeOptions.key]);
-        this.inputValue = data[this.treeOptions.label];
-        this.isOpenTree = false;
+        val[this.treeOptions.label] = data[this.treeOptions.label]
+        val[this.treeOptions.key] = data[this.treeOptions.key]
+        this.$emit('callback', data[this.treeOptions.key])
+        this.inputValue = data[this.treeOptions.label]
+        this.isOpenTree = false
       }
     },
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.name.indexOf(value) !== -1;
+    filterNode (value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
     },
-    renderContent: function(createElement, { node, data, store }) {
+    renderContent: function (createElement, { node, data, store }) {
       let icon = 'fa fa-home'
       if (node.data.ID === 0) {
         icon = 'fa fa-desktop'
       }
       let params = {
-        h:createElement,
-        treeObj:{ node, data, store },
-        icon:icon
+        h: createElement,
+        treeObj: { node, data, store },
+        icon: icon
       }
       return util.renderTreeContent(params)
-    },
+    }
   },
   computed: {
-    inputValue() {
+    inputValue () {
       if (!this.value || !this.treeOptions || !this.treeOptions.label) {
-        return '';
+        return ''
       }
 
-      return this.value[this.treeOptions.label] || '';
+      return this.value[this.treeOptions.label] || ''
     },
-    currentNodeKey() {
+    currentNodeKey () {
       if (!this.value || !this.treeOptions || !this.treeOptions.key) {
-        return '';
+        return ''
       }
 
-      return this.value[this.treeOptions.key] || '';
-    },
+      return this.value[this.treeOptions.key] || ''
+    }
   },
   props: ['value', 'disabled', 'name', 'path'],
-  mounted() {
-    let that = this;
+  mounted () {
+    let that = this
     document.addEventListener(
       'click',
       () => {
-        that.isOpenTree = false;
+        that.isOpenTree = false
       },
       false
-    );
-  },
-};
+    )
+  }
+}
 </script>
 
 <style scoped>

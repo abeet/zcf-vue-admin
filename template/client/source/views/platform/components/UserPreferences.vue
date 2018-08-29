@@ -11,37 +11,37 @@
 </template>
 
 <script>
-import ShortcutSelect from './ShortcutSelect.vue';
-import util from '../../../common/util.js';
-import UserPreferencesExtend from './UserPreferencesExtend.vue';
+import ShortcutSelect from './ShortcutSelect.vue'
+import util from '../../../common/util.js'
+import UserPreferencesExtend from './UserPreferencesExtend.vue'
 export default {
-  data() {
+  data () {
     return {
-      preferences:{}
-    };
+      preferences: {}
+    }
   },
-  methods:{
-    async savePreferences(){
-      console.log(this.preferences);
-      let data = await axios.put('/api/users/preferences',this.preferences).then(res => res.data);
+  methods: {
+    async savePreferences () {
+      console.log(this.preferences)
+      let data = await axios.put('/api/users/preferences', this.preferences).then(res => res.data)
       if (data.status === 1) {
-        util.showSuccess(data.message);
-        this.$emit('close-dialog');
-        if(window.refreshShortcut){
-          document.dispatchEvent(window.refreshShortcut);
+        util.showSuccess(data.message)
+        this.$emit('close-dialog')
+        if (window.refreshShortcut) {
+          document.dispatchEvent(window.refreshShortcut)
         }
       } else {
-        util.showErrorMessageBox(data.message);
+        util.showErrorMessageBox(data.message)
       }
     }
   },
   components: {
     'shortcut-select': ShortcutSelect,
-    'user-preferences-extend':UserPreferencesExtend
+    'user-preferences-extend': UserPreferencesExtend
   },
-  created: async function(){
-    let preferenceRes = await axios.get('/api/users/preferences');
-    this.preferences = preferenceRes.data.data;
+  created: async function () {
+    let preferenceRes = await axios.get('/api/users/preferences')
+    this.preferences = preferenceRes.data.data
   }
 }
 

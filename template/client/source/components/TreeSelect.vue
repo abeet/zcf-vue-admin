@@ -30,7 +30,7 @@ export default {
   mixins: [emitter],
   Name: 'TreeSelect',
   componentName: 'TreeSelect',
-  data() {
+  data () {
     return {
       isOpenTree: false,
       catalogTrees: [],
@@ -38,35 +38,35 @@ export default {
       isClear: false,
       offsetTop: 0,
       offsetLeft: 0,
-      dim:{}
+      dim: {}
     }
   },
-  watch:{
-    items(val){
-      this.catalogTrees=this.items
-    },
+  watch: {
+    items (val) {
+      this.catalogTrees = this.items
+    }
     // dimInfo(val){
     //   this.loadCatalogTree(val)
     // }
   },
-  created(){
+  created () {
     this.loadCatalogTree(this.dimInfo)
   },
   methods: {
-    loadCatalogTree(val){
-      if(val.enable){
-        this.dim=val
+    loadCatalogTree (val) {
+      if (val.enable) {
+        this.dim = val
         this.$on('load-catalogtree', (val) => {
-          this.catalogTrees=val.data
+          this.catalogTrees = val.data
         })
-      }else{
-        this.catalogTrees=this.items
+      } else {
+        this.catalogTrees = this.items
       }
     },
-    callback(val){
-      this.catalogTrees=val
+    callback (val) {
+      this.catalogTrees = val
     },
-    iconClickHandler(e) {
+    iconClickHandler (e) {
       if (this.disabled) {
         return
       }
@@ -85,7 +85,7 @@ export default {
       this.$emit('click', this.isOpenTree)
       this.handleClickChange(null)
     },
-    wrapClickHandler(e) {
+    wrapClickHandler (e) {
       if (this.disabled || this.isSearch) {
         return
       }
@@ -97,7 +97,7 @@ export default {
       }
       this.$emit('click', this.isOpenTree)
     },
-    findCatalog(tree, ID) {
+    findCatalog (tree, ID) {
       loop: for (let i = 0; i < tree.length; i++) {
         if (tree[i][this.itemsOptions.key] == ID) {
           this.catalogName = tree[i][this.itemsOptions.label]
@@ -108,27 +108,27 @@ export default {
         }
       }
     },
-    handleClickChange(row) {
+    handleClickChange (row) {
       this.$emit('click-change', row)
     },
-    setCurrentKey(key) {
+    setCurrentKey (key) {
       key && this.$refs.treePopper.setCurrentKey(key)
     }
   },
   computed: {
-    iconClass() {
+    iconClass () {
       return this.clearable
         ? this.inputValue == '' ? (this.isOpenTree ? 'el-icon-caret-top' : 'el-icon-caret-bottom') : 'el-icon-circle-close'
         : this.isOpenTree ? 'el-icon-caret-top' : 'el-icon-caret-bottom'
     },
     defaultName: {
-      get() {
+      get () {
         return this.inputName
       },
-      set() {}
+      set () {}
     },
     inputValue: {
-      get() {
+      get () {
         if (this.defaultName) {
           let name = this.defaultName
           this.defaultName = null
@@ -140,11 +140,11 @@ export default {
         this.findCatalog(this.catalogTrees, this.value)
         return this.catalogName
       },
-      set(val) {
+      set (val) {
         this.$emit('update:value', isNaN(val[this.itemsOptions.key]) ? '' : val[this.itemsOptions.key])
       }
     },
-    nodeKey() {
+    nodeKey () {
       return this.value || ''
     }
   },
@@ -160,12 +160,12 @@ export default {
       default: ''
     }, // 占位符
     items: {
-      default: function() {
+      default: function () {
         return []
       }
     }, // 树数据
     itemsOptions: {
-      default: function() {
+      default: function () {
         return { key: 'ID', label: 'name', children: 'children' }
       }
     }, // 树选项，默认为
@@ -196,31 +196,30 @@ export default {
       type: Boolean,
       default: false
     },
-    dimInfo:{
-      type:Object,
-      default:function(){
+    dimInfo: {
+      type: Object,
+      default: function () {
         return {
-          enable:false,
-          catalogId:0,
-          contentId:0,
-          contentType:''
+          enable: false,
+          catalogId: 0,
+          contentId: 0,
+          contentType: ''
         }
       }
     }
   },
-  mounted() {
+  mounted () {
     let that = this
 
     document.addEventListener('click', () => {
       that.isOpenTree = false
     }, false)
 
-    document.addEventListener('keyup', (e)=>{
-      if(e.keyCode === 27) {
+    document.addEventListener('keyup', (e) => {
+      if (e.keyCode === 27) {
         that.isOpenTree = false
       }
     }, false)
-
   },
   components: {
     'tree-popper': TreeSelectPopper

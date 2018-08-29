@@ -22,7 +22,7 @@ export default {
   name: 'MenuTreeNode',
   componentName: 'MenuTreeNode',
   mixins: [emitter],
-  data() {
+  data () {
     return {
       isExpanded: false,
       isActive: false,
@@ -37,7 +37,7 @@ export default {
     },
     props: {
       type: Object,
-      default: function() {
+      default: function () {
         return {
           children: 'children',
           label: 'name',
@@ -48,7 +48,7 @@ export default {
     },
     level1: {
       type: Boolean,
-      default: function() {
+      default: function () {
         return false
       }
     },
@@ -61,12 +61,12 @@ export default {
     }
   },
   watch: {
-    active(val) {
+    active (val) {
       this.watchActive()
-    },
+    }
   },
   computed: {
-    owner() {
+    owner () {
       let parent = this.$parent || this.$root
       let name = parent.$options.componentName
 
@@ -85,8 +85,8 @@ export default {
       }
     }
   },
-  created() {
-    if(this.node['treeLevel']<this.expandLevel){
+  created () {
+    if (this.node['treeLevel'] < this.expandLevel) {
       this.isExpanded = true
     }
     if (this.active) {
@@ -94,7 +94,7 @@ export default {
     }
   },
   methods: {
-    matchActive(matchTraceback) {
+    matchActive (matchTraceback) {
       if (!this.active) {
         return false
       }
@@ -111,44 +111,44 @@ export default {
       }
       return true
     },
-    watchActive(val, oldVal) {
+    watchActive (val, oldVal) {
       if (this.matchActive()) {
         this.isActive = true
         this.isExpanded = true
-        this.$nextTick(_=>{
+        this.$nextTick(_ => {
           this.changeLevel1NodeActive()
         })
         this.$emit('node-expand', this.node, this)
         this.lazyLoad()
-      }else{
+      } else {
         this.isActive = false
       }
     },
-    changeLevel1NodeActive(){
-      if(this.isActive){
+    changeLevel1NodeActive () {
+      if (this.isActive) {
         let parent = this
         while (parent && parent.node && !parent.level1) {
           parent = parent.$parent
         }
         if (parent && parent.node && parent.level1) {
-          parent.$parent.$children.forEach(node=>{
+          parent.$parent.$children.forEach(node => {
             node.isGrandChildActive = false
           })
           parent.isGrandChildActive = true
         }
       }
     },
-    handleChildNodeActive(val, nodeData, instance) {
-      this.isGrandChildActive=val
+    handleChildNodeActive (val, nodeData, instance) {
+      this.isGrandChildActive = val
       console.log(val)
       this.$emit('node-active', val, nodeData, instance)
     },
-    handleChildNodeExpand(nodeData, instance) {
+    handleChildNodeExpand (nodeData, instance) {
       this.isExpanded = true
       this.$emit('node-expand', nodeData, instance)
     },
 
-    expandToggle() {
+    expandToggle () {
       if (this.isExpanded) {
         this.isExpanded = false
       } else {
@@ -157,14 +157,14 @@ export default {
       }
     },
 
-    async lazyLoad() {
+    async lazyLoad () {
       if (this.node['isLeaf'] === 0 && this.node[this.props.children] && this.node[this.props.children].length === 0) {
         this.isLazy = true
         await this.owner.handleLazy(this.node)
         this.isLazy = false
       }
     },
-    async handleNodeClick() {
+    async handleNodeClick () {
       this.expandToggle()
       this.dispatch('CatalogTree', 'node-click', this.node, this)
     }
@@ -260,4 +260,3 @@ li.node-li.lazy > .node-content > .fa:before {
   font-size: 75%;
 }
 </style>
-

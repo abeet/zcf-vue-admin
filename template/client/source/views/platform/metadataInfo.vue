@@ -88,111 +88,108 @@
   </div>
 </template>
 <script>
-  import util from '../../common/util.js'
-  import metaColumnGroupDialog from './metaColumnGroupDialog.vue'
-  export default {
-    props: ['data', 'tabName', 'types'],
-    data () {
-      return {
-        saveSubmitLoading:false,
-        dataLoading:false,
-        currentMetadata:{},/**当前元数据变量 */
-        selectedRows:[],/**分组选中行 */
-        columnGroup:[],/**分组数据 */
-        currentColumnGroup:{},/**当前分组数据 */
-        addOrEdit:{/** 添加或修改弹框 */
-          tmpColumnGroup:{},
-          isShowModal:false,
-          title:''
-        }
+import util from '../../common/util.js'
+import metaColumnGroupDialog from './metaColumnGroupDialog.vue'
+export default {
+  props: ['data', 'tabName', 'types'],
+  data () {
+    return {
+      saveSubmitLoading: false,
+      dataLoading: false,
+      currentMetadata: {}, /** 当前元数据变量 */
+      selectedRows: [], /** 分组选中行 */
+      columnGroup: [], /** 分组数据 */
+      currentColumnGroup: {}, /** 当前分组数据 */
+      addOrEdit: {/** 添加或修改弹框 */
+        tmpColumnGroup: {},
+        isShowModal: false,
+        title: ''
       }
-    },
-    methods: {
-      /**添加或编辑字段分组弹框回调 */
-      addOrEditGroupBack(data){
-        let index = this.columnGroup.findIndex(val => val.ID == data.ID)
-        index != -1 ? this.columnGroup.splice(index, 1, data) : this.columnGroup.splice(0, 0, data)
-      },
-      /**保存元数据信息 */
-      async saveMetadataClickHandler () {
-        this.saveSubmitLoading = true
-        try {
-          await util.validateForm(this.$refs['form'])
-          let res = await axios.put(`/metamodels/${this.currentMetadata.ID}`,this.currentMetadata)
-          this.saveSubmitLoading = false
-          util.showMessage(res)
-          if (res.data.status === 1) {
-            this.$emit('callback', this.currentMetadata)
-          }
-        } catch (e) {
-          this.saveSubmitLoading = false
-          util.showErrorNotification(e)
-          return
-        }
-      },
-      /**添加元数据字段分组 */
-      addGroupClickHandler () {
-        this.addOrEdit.tmpColumnGroup = {}
-        this.addOrEdit.isShowModal = true
-        this.addOrEdit.title='添加字段分组'
-      },
-      /**编辑元数据字段分组 */
-      editGroupClickHandler () {
-        this.addOrEdit.tmpColumnGroup = Object.assign({},this.currentColumnGroup)
-        this.addOrEdit.isShowModal = true
-        this.addOrEdit.title='修改字段分组'
-      },
-      /**删除元数据字段分组 */
-      async deleteGroupClickHandler () {
-        let ids = util.getSelectedIDs(this.selectedRows)
-        try {
-          await this.$confirm('确定删除吗，删除后无法恢复。是否继续删除？', '删除确认', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-          let res = await axios.delete(`/metamodels/${this.currentMetadata.ID}/groups/${ids.join()}`)
-          util.showMessage(res)
-          if(res.data.status === 1) {
-            this.columnGroup = this.columnGroup.filter(val => !ids.includes(val.ID))
-            this.selectedRows = []
-          }
-        } catch(e) {
-          util.showErrorNotification(e)
-          return
-        }
-      },
-      /**加载元数据字段分组 */
-      async loadColumnGroup() {
-        this.dataLoading = true
-        let res = await axios.get(`/metamodels/${this.currentMetadata.ID}/groups`)
-        this.dataLoading = false
-        this.columnGroup = (res.data.data&&res.data.data.length)?res.data.data:[]
-      },
-      onGroupSelectionChange (selection) {
-        this.selectedRows = selection
-        this.currentColumnGroup = this.selectedRows.length ? Object.assign({}, this.selectedRows[0]) : {}
-      },
-    },
-    watch:{
-      tabName(val){
-        if(val==='info'){
-          this.$refs['form'].resetFields()
-          this.currentMetadata = Object.assign({},this.data)
-          this.loadColumnGroup()
-        }
-      },
-      data(val){
-        if(this.tabName === 'info'){
-          this.$refs['form'].resetFields()
-          this.currentMetadata = Object.assign({},val)
-          this.loadColumnGroup()
-        }
-      }
-    },
-    components:{
-      'column-group-dialog' : metaColumnGroupDialog
     }
+  },
+  methods: {
+    /** 添加或编辑字段分组弹框回调 */
+    addOrEditGroupBack (data) {
+      let index = this.columnGroup.findIndex(val => val.ID == data.ID)
+      index != -1 ? this.columnGroup.splice(index, 1, data) : this.columnGroup.splice(0, 0, data)
+    },
+    /** 保存元数据信息 */
+    async saveMetadataClickHandler () {
+      this.saveSubmitLoading = true
+      try {
+        await util.validateForm(this.$refs['form'])
+        let res = await axios.put(`/metamodels/${this.currentMetadata.ID}`, this.currentMetadata)
+        this.saveSubmitLoading = false
+        util.showMessage(res)
+        if (res.data.status === 1) {
+          this.$emit('callback', this.currentMetadata)
+        }
+      } catch (e) {
+        this.saveSubmitLoading = false
+        util.showErrorNotification(e)
+      }
+    },
+    /** 添加元数据字段分组 */
+    addGroupClickHandler () {
+      this.addOrEdit.tmpColumnGroup = {}
+      this.addOrEdit.isShowModal = true
+      this.addOrEdit.title = '添加字段分组'
+    },
+    /** 编辑元数据字段分组 */
+    editGroupClickHandler () {
+      this.addOrEdit.tmpColumnGroup = Object.assign({}, this.currentColumnGroup)
+      this.addOrEdit.isShowModal = true
+      this.addOrEdit.title = '修改字段分组'
+    },
+    /** 删除元数据字段分组 */
+    async deleteGroupClickHandler () {
+      let ids = util.getSelectedIDs(this.selectedRows)
+      try {
+        await this.$confirm('确定删除吗，删除后无法恢复。是否继续删除？', '删除确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        let res = await axios.delete(`/metamodels/${this.currentMetadata.ID}/groups/${ids.join()}`)
+        util.showMessage(res)
+        if (res.data.status === 1) {
+          this.columnGroup = this.columnGroup.filter(val => !ids.includes(val.ID))
+          this.selectedRows = []
+        }
+      } catch (e) {
+        util.showErrorNotification(e)
+      }
+    },
+    /** 加载元数据字段分组 */
+    async loadColumnGroup () {
+      this.dataLoading = true
+      let res = await axios.get(`/metamodels/${this.currentMetadata.ID}/groups`)
+      this.dataLoading = false
+      this.columnGroup = (res.data.data && res.data.data.length) ? res.data.data : []
+    },
+    onGroupSelectionChange (selection) {
+      this.selectedRows = selection
+      this.currentColumnGroup = this.selectedRows.length ? Object.assign({}, this.selectedRows[0]) : {}
+    }
+  },
+  watch: {
+    tabName (val) {
+      if (val === 'info') {
+        this.$refs['form'].resetFields()
+        this.currentMetadata = Object.assign({}, this.data)
+        this.loadColumnGroup()
+      }
+    },
+    data (val) {
+      if (this.tabName === 'info') {
+        this.$refs['form'].resetFields()
+        this.currentMetadata = Object.assign({}, val)
+        this.loadColumnGroup()
+      }
+    }
+  },
+  components: {
+    'column-group-dialog': metaColumnGroupDialog
   }
+}
 </script>
-

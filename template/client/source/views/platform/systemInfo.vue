@@ -74,221 +74,218 @@
 </template>
 
 <script>
-import util from '../../common/util.js';
+import util from '../../common/util.js'
 export default {
-    data() {
-        return {
-            info: [],
-            dataLoading: true,
-            login: {
-                loading: false,
-                isCan: true
-            },
-            logOffLoading: false,
-            importDatabase: {
-                isShowFileModal: false,
-                fileList: []
-            },
-            onlineUpdate: {
-                isShowSelectModal: false,
-                server: 'http://release.update.zving.com/',
-                serverItems: ['http://release.update.zving.com/', 'http://beta.update.zving.com/'],
-                isShowUpdateModal: false,
-                startUpdate: false,
-                updateLogs: ''
-            },
-            localUpdate: {
-                isShowModal: false,
-            }
-        };
-    },
-    methods: {
-        // 禁止登陆
-        async disableOrEnableLoginClickHandler() {
-          let handle = async () => {
-            this.login.loading = true;
-            if(this.login.isCan){
-              let res = await axios.delete('/api/info/logined').catch(e=>console.log(e))
-              res = res.data
-              this.login.isCan = res.state;
-              util.showNotification(res);
-              this.login.loading = false;
-              return res.status === 1;
-            }else{
-              let res = await axios.put('/api/info/logined').catch(e=>console.log(e))
-              res = res.data
-              this.login.isCan = res.state;
-              util.showNotification(res);
-              this.login.loading = false;
-              return res.status === 1;
-            }
-          };
-
-          if(this.login.isCan) {
-            await this.$confirm('临时禁止登录后，除admin之外的其他用户都不能登录。是否确认？', '请确认', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            })
-            handle();
-          } else {
-            handle();
-          }
-        },
-        // 注销所有会话
-        async logOffSessionClickHandler() {
-          try {
-            await this.$confirm('除当前用户之外的其他用户都将被强制注销。是否确认？', '请确认', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            })
-          } catch (e) {
-            return
-          }
-          this.logOffLoading = true;
-          let res = await axios.delete('/api/info/sessions').catch(e=>console.log(e))
-          res = res.data
-          this.logOffLoading = false;
-          util.showNotification(res);
-        },
-        // 导出数据库
-        async exportDatabaseClickHandler(){
-          try {
-            await this.$confirm('确认导出数据库吗？', '请确认', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            })
-            let res = await axios.get('/api/info/database/backups')
-            if(res.data.status===1){
-              await util.showProgress( res.data.data.taskID,'正在导出数据库')
-              window.location.href = `${axios.defaults.baseURL}/api/info/database/downloads?fileName=${res.data.data.path}`
-            }else{
-              util.showMessage(res)
-            }
-          } catch(e) {
-            util.showErrorNotification(e)
-            return
-          }
-        },
-        // 导入数据库
-        importDatabaseClickHandler(){
-            this.importDatabase.fileList = [];
-            this.importDatabase.isShowFileModal = true;
-        },
-        selectFileChangeHandler(file, files) {
-            this.importDatabase.fileList = files.slice(-1);
-        },
-        async fileUploadSuccessHandler(res){
-          await util.showProgress( res.taskID,'正在导入数据库')
-          this.importDatabase.isShowFileModal = false
-        },
-        //导入模板包Dialog关闭事件
-        importDialogCloseHandler() {
-          this.$refs.upload.abort();
-          this.$refs.upload.clearFiles();
-        },
-        async fileUploadHandler(event){
-            const { file, onSuccess, onProgress, onError } = event;
-            const formData = new FormData();
-            formData.append('file', file);
-            try{
-              let onUploadProgress = (event) => { onProgress(event, file) }
-              let res = await axios.post('/api/info/database', formData, {
-                onUploadProgress: function(event){
-                    console.log(event);
-                },
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-              })
-              if(res.data.status===1){
-                onSuccess(res.data.data)
-              }else{
-                util.showMessage(res)
-              }
-            }catch(e){
-              util.showErrorNotification(e)
-              return
-            }
-        },
-        // 在线更新
-        onlineUpdateClickHandler(){
-            this.onlineUpdate.updateLogs = '';
-            this.onlineUpdate.startUpdate = false;
-            this.onlineUpdate.isShowUpdateModal = false;
-            this.onlineUpdate.isShowSelectModal = true;
-        },
-        confirmOnlineUpdateClickHandler(){
-            this.onlineUpdate.isShowSelectModal = false;
-            this.onlineUpdate.isShowUpdateModal = true;
-        },
-        async startOnlineUpdateClickHandler(){
-            this.onlineUpdate.startUpdate = true;
-            this.onlineUpdate.updateLogs = '更新开始！\n';
-            this.onlineUpdate.updateLogs += `开始连接服务器 ${this.onlineUpdate.server}\n`;
-            let pollingTask = async (id) => {
-                let fetchInfo = async () => {
-                    let res = await axios.get(`/api/info/promotion/${id}`).catch(e=>console.log(e))
-                    let data = res.data
-                    this.onlineUpdate.updateLogs += `${data.data.text}\n`
-                    return data
-                };
-                return new Promise((resolve)=>{
-                    let intervalId = setInterval(() => {
-                        fetchInfo().then(data => {
-                            if(data.data.progress === 100){
-                                clearInterval(intervalId);
-                                resolve(data);
-                            }
-                        })
-                    }, 1000);
-                });
-            };
-            let server = this.onlineUpdate.server
-            let res = await axios.post('/api/info/promotion', { server }, {online: true})
-            let data = res.data
-            this.onlineUpdate.updateLogs += `${data.message}\n`
-            data = pollingTask(data.data.taskId)
-            this.onlineUpdate.isShowUpdateModal = false
-            util.showNotification(data)
-        },
-        // 本地更新
-        async localUpdateClickHandler(){
-            try {
-              await this.$confirm('确定要执行该任务吗？', '请确认', {
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
-                  type: 'warning'
-              })
-              let res = await axios.post('/api/info/promotion', null, {local: true})
-              if(res.data.status===1) {
-                await util.showProgress( res.data.data.taskID,'正在更新数据库')
-                this.localUpdate.isShowModal = false
-              }else{
-                util.showMessage(res)
-              }
-            } catch(e) {
-              util.showErrorNotification(e)
-              return
-            }
-        }
-    },
-    created() {
-        this.dataLoading = true;
-        Promise.all([
-          axios.get('/api/info').then(res => res.data),
-          axios.get('/api/info/logined').then(res => res.data)
-        ]).then(datas => {
-            this.info = datas[0].data;
-            this.login = {
-              loading: false,
-              isCan: !!datas[1].state
-            };
-            this.dataLoading = false;
-        });
+  data () {
+    return {
+      info: [],
+      dataLoading: true,
+      login: {
+        loading: false,
+        isCan: true
+      },
+      logOffLoading: false,
+      importDatabase: {
+        isShowFileModal: false,
+        fileList: []
+      },
+      onlineUpdate: {
+        isShowSelectModal: false,
+        server: 'http://release.update.zving.com/',
+        serverItems: ['http://release.update.zving.com/', 'http://beta.update.zving.com/'],
+        isShowUpdateModal: false,
+        startUpdate: false,
+        updateLogs: ''
+      },
+      localUpdate: {
+        isShowModal: false
+      }
     }
+  },
+  methods: {
+    // 禁止登陆
+    async disableOrEnableLoginClickHandler () {
+      let handle = async () => {
+        this.login.loading = true
+        if (this.login.isCan) {
+          let res = await axios.delete('/api/info/logined').catch(e => console.log(e))
+          res = res.data
+          this.login.isCan = res.state
+          util.showNotification(res)
+          this.login.loading = false
+          return res.status === 1
+        } else {
+          let res = await axios.put('/api/info/logined').catch(e => console.log(e))
+          res = res.data
+          this.login.isCan = res.state
+          util.showNotification(res)
+          this.login.loading = false
+          return res.status === 1
+        }
+      }
+
+      if (this.login.isCan) {
+        await this.$confirm('临时禁止登录后，除admin之外的其他用户都不能登录。是否确认？', '请确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        handle()
+      } else {
+        handle()
+      }
+    },
+    // 注销所有会话
+    async logOffSessionClickHandler () {
+      try {
+        await this.$confirm('除当前用户之外的其他用户都将被强制注销。是否确认？', '请确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+      } catch (e) {
+        return
+      }
+      this.logOffLoading = true
+      let res = await axios.delete('/api/info/sessions').catch(e => console.log(e))
+      res = res.data
+      this.logOffLoading = false
+      util.showNotification(res)
+    },
+    // 导出数据库
+    async exportDatabaseClickHandler () {
+      try {
+        await this.$confirm('确认导出数据库吗？', '请确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        let res = await axios.get('/api/info/database/backups')
+        if (res.data.status === 1) {
+          await util.showProgress(res.data.data.taskID, '正在导出数据库')
+          window.location.href = `${axios.defaults.baseURL}/api/info/database/downloads?fileName=${res.data.data.path}`
+        } else {
+          util.showMessage(res)
+        }
+      } catch (e) {
+        util.showErrorNotification(e)
+      }
+    },
+    // 导入数据库
+    importDatabaseClickHandler () {
+      this.importDatabase.fileList = []
+      this.importDatabase.isShowFileModal = true
+    },
+    selectFileChangeHandler (file, files) {
+      this.importDatabase.fileList = files.slice(-1)
+    },
+    async fileUploadSuccessHandler (res) {
+      await util.showProgress(res.taskID, '正在导入数据库')
+      this.importDatabase.isShowFileModal = false
+    },
+    // 导入模板包Dialog关闭事件
+    importDialogCloseHandler () {
+      this.$refs.upload.abort()
+      this.$refs.upload.clearFiles()
+    },
+    async fileUploadHandler (event) {
+      const { file, onSuccess, onProgress, onError } = event
+      const formData = new FormData()
+      formData.append('file', file)
+      try {
+        let onUploadProgress = (event) => { onProgress(event, file) }
+        let res = await axios.post('/api/info/database', formData, {
+          onUploadProgress: function (event) {
+            console.log(event)
+          },
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        if (res.data.status === 1) {
+          onSuccess(res.data.data)
+        } else {
+          util.showMessage(res)
+        }
+      } catch (e) {
+        util.showErrorNotification(e)
+      }
+    },
+    // 在线更新
+    onlineUpdateClickHandler () {
+      this.onlineUpdate.updateLogs = ''
+      this.onlineUpdate.startUpdate = false
+      this.onlineUpdate.isShowUpdateModal = false
+      this.onlineUpdate.isShowSelectModal = true
+    },
+    confirmOnlineUpdateClickHandler () {
+      this.onlineUpdate.isShowSelectModal = false
+      this.onlineUpdate.isShowUpdateModal = true
+    },
+    async startOnlineUpdateClickHandler () {
+      this.onlineUpdate.startUpdate = true
+      this.onlineUpdate.updateLogs = '更新开始！\n'
+      this.onlineUpdate.updateLogs += `开始连接服务器 ${this.onlineUpdate.server}\n`
+      let pollingTask = async (id) => {
+        let fetchInfo = async () => {
+          let res = await axios.get(`/api/info/promotion/${id}`).catch(e => console.log(e))
+          let data = res.data
+          this.onlineUpdate.updateLogs += `${data.data.text}\n`
+          return data
+        }
+        return new Promise((resolve) => {
+          let intervalId = setInterval(() => {
+            fetchInfo().then(data => {
+              if (data.data.progress === 100) {
+                clearInterval(intervalId)
+                resolve(data)
+              }
+            })
+          }, 1000)
+        })
+      }
+      let server = this.onlineUpdate.server
+      let res = await axios.post('/api/info/promotion', { server }, {online: true})
+      let data = res.data
+      this.onlineUpdate.updateLogs += `${data.message}\n`
+      data = pollingTask(data.data.taskId)
+      this.onlineUpdate.isShowUpdateModal = false
+      util.showNotification(data)
+    },
+    // 本地更新
+    async localUpdateClickHandler () {
+      try {
+        await this.$confirm('确定要执行该任务吗？', '请确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        let res = await axios.post('/api/info/promotion', null, {local: true})
+        if (res.data.status === 1) {
+          await util.showProgress(res.data.data.taskID, '正在更新数据库')
+          this.localUpdate.isShowModal = false
+        } else {
+          util.showMessage(res)
+        }
+      } catch (e) {
+        util.showErrorNotification(e)
+      }
+    }
+  },
+  created () {
+    this.dataLoading = true
+    Promise.all([
+      axios.get('/api/info').then(res => res.data),
+      axios.get('/api/info/logined').then(res => res.data)
+    ]).then(datas => {
+      this.info = datas[0].data
+      this.login = {
+        loading: false,
+        isCan: !!datas[1].state
+      }
+      this.dataLoading = false
+    })
+  }
 }
 </script>
 

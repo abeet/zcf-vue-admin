@@ -37,18 +37,18 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       dataLoading: true,
       detectors: []
     }
   },
   methods: {
-    indexMethod(index) {
-      return index+1
+    indexMethod (index) {
+      return index + 1
     }
   },
-  async created() {
+  async created () {
     const resp = await axios.get('/api/detectors')
     this.detectors = resp.data.data
     this.dataLoading = false
@@ -56,4 +56,3 @@ export default {
 }
 
 </script>
-

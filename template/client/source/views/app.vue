@@ -95,7 +95,7 @@ import LockScreen from './lockScreen.vue'
 import util from '../common/util.js'
 
 export default {
-  data() {
+  data () {
     let routePath = location.hash.substr(1)
     if (routePath && routePath.split('/').length > 2) {
       routePath = routePath
@@ -114,17 +114,17 @@ export default {
       handlerLoading: false,
       messageShow: false,
       userSettingShow: false,
-      isBanner:true,
+      isBanner: true,
       temp: {
         oldPassword: '',
         password: '',
-        repeatPassword: '',
+        repeatPassword: ''
       },
       tempRules: {
         oldPassword: [{ required: true, message: '请输入当前密码', trigger: 'blur' }],
         password: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
-          { min: 6, max: 32, message: '密码最少6位，最多32位', trigger: 'blur' },
+          { min: 6, max: 32, message: '密码最少6位，最多32位', trigger: 'blur' }
         ],
         repeatPassword: [
           { required: true, message: '请重复输入一次新密码', trigger: 'blur' },
@@ -136,22 +136,22 @@ export default {
                 callback()
               }
             },
-            trigger: 'blur',
-          },
-        ],
+            trigger: 'blur'
+          }
+        ]
       },
       currentSiteID: 0,
       currentSiteName: '',
-      siteListTreeData: [],   //站点列表树数据
+      siteListTreeData: [], // 站点列表树数据
       message: {
         count: 0
       },
-      fullscreened: false,// 是否为全屏
-      showUnlock: localStorage.locking === '1' //显示解锁屏幕
+      fullscreened: false, // 是否为全屏
+      showUnlock: localStorage.locking === '1' // 显示解锁屏幕
     }
   },
   computed: {
-    avatorPath() {
+    avatorPath () {
       return util.url.join(window.SERVER, '/avatar/' + this.userName)
     }
   },
@@ -161,34 +161,34 @@ export default {
     'tree-select': TreeSelect,
     'lock-screen': LockScreen
   },
-  async created() {
+  async created () {
     let self = this
     // 监听全屏切换事件
     let spprtFllScrn = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen
     spprtFllScrn = !!spprtFllScrn
-    document.addEventListener("fullscreenchange", function() {
-        self.fullscreened = !self.fullscreened
+    document.addEventListener('fullscreenchange', function () {
+      self.fullscreened = !self.fullscreened
     })
-    document.addEventListener("mozfullscreenchange", function() {
-        self.fullscreened = !self.fullscreened
+    document.addEventListener('mozfullscreenchange', function () {
+      self.fullscreened = !self.fullscreened
     })
-    document.addEventListener("webkitfullscreenchange", function() {
-        self.fullscreened = !self.fullscreened
+    document.addEventListener('webkitfullscreenchange', function () {
+      self.fullscreened = !self.fullscreened
     })
-    document.addEventListener("msfullscreenchange", function() {
-        self.fullscreened = !self.fullscreened
+    document.addEventListener('msfullscreenchange', function () {
+      self.fullscreened = !self.fullscreened
     })
 
-    //监听个人设置打开事件
+    // 监听个人设置打开事件
     window.openUserSettingDialog = new Event('openusersettingdialog')
-    document.addEventListener("openusersettingdialog", function() {
-        self.isBanner = false
-        self.userSettingShow = true
+    document.addEventListener('openusersettingdialog', function () {
+      self.isBanner = false
+      self.userSettingShow = true
     })
-    //监听个人设置关闭事件
+    // 监听个人设置关闭事件
     window.closeUserSettingDialog = new Event('closeusersettingdialog')
-    document.addEventListener("closeusersettingdialog", function() {
-        self.userSettingShow = false
+    document.addEventListener('closeusersettingdialog', function () {
+      self.userSettingShow = false
     })
 
     let res = await axios.get('/api/sites')
@@ -199,16 +199,16 @@ export default {
     this.message = res.data.data
   },
   watch: {
-    '$route.name'(val, oldVal) {
+    '$route.name' (val, oldVal) {
       this.routerName = this.$route.name || '/'
     },
-    async currentSiteID(val, oldVal) {
-      if(oldVal !== 0){
-        let res = await axios.put('/api/sites/change',{siteID:val})
-        if(res.data.status === 1){
+    async currentSiteID (val, oldVal) {
+      if (oldVal !== 0) {
+        let res = await axios.put('/api/sites/change', {siteID: val})
+        if (res.data.status === 1) {
           this.$root.siteID = val
           window.location.reload()
-        }else{
+        } else {
           util.showNotification(res.data)
         }
       }
@@ -216,15 +216,15 @@ export default {
   },
   methods: {
     // 切换全屏
-    handleFullscreen() {
-      var bd = document.body;
+    handleFullscreen () {
+      var bd = document.body
       this.fullscreened ? document.exitFullscreen ? document.exitFullscreen() : document.mozCancelFullScreen ? document.mozCancelFullScreen() : document.webkitCancelFullScreen ? document.webkitCancelFullScreen() : document.msExitFullscreen && document.msExitFullscreen() : bd.requestFullscreen ? bd.requestFullscreen() : bd.mozRequestFullScreen ? bd.mozRequestFullScreen() : bd.webkitRequestFullScreen ? bd.webkitRequestFullScreen() : bd.msRequestFullscreen && bd.msRequestFullscreen()
     },
     // 锁屏
-    lockScreen() {
-        this.showUnlock = true;
+    lockScreen () {
+      this.showUnlock = true
     },
-    onSelectMenun(menu) {
+    onSelectMenun (menu) {
       let hash = (menu.children && menu.children[0].path) || ''
       if (hash.charAt(0) !== '/') {
         hash = '/' + hash
@@ -235,29 +235,29 @@ export default {
       window.location.hash = hash
       localStorage.lastRoutePath = hash
     },
-    toggleNavbar() {
+    toggleNavbar () {
       this.navbarCollapsed = !this.navbarCollapsed
     },
-    expandNavbar() {
+    expandNavbar () {
       let self = this
       this.hoverIntent = setTimeout(_ => {
         self.navbarCollapsed = true
       }, 200)
     },
-    collapseNavbar() {
+    collapseNavbar () {
       if (this.hoverIntent) {
         clearTimeout(this.hoverIntent)
       }
       this.navbarCollapsed = false
     },
-    async logout() {
+    async logout () {
       await axios.get('/api/logout')
       localStorage.removeItem('logined')
       localStorage.removeItem('realName')
       localStorage.removeItem('adminUserName')
       location.href = 'login.html'
     },
-    async handleCommand(cmd) {
+    async handleCommand (cmd) {
       if (cmd == 'logout') {
         this.logout()
       }
@@ -265,19 +265,19 @@ export default {
         this.temp = {
           oldPassword: '',
           password: '',
-          repeatPassword: '',
+          repeatPassword: ''
         }
         this.modifyPasswordModal = true
       }
     },
-    getMessage() {
+    getMessage () {
       this.messageShow = true
     },
-    showUserSetting() {
+    showUserSetting () {
       this.isBanner = true
       this.userSettingShow = true
     },
-    async modifyPasswordHandler() {
+    async modifyPasswordHandler () {
       try {
         await util.validateForm(this.$refs['modifyPasswordForm'])
       } catch (e) {
@@ -292,14 +292,14 @@ export default {
         this.temp = {
           oldPassword: '',
           password: '',
-          repeatPassword: '',
+          repeatPassword: ''
         }
       }
       this.handlerLoading = false
       util.showNotification(data)
-    },
+    }
 
-  },
+  }
 }
 </script>
 
@@ -471,4 +471,3 @@ export default {
   font-size: 12px;
 }
 </style>
-

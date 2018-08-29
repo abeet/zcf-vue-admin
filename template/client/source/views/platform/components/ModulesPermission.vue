@@ -19,149 +19,147 @@
   </div>
 </template>
 <script>
-  import util from '../../../common/util'
-  import translate from '../../../common/dataTranslate.js'
-  import TreeSelect from '../../../components/TreeSelect.vue'
-  import TreeGridPermission from './TreeGridPermission.vue'
-  export default {
-    data() {
-      return {
-        selectAllLoading:false,
-        permissions: [],
-        permissionsBak: [],
-        columns: [],
-        keyword: '',
-        mType: '',
-        moduleTypes: {},
-        dataLoading: true,
-        saveLoading: false,
-        currentSiteID: this.$root.siteID,
-        siteListTreeData: [], //站点列表树数据
-        isAllChecked: false,
-      }
+import util from '../../../common/util'
+import translate from '../../../common/dataTranslate.js'
+import TreeSelect from '../../../components/TreeSelect.vue'
+import TreeGridPermission from './TreeGridPermission.vue'
+export default {
+  data () {
+    return {
+      selectAllLoading: false,
+      permissions: [],
+      permissionsBak: [],
+      columns: [],
+      keyword: '',
+      mType: '',
+      moduleTypes: {},
+      dataLoading: true,
+      saveLoading: false,
+      currentSiteID: this.$root.siteID,
+      siteListTreeData: [], // 站点列表树数据
+      isAllChecked: false
+    }
+  },
+  computed: {},
+  methods: {
+    searchHandler () {
+      this.getData()
     },
-    computed: {},
-    methods: {
-      searchHandler() {
-        this.getData()
-      },
-      selectedAllHandler() {
-        this.selectAllLoading = true
-        this.$refs.treegrid.selectedAllHandler()
-        setTimeout(()=>{
-          this.selectAllLoading = false
-        },1000)
-      },
-      async saveClickHandler() {
-        this.saveLoading = true
-        let updatedPermissions={}
-        this.permissionsBak.forEach((permissionBak,index)=>{
-          let permission=this.permissions[index]
-          this.columns.forEach((column,colIndex)=>{
-            if(permissionBak[column.dataIndex].value!=permission[column.dataIndex].value&&!permissionBak[column.dataIndex].disabled){
-              if(colIndex==0){
-                 updatedPermissions[column.dataIndex  + permission.ID] = permission[column.dataIndex].value ? 1 : 0
-              }else{
-                 updatedPermissions[column.dataIndex + '.' + permission.ID] = permission[column.dataIndex].value ? 1 : 0
-              }
-            }
-          })
-        })
-        try {
-          let res = await axios.put(`/modulespriv/id/${this.id}/type/${this.type}/modulespriv`, { data: updatedPermissions })
-          util.showMessage(res)
-          this.permissionsBak=JSON.parse(JSON.stringify(this.permissions))
-          this.saveLoading = false
-        } catch (e) {
-          util.showErrorNotification(e)
-          this.saveLoading = false
-          return
-        }
-
-      },
-      async getData() {
-        if (this.id) {
-          this.dataLoading = true
-          if(this.currentSiteID&&this.siteListTreeData&&this.siteListTreeData.length>0){
-            this.columns=[]
-            let resModelTypes = await axios.get(`/modulespriv/id/${this.id}/type/${this.type}/privtype`);
-            this.moduleTypes = resModelTypes.data.data
-            if (!this.mType) {
-              for (let moduleType in this.moduleTypes) {
-                this.mType = moduleType
-                break
-              }
-            }
-            let datas = await Promise.all([
-              axios.get(`/modulespriv/id/all/type/${this.type}/modulesprivcolumns`, { params: { 'mType': this.mType } }),
-              axios.get(`/modulespriv/id/${this.id}/type/${this.type}/modulesprivs`, { params: { 'siteID': this.currentSiteID, 'mType': this.mType, 'keyword': encodeURIComponent(encodeURIComponent(this.keyword)) } })
-            ])
-            let resp = datas[0]
-            this.columns = resp.data.data
-            this.columns[0].width = 250;
-            if(this.mType === 'MessageBoard'){
-              this.columns[5].width = 130
-            }
-            let res = datas[1]
-            if (res.data.data.length > 0) {
-              this.permissions = translate.MSDataTransfer.treeToArray(res.data.data, null, null, true)
-              this.permissions.forEach(val=>{
-                  val.children=[]
-              })
-              this.permissionsBak = JSON.parse(JSON.stringify(this.permissions))
+    selectedAllHandler () {
+      this.selectAllLoading = true
+      this.$refs.treegrid.selectedAllHandler()
+      setTimeout(() => {
+        this.selectAllLoading = false
+      }, 1000)
+    },
+    async saveClickHandler () {
+      this.saveLoading = true
+      let updatedPermissions = {}
+      this.permissionsBak.forEach((permissionBak, index) => {
+        let permission = this.permissions[index]
+        this.columns.forEach((column, colIndex) => {
+          if (permissionBak[column.dataIndex].value != permission[column.dataIndex].value && !permissionBak[column.dataIndex].disabled) {
+            if (colIndex == 0) {
+              updatedPermissions[column.dataIndex + permission.ID] = permission[column.dataIndex].value ? 1 : 0
             } else {
-              this.permissions = []
-              this.permissionsBak = []
+              updatedPermissions[column.dataIndex + '.' + permission.ID] = permission[column.dataIndex].value ? 1 : 0
             }
           }
-          this.dataLoading = false
-        }
+        })
+      })
+      try {
+        let res = await axios.put(`/modulespriv/id/${this.id}/type/${this.type}/modulespriv`, { data: updatedPermissions })
+        util.showMessage(res)
+        this.permissionsBak = JSON.parse(JSON.stringify(this.permissions))
+        this.saveLoading = false
+      } catch (e) {
+        util.showErrorNotification(e)
+        this.saveLoading = false
       }
     },
-    watch: {
-      id: function (value) {
-        if (value) {
-          this.currentSiteID = this.$root.siteID
-          this.moduleTypes = {}
-          this.mType = ''
-          this.updatedPermissions = {}
-          this.getData()
-        } else {
-          this.permissions = []
+    async getData () {
+      if (this.id) {
+        this.dataLoading = true
+        if (this.currentSiteID && this.siteListTreeData && this.siteListTreeData.length > 0) {
+          this.columns = []
+          let resModelTypes = await axios.get(`/modulespriv/id/${this.id}/type/${this.type}/privtype`)
+          this.moduleTypes = resModelTypes.data.data
+          if (!this.mType) {
+            for (let moduleType in this.moduleTypes) {
+              this.mType = moduleType
+              break
+            }
+          }
+          let datas = await Promise.all([
+            axios.get(`/modulespriv/id/all/type/${this.type}/modulesprivcolumns`, { params: { 'mType': this.mType } }),
+            axios.get(`/modulespriv/id/${this.id}/type/${this.type}/modulesprivs`, { params: { 'siteID': this.currentSiteID, 'mType': this.mType, 'keyword': encodeURIComponent(encodeURIComponent(this.keyword)) } })
+          ])
+          let resp = datas[0]
+          this.columns = resp.data.data
+          this.columns[0].width = 250
+          if (this.mType === 'MessageBoard') {
+            this.columns[5].width = 130
+          }
+          let res = datas[1]
+          if (res.data.data.length > 0) {
+            this.permissions = translate.MSDataTransfer.treeToArray(res.data.data, null, null, true)
+            this.permissions.forEach(val => {
+              val.children = []
+            })
+            this.permissionsBak = JSON.parse(JSON.stringify(this.permissions))
+          } else {
+            this.permissions = []
+            this.permissionsBak = []
+          }
         }
-      },
-      async currentSiteID(val, oldVal) {
-        this.currentSiteID = val
+        this.dataLoading = false
+      }
+    }
+  },
+  watch: {
+    id: function (value) {
+      if (value) {
+        this.currentSiteID = this.$root.siteID
         this.moduleTypes = {}
         this.mType = ''
         this.updatedPermissions = {}
         this.getData()
-      },
-      async mType(val, oldVal) {
-        this.mType = val
-        this.updatedPermissions = {}
-        this.getData()
+      } else {
+        this.permissions = []
       }
     },
-    async created() {
-      let siteRes = await axios.get(`/sitepriv/id/${this.id}/type/${this.type}`)
-      this.siteListTreeData = siteRes.data.data
+    async currentSiteID (val, oldVal) {
+      this.currentSiteID = val
+      this.moduleTypes = {}
+      this.mType = ''
+      this.updatedPermissions = {}
       this.getData()
     },
-    props: {
-      id: {
-        type: String,
-        required: true,
-        default: ''
-      },
-      type: {
-        type: String,
-        required: true
-      }
-    },
-    components: {
-      'tree-select': TreeSelect,
-      'tree-grid-permission': TreeGridPermission
+    async mType (val, oldVal) {
+      this.mType = val
+      this.updatedPermissions = {}
+      this.getData()
     }
+  },
+  async created () {
+    let siteRes = await axios.get(`/sitepriv/id/${this.id}/type/${this.type}`)
+    this.siteListTreeData = siteRes.data.data
+    this.getData()
+  },
+  props: {
+    id: {
+      type: String,
+      required: true,
+      default: ''
+    },
+    type: {
+      type: String,
+      required: true
+    }
+  },
+  components: {
+    'tree-select': TreeSelect,
+    'tree-grid-permission': TreeGridPermission
   }
+}
 </script>

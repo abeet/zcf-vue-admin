@@ -322,7 +322,7 @@ function dataURLtoBlob (dataURL) {
 async function uploadBase64Image (dataURL, imagePath, siteID) {
   const imgBlob = dataURLtoBlob(dataURL)
   const ext = getImageExt(imagePath)
-  let imageName = imagePath.substring(imagePath.lastIndexOf('/'),imagePath.lastIndexOf('?'))
+  let imageName = imagePath.substring(imagePath.lastIndexOf('/'), imagePath.lastIndexOf('?'))
   // console.log('-----------------------')
   // console.log(imgBlob)
   // console.log(ext)
@@ -497,7 +497,6 @@ let autoTextarea = function (elem, extra, maxHeight) {
       document.documentElement.scrollTop = scrollTop
       elem.currHeight = parseInt(style.height)
     }
-
   }
 
   addEvent('propertychange', change)

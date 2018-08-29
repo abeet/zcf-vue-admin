@@ -29,9 +29,9 @@
 import util from '../../../common/util.js'
 import messageDetail from './messageDetailDialog.vue'
 export default {
-  data() {
+  data () {
     return {
-      sortField:'addTime',
+      sortField: 'addTime',
       msgHistorySelectedRows: [],
       msgHistoryTable: [],
       showLookMessageShow: false,
@@ -43,71 +43,71 @@ export default {
         content: ''
       },
       userType: 'FromUser',
-      openTimes:0,
+      openTimes: 0
     }
   },
   computed: {
     msgHistoryDialog: {
-      get() {
+      get () {
         return this.msgHistoryShow
       },
-      set(val) {
+      set (val) {
         this.$emit('update:msgHistoryShow', val)
-      },
-    },
+      }
+    }
   },
   components: {
     'msgdetail-dialog': messageDetail
   },
   methods: {
-    dialogOpen(){
-      if(this.openTimes > 0){
+    dialogOpen () {
+      if (this.openTimes > 0) {
         this.getMsgHistoryData()
       }
       this.openTimes += 1
     },
-    //当前行
-    msgHistorySelectionChange(selection) {
+    // 当前行
+    msgHistorySelectionChange (selection) {
       this.msgHistorySelectedRows = selection
     },
-    getData(){
+    getData () {
       return [
-        '/api/message/historydatabind',{
-        params:{
-          sortField:this.sortField,
-        }
-      }]
+        '/api/message/historydatabind', {
+          params: {
+            sortField: this.sortField
+          }
+        }]
     },
-    //已发消息列表数据
-    getMsgHistoryData() {
+    // 已发消息列表数据
+    getMsgHistoryData () {
       this.$refs.datatable.getData()
     },
-    //双击查看已发消息
-    lookMsgHistoryDbClick(row) {
+    // 双击查看已发消息
+    lookMsgHistoryDbClick (row) {
       this.showLookMessageShow = true
       this.tmpMessageDetail = Object.assign({}, row)
     },
-    //已发消息删除事件
-    async deleteClick() {
-      try{
+    // 已发消息删除事件
+    async deleteClick () {
+      try {
         await this.$confirm('确认删除所选的消息?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning',
+          type: 'warning'
         })
         let rowIds = []
-        this.msgHistorySelectedRows.forEach(function(row) {
+        this.msgHistorySelectedRows.forEach(function (row) {
           rowIds.push(row.ID)
         })
-        let res = await axios.delete(`/api/message/${rowIds}?userType=`+this.userType)
+        let res = await axios.delete(`/api/message/${rowIds}?userType=` + this.userType)
         util.showResponseMessage(res.data)
         if (res.data.status === 1) {
           this.getMsgHistoryData()
         }
-      }catch(e){
-        return
+      } catch (e) {
+
       }
-    },
+    }
   },
   props: ['msgHistoryShow']
 }

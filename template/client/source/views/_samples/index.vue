@@ -25,20 +25,20 @@
 <script>
 
 let menus = []
-let pmenu = window.routes.filter(item=>item.path === '/_samples')
+let pmenu = window.routes.filter(item => item.path === '/_samples')
 if (pmenu[0] && pmenu[0].children) {
   menus = pmenu[0].children
 }
 
 export default {
-  data() {
+  data () {
     return {
       menus,
       activeMenu: this.$route.path
-    };
+    }
   },
   methods: {
-    onSelectMenu(path) {
+    onSelectMenu (path) {
       let item = this.menus.find((val) => val.path === path)
 
       if (item) {
@@ -46,12 +46,12 @@ export default {
       }
     }
   },
-  created() {
-    if(location.hash.split('/').length==2){
+  created () {
+    if (location.hash.split('/').length == 2) {
       location.hash = this.activeMenu
     }
   },
-  beforeRouteUpdate(to, from, next) {
+  beforeRouteUpdate (to, from, next) {
     let path = to.path
     let item = this.menus.find(val => val.path === path)
 

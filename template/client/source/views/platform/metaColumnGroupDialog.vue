@@ -21,10 +21,10 @@ import util from '../../common/util.js'
 export default {
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
       }
     }
@@ -35,14 +35,14 @@ export default {
     title: String,
     modelId: [String, Number]
   },
-  data() {
+  data () {
     return {
       confirmLoading: false,
-      tmpColumnGroup: {} /**form临时数据存储 */
+      tmpColumnGroup: {} /** form临时数据存储 */
     }
   },
   methods: {
-    async confirmClickHandler() {
+    async confirmClickHandler () {
       this.confirmLoading = true
       try {
         await util.validateForm(this.$refs['form'])
@@ -61,19 +61,18 @@ export default {
       } catch (e) {
         this.confirmLoading = false
         util.showErrorNotification(e)
-        return
       }
     },
-    beforeDialogOpen() {
+    beforeDialogOpen () {
       if (this.data.ID) {
-        //编辑
+        // 编辑
         this.tmpColumnGroup = Object.assign({}, this.data)
         !!this.tmpColumnGroup.addTime &&
           Object.assign(this.tmpColumnGroup, { addTime: util.formatDate(this.tmpColumnGroup.addTime, 'yyyy-MM-dd hh:mm:ss') })
         !!this.tmpColumnGroup.modifyTime &&
           Object.assign(this.tmpColumnGroup, { modifyTime: util.formatDate(this.tmpColumnGroup.modifyTime, 'yyyy-MM-dd hh:mm:ss') })
       } else {
-        //添加
+        // 添加
         this.tmpColumnGroup = { name: '', code: '' }
       }
     }

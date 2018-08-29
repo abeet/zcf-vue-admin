@@ -37,84 +37,84 @@ import roleSelect from '../roleSelectDialog.vue'
 import util from '../../../common/util.js'
 
 export default {
-  data() {
+  data () {
     return {
       tmpMessageAdd: {
         toUser: '',
         toRole: '',
         subject: '',
-        content: '',
-      }, //新建消息对象
-      userSelectShow: false, //选择用户dialog显示状态
-      roleSelectShow: false, //选择角色dialog显示状态
+        content: ''
+      }, // 新建消息对象
+      userSelectShow: false, // 选择用户dialog显示状态
+      roleSelectShow: false, // 选择角色dialog显示状态
       messageAddRules: {
         toUser: [{ required: true, message: '接收人不能为空', trigger: 'blur' }],
         toRole: [{ required: true, message: '接收角色不能为空', trigger: 'blur' }],
         subject: [
           { required: true, message: '标题不能为空', trigger: 'blur' },
-          { min: 1, max: 400, message: '长度在 1 到 400 个字符', trigger: 'blur' },
+          { min: 1, max: 400, message: '长度在 1 到 400 个字符', trigger: 'blur' }
         ],
         content: [
           { required: true, message: '内容不能为空', trigger: 'blur' },
-          { min: 1, max: 2000, message: '长度在 1 到 2000 个字符', trigger: 'blur' },
-        ],
-      }, //新建消息规则
+          { min: 1, max: 2000, message: '长度在 1 到 2000 个字符', trigger: 'blur' }
+        ]
+      } // 新建消息规则
     }
   },
   computed: {
     messageAddDialog: {
-      get() {
+      get () {
         return this.messageAddShow
       },
-      set(val) {
+      set (val) {
         this.$emit('update:messageAddShow', val)
-      },
-    },
+      }
+    }
   },
   components: {
     'user-dialog': userSelect,
-    'role-dialog': roleSelect,
+    'role-dialog': roleSelect
   },
   methods: {
-    dialogOpen(){
-      this.tmpMessageAdd={
+    dialogOpen () {
+      this.tmpMessageAdd = {
         toUser: '',
         toRole: '',
         subject: '',
-        content: '',
+        content: ''
       }
     },
-    //选择用户点击
-    async userSelectClick() {
+    // 选择用户点击
+    async userSelectClick () {
       this.userSelectShow = true
     },
-    //选择角色点击
-    async roleSelectClick() {
+    // 选择角色点击
+    async roleSelectClick () {
       this.roleSelectShow = true
     },
-    roleSelectCallback(roles){
+    roleSelectCallback (roles) {
       this.tmpMessageAdd.toRole = roles
     },
-    //接收人
-    userSelectCallback(users) {
+    // 接收人
+    userSelectCallback (users) {
       this.tmpMessageAdd.toUser = users
     },
-    async confirmMessageAddClick() {
+    async confirmMessageAddClick () {
       try {
         await util.validateForm(this.$refs['messageAddForm'])
       } catch (e) {
         util.showErrorMessageBox(e)
         return
       }
-      let res = await axios.post('/api/message',this.tmpMessageAdd)
+      let res = await axios.post('/api/message', this.tmpMessageAdd)
       util.showResponseMessage(res.data)
-      if(res.data.status === 1){
+      if (res.data.status === 1) {
         this.messageAddDialog = false
         this.$emit('callback')
       }
-    },
+    }
   },
-  props: ['messageAddShow'],
+  props: ['messageAddShow']
 }
 </script>
 

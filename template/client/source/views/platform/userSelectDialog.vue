@@ -48,129 +48,129 @@
 <script>
 import TreeSelect from '../../components/TreeSelect.vue'
 export default {
-  data() {
+  data () {
     return {
-      branchInnerCode:0,
+      branchInnerCode: 0,
       roleBranchTree: [],
       treeItemsOptions: {
         children: 'children',
         label: 'name',
-        key: 'branchInnerCode',
+        key: 'branchInnerCode'
       },
       searchName: '',
       allUserSelectTable: [],
       userSelectTable: [],
       selectedAllUserRows: [],
-      users: [], //短消息-新建-接收人-用户去重
-      selectedUsers: [], //短消息-新建-接收人-处理后的用户
+      users: [], // 短消息-新建-接收人-用户去重
+      selectedUsers: [], // 短消息-新建-接收人-处理后的用户
       selectedUserRows: [],
-      openTimes:0,
+      openTimes: 0
     }
   },
   computed: {
     userSelectDialog: {
-      get() {
+      get () {
         return this.userSelectShow
       },
-      set(val) {
+      set (val) {
         this.$emit('update:userSelectShow', val)
-      },
-    },
+      }
+    }
   },
   components: {
-    'tree-select': TreeSelect,
+    'tree-select': TreeSelect
   },
   methods: {
-    dialogOpen(){
+    dialogOpen () {
       this.searchName = ''
       this.selectedUsers = this.toUsers.split(',')
       this.userSelectTable = []
       this.getBranchDatas()
-      if(this.openTimes > 0){
+      if (this.openTimes > 0) {
         this.getAllUserSelectDatas()
         this.getUserSelectDatas()
       }
       this.openTimes += 1
     },
-    async getBranchDatas(){
+    async getBranchDatas () {
       let res = await axios.get('/api/branches/branchtree')
       this.roleBranchTree = res.data.data
     },
-    getAllUserURL(){
+    getAllUserURL () {
       return [
-        '/api/userselector/alluserdatabind',{
-        params:{
-          selectedUsers:this.selectedUsers.join(','),
-          searchContent:this.searchName,
-          branchInnerCode:this.branchInnerCode
-        }
-      }]
+        '/api/userselector/alluserdatabind', {
+          params: {
+            selectedUsers: this.selectedUsers.join(','),
+            searchContent: this.searchName,
+            branchInnerCode: this.branchInnerCode
+          }
+        }]
     },
-    //所有用户数据
-    getAllUserSelectDatas() {
+    // 所有用户数据
+    getAllUserSelectDatas () {
       this.$refs.allUserTable.getData()
     },
-    //选中行
-    allUserSelectChange(selection) {
+    // 选中行
+    allUserSelectChange (selection) {
       this.selectedAllUserRows = selection
     },
-    //已选用户列表选中行
-    userSelectChange(selection) {
+    // 已选用户列表选中行
+    userSelectChange (selection) {
       this.selectedUserRows = selection
     },
-    //所有用户搜索
-    searchAllUserSelectClick() {
+    // 所有用户搜索
+    searchAllUserSelectClick () {
       this.getAllUserSelectDatas()
     },
-    //添加到已选用户列表
-    addUserClick(row) {
-      if(row){
+    // 添加到已选用户列表
+    addUserClick (row) {
+      if (row) {
         this.selectedUsers.push(row.userName)
-      }else{
-        this.selectedAllUserRows.forEach(o=>{
+      } else {
+        this.selectedAllUserRows.forEach(o => {
           this.selectedUsers.push(o.userName)
         })
       }
       this.getAllUserSelectDatas()
       this.getUserSelectDatas()
     },
-    removeUserClick(row){
-      if(row){
+    removeUserClick (row) {
+      if (row) {
         let index = this.selectedUsers.findIndex(val => val === row.userName)
-        this.selectedUsers.splice(index,1)
-      }else{
-        this.selectedUserRows.forEach(o=>{
+        this.selectedUsers.splice(index, 1)
+      } else {
+        this.selectedUserRows.forEach(o => {
           let index = this.selectedUsers.findIndex(val => val === o.userName)
-          this.selectedUsers.splice(index,1)
+          this.selectedUsers.splice(index, 1)
         })
       }
       this.getAllUserSelectDatas()
       this.getUserSelectDatas()
     },
-    getSelectedUserURL(){
+    getSelectedUserURL () {
       return [
-        '/api/userselector/selecteduserdatabind',{
-          params:{
-            selectedUsers:this.selectedUsers.join(',')
+        '/api/userselector/selecteduserdatabind', {
+          params: {
+            selectedUsers: this.selectedUsers.join(',')
           }
         }
       ]
     },
-    //已选用户列表数据
-    getUserSelectDatas() {
+    // 已选用户列表数据
+    getUserSelectDatas () {
       this.$refs.selectedUserTable.getData()
     },
-    //选择用户确定
-    confirmUserSelectClick() {
+    // 选择用户确定
+    confirmUserSelectClick () {
       let users = []
-      this.userSelectTable.forEach(row=>{
+      this.userSelectTable.forEach(row => {
         users.push(row.userName)
       })
       this.$emit('callback', users.join(','))
       this.userSelectDialog = false
-    },
+    }
   },
-  props: ['userSelectShow','toUsers'],
+  props: ['userSelectShow', 'toUsers']
 }
 </script>
 

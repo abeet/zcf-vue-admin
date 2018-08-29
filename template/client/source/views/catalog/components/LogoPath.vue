@@ -26,38 +26,38 @@ export default {
   props: {
     path: {
       required: true
-    }, //绑定图片路径
+    }, // 绑定图片路径
     prefix: {
       type: String,
-      default: function() {
+      default: function () {
         return window.app ? window.app.prefix : window.opener && window.opener.app ? window.opener.app.prefix : ''
       }
-    }, //图片预览路径前缀
+    }, // 图片预览路径前缀
     previewPath: {
       type: String,
       default: ''
-    }, //图片预览路径
+    }, // 图片预览路径
     editPosition: {
       type: String,
       default: 'bottom'
-    }, //图片操作按钮位置，bottom/right
+    }, // 图片操作按钮位置，bottom/right
     uploadTitle: {
       default: '图片上传'
-    }, //图片上传组件标题
+    }, // 图片上传组件标题
     resourceDialogProps: {
       type: Object,
-      default: function() {
+      default: function () {
         return {}
       }
-    }, //图片上传组件参数
+    }, // 图片上传组件参数
     disabled: {
       type: Boolean,
       default: false
-    }, //是否禁用所有功能
+    }, // 是否禁用所有功能
     fixed: {
       type: Boolean,
       default: false
-    }, //是否
+    }, // 是否
     logoStyle: {
       type: String
     },
@@ -66,11 +66,11 @@ export default {
       default: '上传图片'
     },
     dimensionId: {
-      type: [Number,String],
+      type: [Number, String],
       default: 0
-    },
+    }
   },
-  data() {
+  data () {
     return {
       resourceModal: false,
       imageCuttingModal: false
@@ -78,49 +78,49 @@ export default {
   },
   computed: {
     imgPath: {
-      get() {
+      get () {
         return this.path
       },
-      set(val) {
+      set (val) {
         this.$emit('update:path', val)
       }
     },
     sPath: {
-      get() {
+      get () {
         if (this.path.toLowerCase().startsWith('http')) {
           return this.path
         } else {
-          return !!this.previewPath ? this.previewPath : this.prefix + this.path
+          return this.previewPath ? this.previewPath : this.prefix + this.path
         }
       },
-      set(val) {
+      set (val) {
         this.$emit('update:previewPath', val)
       }
     },
     sLogoStyle: {
-      get() {
+      get () {
         return this.logoStyle
           ? this.logoStyle
           : this.fixed ? 'width:120px;height:90px;cursor:pointer' : `maxWidth:260px;maxHeight:175px;cursor:pointer`
       },
-      set(val) {}
+      set (val) {}
     }
   },
   methods: {
-    editLogo() {
+    editLogo () {
       if (this.disabled) {
         return
       }
       this.resourceModal = true
     },
-    clearLogo() {
+    clearLogo () {
       if (this.disabled || !this.imgPath) {
         return
       }
       this.imgPath = ''
       this.sPath = 'assets/images/addpicture.png'
     },
-    cutLogo() {
+    cutLogo () {
       if (this.disabled || !this.imgPath) {
         return
       }
@@ -132,11 +132,11 @@ export default {
       }
       this.imageCuttingModal = true
     },
-    resourceCallback(sPath, path) {
+    resourceCallback (sPath, path) {
       this.sPath = sPath
       this.imgPath = path
     },
-    imageCuttingCallback(sPath, path) {
+    imageCuttingCallback (sPath, path) {
       this.sPath = sPath
       this.imgPath = path
     }

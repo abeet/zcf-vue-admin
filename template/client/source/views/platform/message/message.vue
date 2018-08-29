@@ -52,14 +52,14 @@ import messageReply from './messageReplyDialog.vue'
 import messageHistory from './messageHistory.vue'
 import messageDetail from './messageDetailDialog.vue'
 export default {
-  data() {
+  data () {
     return {
       sortField: 'addTime',
-      messageTable: [], //消息列表数据
-      selectedRows: [], //消息列表当前行
-      messageAddShow: false, //新建消息dialog显示状态
-      messageReplyShow: false, //回复dialog显示状态
-      msgHistoryShow: false, //已发消息dialog显示状态
+      messageTable: [], // 消息列表数据
+      selectedRows: [], // 消息列表当前行
+      messageAddShow: false, // 新建消息dialog显示状态
+      messageReplyShow: false, // 回复dialog显示状态
+      msgHistoryShow: false, // 已发消息dialog显示状态
       showLookMessageShow: false,
       tmpMessageDetail: {
         toUser: '',
@@ -74,15 +74,15 @@ export default {
         subject: '',
         content: ''
       },
-      openTimes:0,
+      openTimes: 0
     }
   },
   computed: {
     messageDialog: {
-      get() {
+      get () {
         return this.messageShow
       },
-      set(val) {
+      set (val) {
         this.$emit('update:messageShow', val)
       }
     }
@@ -94,29 +94,29 @@ export default {
     'msgdetail-dialog': messageDetail
   },
   methods: {
-    dialogOpen() {
-      if(this.openTimes > 0){
+    dialogOpen () {
+      if (this.openTimes > 0) {
         this.getMessageData()
       }
       this.openTimes += 1
     },
-    edit(row) {
+    edit (row) {
       console.log(row)
     },
-    //新建
-    addMessageClick() {
+    // 新建
+    addMessageClick () {
       this.messageAddShow = true
     },
-    //回复点击
-    replyMessageClick() {
+    // 回复点击
+    replyMessageClick () {
       this.messageReplyShow = true
       this.tmpMessageReply = Object.assign({}, this.selectedRows[0])
     },
-    //已发消息
-    sendMessageClick() {
+    // 已发消息
+    sendMessageClick () {
       this.msgHistoryShow = true
     },
-    getData() {
+    getData () {
       return [
         '/api/message',
         {
@@ -126,18 +126,18 @@ export default {
         }
       ]
     },
-    //短消息列表数据
-    getMessageData() {
+    // 短消息列表数据
+    getMessageData () {
       this.$refs.messageTable.getData()
     },
-    //选中行
-    messageSelectionChange(selection) {
+    // 选中行
+    messageSelectionChange (selection) {
       this.selectedRows = selection
     },
-    //标记为已读
-    markReadClick() {
+    // 标记为已读
+    markReadClick () {
       let rowIds = []
-      this.selectedRows.forEach(function(row) {
+      this.selectedRows.forEach(function (row) {
         rowIds.push(row.ID)
       })
 
@@ -154,10 +154,10 @@ export default {
       })
     },
 
-    //删除消息
-    deleteMessageClick() {
+    // 删除消息
+    deleteMessageClick () {
       let rowIds = []
-      this.selectedRows.forEach(function(row) {
+      this.selectedRows.forEach(function (row) {
         rowIds.push(row.ID)
       })
       this.$confirm('确认删除所选的消息?', '提示', {
@@ -172,8 +172,8 @@ export default {
         }
       })
     },
-    //双击查看消息
-    lookMessageDbClick(row) {
+    // 双击查看消息
+    lookMessageDbClick (row) {
       this.tmpMessageDetail = Object.assign({}, row)
       this.showLookMessageShow = true
     }

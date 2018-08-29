@@ -46,40 +46,40 @@
 import util from '../../common/util.js'
 import metaColumnDialog from './metaColumnDialog.vue'
 export default {
-  props:{modelId:[String,Number],tabName:String},
-  data() {
+  props: {modelId: [String, Number], tabName: String},
+  data () {
     return {
-      dataLoading : false,
-      selectedRows:[],/**分组选中行 */
-      currentColumn:{},/**当前选中首行字段 */
-      columns:[],/**表格填充数据 */
-      addOrEdit:{/** 添加或修改弹框 */
-        tmpColumn:{},
-        isShowModal:false,
-        title:''
+      dataLoading: false,
+      selectedRows: [], /** 分组选中行 */
+      currentColumn: {}, /** 当前选中首行字段 */
+      columns: [], /** 表格填充数据 */
+      addOrEdit: {/** 添加或修改弹框 */
+        tmpColumn: {},
+        isShowModal: false,
+        title: ''
       }
     }
   },
-  methods:{
-    /**添加或编辑回调 */
-    afterAddOrEdit(data){
+  methods: {
+    /** 添加或编辑回调 */
+    afterAddOrEdit (data) {
       let index = this.columns.findIndex(val => val.ID == data.ID)
       index != -1 ? this.columns.splice(index, 1, data) : this.columns.splice(0, 0, data)
     },
-    /**添加字段 */
-    addColumnClickHandler(){
+    /** 添加字段 */
+    addColumnClickHandler () {
       this.addOrEdit.title = '添加字段'
       this.addOrEdit.tmpColumn = {}
       this.addOrEdit.isShowModal = true
     },
-    /**修改字段 */
-    editColumnClickHandler(){
+    /** 修改字段 */
+    editColumnClickHandler () {
       this.addOrEdit.title = '修改字段'
-      this.addOrEdit.tmpColumn = Object.assign({},this.currentColumn)
+      this.addOrEdit.tmpColumn = Object.assign({}, this.currentColumn)
       this.addOrEdit.isShowModal = true
     },
-    /**删除字段 */
-    async deleteColumnClickHandler(){
+    /** 删除字段 */
+    async deleteColumnClickHandler () {
       let ids = util.getSelectedIDs(this.selectedRows)
       try {
         await this.$confirm('确定删除吗，删除后无法恢复。是否继续删除？', '删除确认', {
@@ -89,37 +89,36 @@ export default {
         })
         let res = await axios.delete(`/metamodels/${this.modelId}/columns/${ids.join()}`)
         util.showMessage(res)
-        if(res.data.status === 1) {
+        if (res.data.status === 1) {
           this.columns = this.columns.filter(val => !ids.includes(val.ID))
           this.selectedRows = []
         }
-      } catch(e) {
+      } catch (e) {
         util.showErrorNotification(e)
-        return
       }
     },
-    onSelectionChange(selection){
+    onSelectionChange (selection) {
       this.selectedRows = selection
       this.currentColumn = this.selectedRows.length ? Object.assign({}, this.selectedRows[0]) : {}
     },
-    async loadColumnList(){
+    async loadColumnList () {
       this.dataLoading = true
       let res = await axios.get(`/metamodels/${this.modelId}/columns`)
       this.dataLoading = false
-      this.columns = (res.data.data&&res.data.data.length)?res.data.data:[]
+      this.columns = (res.data.data && res.data.data.length) ? res.data.data : []
     }
   },
-  components:{
-    'meta-column-dialog' : metaColumnDialog,
+  components: {
+    'meta-column-dialog': metaColumnDialog
   },
-  watch:{
-    modelId(val){
-      if(this.tabName === 'field'){
+  watch: {
+    modelId (val) {
+      if (this.tabName === 'field') {
         this.loadColumnList()
       }
     },
-    tabName(val){
-      if(val === 'field'){
+    tabName (val) {
+      if (val === 'field') {
         this.loadColumnList()
       }
     }

@@ -18,10 +18,10 @@ axiosMock.onGet('/api/logs/tree').reply(200, {
   }],
   message: '',
   status: 1
-});
+})
 
 axiosMock.onGet('/api/logs/realtimelog').reply((res) => {
-  if(res.params.lastid === 0){
+  if (res.params.lastid === 0) {
     return [200, {
       data: {
         lastid: Math.round(Math.random() * 1000000),
@@ -29,7 +29,7 @@ axiosMock.onGet('/api/logs/realtimelog').reply((res) => {
       },
       status: 1,
       message: ''
-    }];
+    }]
   }
 
   return [200, {
@@ -39,8 +39,8 @@ axiosMock.onGet('/api/logs/realtimelog').reply((res) => {
     },
     status: 1,
     message: ''
-  }];
-});
+  }]
+})
 
 const sqlLogs = {
   logs: [
@@ -56,13 +56,13 @@ const sqlLogs = {
     {id: 10, date: '2017-08-09 17:01:18', ip: 'localhost', userName: 'admin', ms: 120, message: 'CostTime=7739'}
   ],
   total: 182
-};
+}
 
 axiosMock.onGet('/api/logs/sqllog').reply(200, {
   data: sqlLogs,
   status: 1,
   message: ''
-});
+})
 
 const securityLogs = {
   logs: [
@@ -78,13 +78,13 @@ const securityLogs = {
     {id: 10, date: '2008-08-09 17:01:18', userName: 'admin', ip: 'localhost', message: 'message info'}
   ],
   total: 93
-};
+}
 
 axiosMock.onGet('/api/logs/securitylog').reply(200, {
   data: securityLogs,
   status: 1,
   message: ''
-});
+})
 
 const cronLogs = {
   logs: [
@@ -100,13 +100,13 @@ const cronLogs = {
     {id: 10, date: '2008-08-09 17:01:18', message: 'message info cron logs'}
   ],
   total: 47
-};
+}
 
 axiosMock.onGet('/api/logs/cronlog').reply(200, {
   data: cronLogs,
   status: 1,
   message: ''
-});
+})
 
 const userLogs = {
   logs: [
@@ -122,19 +122,19 @@ const userLogs = {
     {id: 10, date: '2008-08-09 17:01:18', userName: 'admin', ip: 'localhost', message: 'message info', memo: 'memo'}
   ],
   total: 28
-};
+}
 
 axiosMock.onGet('/api/logs/userlog').reply(200, {
   data: userLogs,
   status: 1,
   message: ''
-});
+})
 
 axiosMock.onGet('/api/logs/userloginlog').reply(200, {
   data: userLogs,
   status: 1,
   message: ''
-});
+})
 
 const downlogs = {
   logs: [
@@ -150,13 +150,13 @@ const downlogs = {
     {id: 10, lastmodifiedtime: '2008-08-09 17:01:18', fileName: 'logs-10.log', size: '2.0KB'}
   ],
   total: 10
-};
+}
 
 axiosMock.onGet('/api/logs/downlog').reply(200, {
   data: downlogs,
   status: 1,
   message: ''
-});
+})
 
 const userOperateLogs = {
   logs: [
@@ -172,10 +172,10 @@ const userOperateLogs = {
     {id: 10, date: '2008-08-09 17:01:18', userName: 'admin', operateitem: '设置', memo: 'memo'}
   ],
   total: 64
-};
+}
 
 axiosMock.onGet('/api/logs/useroperatelog').reply(200, {
   data: userOperateLogs,
   status: 1,
   message: ''
-});
+})

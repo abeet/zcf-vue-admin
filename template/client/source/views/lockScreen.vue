@@ -29,13 +29,13 @@
 import util from '../common/util.js'
 
 export default {
-  data() {
+  data () {
     return {
       avatorLeft: '0px',
       inputLeft: '400px',
       password: '',
       check: null
-    };
+    }
   },
   props: {
     showUnlock: {
@@ -45,92 +45,91 @@ export default {
   },
   computed: {
     _showUnlock: {
-      get() {
-        return this.showUnlock;
+      get () {
+        return this.showUnlock
       },
-      set(val) {
-        this.$emit('update:showUnlock', val);
+      set (val) {
+        this.$emit('update:showUnlock', val)
       }
     },
-    avatorPath() {
+    avatorPath () {
       return util.url.join(window.SERVER, '/avatar/' + localStorage.userName)
     }
   },
   watch: {
-    showUnlock(val) {
+    showUnlock (val) {
       if (val) {
         this.lockScreen()
       }
     }
   },
-  mounted() {
-    let lockScreenBack;
+  mounted () {
+    let lockScreenBack
     if (!document.getElementById('lockScreenBack')) {
-      let lockdiv = document.createElement('div');
-      lockdiv.setAttribute('id', 'lockScreenBack');
-      lockdiv.setAttribute('class', 'lock-screen-back');
-      document.body.appendChild(lockdiv);
-      lockScreenBack = document.getElementById('lockScreenBack');
+      let lockdiv = document.createElement('div')
+      lockdiv.setAttribute('id', 'lockScreenBack')
+      lockdiv.setAttribute('class', 'lock-screen-back')
+      document.body.appendChild(lockdiv)
+      lockScreenBack = document.getElementById('lockScreenBack')
       window.addEventListener('resize', () => {
-        let size = this.setLockBackSize();
-        this.lockScreenSize = size;
-        lockScreenBack.style.transition = 'all 0s';
-        lockScreenBack.style.width = lockScreenBack.style.height = size + 'px';
-      });
+        let size = this.setLockBackSize()
+        this.lockScreenSize = size
+        lockScreenBack.style.transition = 'all 0s'
+        lockScreenBack.style.width = lockScreenBack.style.height = size + 'px'
+      })
     } else {
-      lockScreenBack = document.getElementById('lockScreenBack');
+      lockScreenBack = document.getElementById('lockScreenBack')
     }
-    let size = this.setLockBackSize();
-    this.lockScreenSize = size;
-    lockScreenBack.style.transition = 'all 3s';
-    lockScreenBack.style.width = lockScreenBack.style.height = size + 'px';
-    lockScreenBack.style.zIndex = -1;
-
+    let size = this.setLockBackSize()
+    this.lockScreenSize = size
+    lockScreenBack.style.transition = 'all 3s'
+    lockScreenBack.style.width = lockScreenBack.style.height = size + 'px'
+    lockScreenBack.style.zIndex = -1
   },
   methods: {
-    setLockBackSize() {
-      let x = document.body.clientWidth;
-      let y = document.body.clientHeight;
-      let r = Math.sqrt(x * x + y * y);
-      return parseInt(r);
+    setLockBackSize () {
+      let x = document.body.clientWidth
+      let y = document.body.clientHeight
+      let r = Math.sqrt(x * x + y * y)
+      return parseInt(r)
     },
-    lockScreen() {
-      let lockScreenBack = document.getElementById('lockScreenBack');
-      lockScreenBack.style.transition = 'all 3s';
-      lockScreenBack.style.zIndex = 1000;
-      lockScreenBack.style.boxShadow = '0 0 0 ' + this.setLockBackSize() + 'px #667aa6 inset';
+    lockScreen () {
+      let lockScreenBack = document.getElementById('lockScreenBack')
+      lockScreenBack.style.transition = 'all 3s'
+      lockScreenBack.style.zIndex = 1000
+      lockScreenBack.style.boxShadow = '0 0 0 ' + this.setLockBackSize() + 'px #667aa6 inset'
       localStorage.lastRoutePath = this.$route.path // 本地存储锁屏之前打开的页面以便解锁后打开
       setTimeout(() => {
-        lockScreenBack.style.transition = 'all 0s';
+        lockScreenBack.style.transition = 'all 0s'
         this.$router.push({
           path: '/locking'
-        });
-      }, 800);
+        })
+      }, 800)
       localStorage.locking = '1'
     },
-    handleUnlockOK() {
-      let lockScreenBack = document.getElementById('lockScreenBack');
-      this._showUnlock = false;
-      lockScreenBack.style.zIndex = -1;
-      lockScreenBack.style.boxShadow = '0 0 0 0 #667aa6 inset';
+    handleUnlockOK () {
+      let lockScreenBack = document.getElementById('lockScreenBack')
+      this._showUnlock = false
+      lockScreenBack.style.zIndex = -1
+      lockScreenBack.style.boxShadow = '0 0 0 0 #667aa6 inset'
       this.$router.push({
         path: localStorage.lastRoutePath // 解锁之后跳转到锁屏之前的页面
-      });
+      })
     },
-    async validator() {
+    async validator () {
       let res = await axios.post('/api/loginwithoutname', {password: this.password})
-      if(res && res.data && res.data.status === 1){
-        return true;
+      if (res && res.data && res.data.status === 1) {
+        return true
       }
-      return false;
+      return false
     },
-    handleClickAvator() {
-      this.avatorLeft = '-140px';
-      this.inputLeft = '0px';
-      this.$refs.inputEle.focus();
+    handleClickAvator () {
+      this.avatorLeft = '-140px'
+      this.inputLeft = '0px'
+      this.$refs.inputEle.focus()
     },
-    async handleUnlock() {
-      if(!this.password){
+    async handleUnlock () {
+      if (!this.password) {
         this.$message({
           message: '请输入密码解锁！',
           type: 'error'
@@ -139,11 +138,11 @@ export default {
       }
       const r = await this.validator()
       if (r) {
-        this.avatorLeft = '0px';
-        this.inputLeft = '400px';
-        this.password = '';
+        this.avatorLeft = '0px'
+        this.inputLeft = '400px'
+        this.password = ''
         localStorage.locking = '0'
-        this.$emit('on-unlock');
+        this.$emit('on-unlock')
         this.handleUnlockOK()
       } else {
         this.$message({
@@ -152,11 +151,11 @@ export default {
         })
       }
     },
-    unlockMousedown() {
-      this.$refs.unlockBtn.className = 'unlock-btn click-unlock-btn';
+    unlockMousedown () {
+      this.$refs.unlockBtn.className = 'unlock-btn click-unlock-btn'
     },
-    unlockMouseup() {
-      this.$refs.unlockBtn.className = 'unlock-btn';
+    unlockMouseup () {
+      this.$refs.unlockBtn.className = 'unlock-btn'
     }
   }
 }

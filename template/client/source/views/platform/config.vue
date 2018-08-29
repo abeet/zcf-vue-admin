@@ -42,7 +42,7 @@ import ControlNumber from './components/control/ControlNumber.vue'
 import util from '../../common/util'
 
 export default {
-  data() {
+  data () {
     return {
       loading: true,
       configs: {},
@@ -50,7 +50,7 @@ export default {
     }
   },
   methods: {
-    async saveClick() {
+    async saveClick () {
       try {
         var res = await axios.put('/api/configs/saved', { data: this.configs })
         res = res.data
@@ -60,7 +60,7 @@ export default {
       }
       util.showNotification(res)
     },
-    controlType(item) {
+    controlType (item) {
       if (item.controlType === 'Text' && item.dataType === 'Long') {
         return 'control-number'
       }
@@ -84,7 +84,7 @@ export default {
           return ''
       }
     },
-    itemClickHandler(index) {
+    itemClickHandler (index) {
       let scrollWrap = document.querySelector('.layout-content-padding'),
         configItems = document.querySelectorAll('.config-group-wrap'),
         topValue = 0
@@ -97,7 +97,7 @@ export default {
       scrollWrap.scrollTop = topValue
     }
   },
-  async created() {
+  async created () {
     let data = await axios.get('/api/configs')
     data = data.data
     this.loading = false

@@ -69,13 +69,13 @@ const codes = [
     isfixed: true,
     memo: ''
   }
-];
+]
 
 axiosMock.onGet(/api\/codes\?pageIndex=\d+&pageSize=\d+$/).reply(200, {
   data: codes,
   total: 108,
   status: 1
-});
+})
 
 axiosMock.onPost('/api/codes').reply(200, {
   status: 1,
@@ -84,11 +84,11 @@ axiosMock.onPost('/api/codes').reply(200, {
     id: Math.round(Math.random() * 10000)
     // ...
   }
-});
+})
 
-axiosMock.onPut(/api\/codes\/.+$/).reply(200, { status: 1, message: '更新成功！'});
+axiosMock.onPut(/api\/codes\/.+$/).reply(200, { status: 1, message: '更新成功！'})
 
-axiosMock.onDelete(/api\/codes\/.+$/).reply(200, { status: 1, message: '删除成功！'});
+axiosMock.onDelete(/api\/codes\/.+$/).reply(200, { status: 1, message: '删除成功！'})
 
 const codeItems = [
   { id: 1, codeType: 'ADPStatus', codeName: '超过一个月', codeValue: 'one_month', isfixed: true, remark: ''},
@@ -97,12 +97,12 @@ const codeItems = [
   { id: 4, codeType: 'ADPStatus', codeName: '超过一年', codeValue: 'one_year', isfixed: false, remark: ''},
   { id: 5, codeType: 'ADPStatus', codeName: '超过二年', codeValue: 'two_year', isfixed: false, remark: ''},
   { id: 6, codeType: 'ADPStatus', codeName: '重未修改', codeValue: 'repeat', isfixed: false, remark: ''}
-];
+]
 
 axiosMock.onGet(/api\/codes\/.+\/items$/).reply(200, {
   status: 1,
   data: codeItems
-});
+})
 
 axiosMock.onPost(/api\/codes\/.+\/items$/).reply(200, {
   status: 1,
@@ -111,8 +111,8 @@ axiosMock.onPost(/api\/codes\/.+\/items$/).reply(200, {
     id: Math.round(Math.random() * 10000)
     // ...
   }
-});
+})
 
-axiosMock.onPut(/api\/codes\/.+\/items\/.+$/).reply(200, { status: 1, message: '更新成功！'});
+axiosMock.onPut(/api\/codes\/.+\/items\/.+$/).reply(200, { status: 1, message: '更新成功！'})
 
-axiosMock.onDelete(/api\/codes\/.+\/items\/.+$/).reply(200, { status: 1, message: '删除成功！'});
+axiosMock.onDelete(/api\/codes\/.+\/items\/.+$/).reply(200, { status: 1, message: '删除成功！'})

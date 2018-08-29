@@ -22,68 +22,68 @@
 </template>
 
 <script>
-  // 树形选择器
+// 树形选择器
 
-  export default {
-    data(){
-      return {
-        isOpenTree: false
-      };
-    },
-    methods: {
-      inputClickHandler(){
-        if(this.disabled){
-          return;
-        }
-        this.isOpenTree = !this.isOpenTree;
-      },
-      wrapClickHandler(){
-        if(this.disabled){
-          return;
-        }
-        if(!this.isOpenTree){
-          this.isOpenTree = true;
-        }
-      },
-      treeNodeClickHandler(data){
-        let val = {};
-        val[this.itemsOptions.label] = data[this.itemsOptions.label];
-        val[this.itemsOptions.key] = data[this.itemsOptions.key];
-
-        this.$emit('input', val);
-        this.isOpenTree = false;
-      }
-    },
-    computed:{
-      inputValue(){
-        if(!this.value || !this.itemsOptions || !this.itemsOptions.label){
-          return '';
-        }
-
-        return this.value[this.itemsOptions.label] || '';
-      },
-      currentNodeKey(){
-        if(!this.value || !this.itemsOptions || !this.itemsOptions.key){
-          return '';
-        }
-
-        return this.value[this.itemsOptions.key] || '';
-      }
-    },
-    props: [
-      'value',
-      'placeholder',
-      'items',
-      'itemsOptions',
-      'disabled'
-    ],
-    mounted(){
-      let that = this;
-      document.addEventListener('click', () => {
-        that.isOpenTree = false;
-      }, false)
+export default {
+  data () {
+    return {
+      isOpenTree: false
     }
-  };
+  },
+  methods: {
+    inputClickHandler () {
+      if (this.disabled) {
+        return
+      }
+      this.isOpenTree = !this.isOpenTree
+    },
+    wrapClickHandler () {
+      if (this.disabled) {
+        return
+      }
+      if (!this.isOpenTree) {
+        this.isOpenTree = true
+      }
+    },
+    treeNodeClickHandler (data) {
+      let val = {}
+      val[this.itemsOptions.label] = data[this.itemsOptions.label]
+      val[this.itemsOptions.key] = data[this.itemsOptions.key]
+
+      this.$emit('input', val)
+      this.isOpenTree = false
+    }
+  },
+  computed: {
+    inputValue () {
+      if (!this.value || !this.itemsOptions || !this.itemsOptions.label) {
+        return ''
+      }
+
+      return this.value[this.itemsOptions.label] || ''
+    },
+    currentNodeKey () {
+      if (!this.value || !this.itemsOptions || !this.itemsOptions.key) {
+        return ''
+      }
+
+      return this.value[this.itemsOptions.key] || ''
+    }
+  },
+  props: [
+    'value',
+    'placeholder',
+    'items',
+    'itemsOptions',
+    'disabled'
+  ],
+  mounted () {
+    let that = this
+    document.addEventListener('click', () => {
+      that.isOpenTree = false
+    }, false)
+  }
+}
 </script>
 
 <style scoped>
@@ -92,7 +92,6 @@
     cursor: pointer;
   }
   .select-wrap input[type='text']{
-
 
   }
   .select-wrap .tree-wrap{

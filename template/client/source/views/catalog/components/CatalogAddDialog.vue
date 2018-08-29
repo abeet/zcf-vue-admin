@@ -45,74 +45,74 @@
 <script>
 import util from '../../../common/util.js'
 export default {
-  props:{
+  props: {
     show: {
       type: Boolean,
       default: false,
       required: true
     },
     dimensionId: {
-      type: [Number,String],
+      type: [Number, String],
       default: 0
     },
     parent: {
       type: Object
     },
-    types:{
+    types: {
       type: Array,
-      required:true
+      required: true
     },
-    contentTypes:{
+    contentTypes: {
       type: Array,
-      required:true
-    },
+      required: true
+    }
   },
-  data() {
+  data () {
     return {
       submitLoading: false,
-      tmpCatalog: {name:'',alias:'',parent:{ID:0,name:'',alias:'',contentType:'',type:''}},
+      tmpCatalog: {name: '', alias: '', parent: {ID: 0, name: '', alias: '', contentType: '', type: ''}}
     }
   },
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
       }
     }
   },
   methods: {
-    //别名设置：取名称首字母
-    setAlias() {
-      if(this.tmpCatalog.alias.trim()){
+    // 别名设置：取名称首字母
+    setAlias () {
+      if (this.tmpCatalog.alias.trim()) {
         return
       }
       this.tmpCatalog.alias = util.getSpell(
         this.tmpCatalog.name,
         true
       )
-      if(this.parent.alias){
+      if (this.parent.alias) {
         this.tmpCatalog.alias = this.parent.alias + '_' + this.tmpCatalog.alias
       }
     },
-    dialogOpen(){
+    dialogOpen () {
       this.tmpCatalog = {
-        parent:{ID:this.parent.ID,name:this.parent.name},
-        name:'',
-        isExtendParentPriv:'N',
-        alias:'',
-        type:this.parent.type,
-        contentType:this.parent.contentType
+        parent: {ID: this.parent.ID, name: this.parent.name},
+        name: '',
+        isExtendParentPriv: 'N',
+        alias: '',
+        type: this.parent.type,
+        contentType: this.parent.contentType
       },
       this.submitLoading = false
     },
-    /**检查填写的字符串格式是否正确,替换掉特殊字符,保留中文*/
-    checkFormat() {
+    /** 检查填写的字符串格式是否正确,替换掉特殊字符,保留中文 */
+    checkFormat () {
       let str = this.tmpCatalog.name
-      if(!str){
-        return false;
+      if (!str) {
+        return false
       }
       str = str.replace('\t', '  ')
       str = str.replace(/\r\b\f/g, '')
@@ -124,12 +124,12 @@ export default {
       this.tmpCatalog.name = str
       return true
     },
-    async confirmClickHandler() {
+    async confirmClickHandler () {
       this.tmpCatalog.dimensionID = this.dimensionId
       this.tmpCatalog.parentID = this.parent.ID
       let flag = await this.checkFormat()
       if (!flag) {
-        util.showResponseMessage({message:'请输入正确的栏目名称'})
+        util.showResponseMessage({message: '请输入正确的栏目名称'})
         return
       }
       this.submitLoading = true
@@ -138,18 +138,17 @@ export default {
         let res = await axios.post('/api/catalogs', this.tmpCatalog)
         this.submitLoading = false
         util.showResponseMessage(res.data)
-        if(res.data.status===1){
+        if (res.data.status === 1) {
           this.isShow = false
           await this.$nextTick()
           await util.updatePriv()
           this.$refs.form.resetFields()
-          this.$emit('callback',res.data.catalog)
+          this.$emit('callback', res.data.catalog)
         }
       } catch (e) {
         this.submitLoading = false
-        return
       }
-    },
+    }
   }
 }
 </script>

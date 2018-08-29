@@ -172,7 +172,7 @@ import BlockPermission from './components/BlockPermission.vue'
 import util from '../../common/util.js'
 
 export default {
-  data() {
+  data () {
     return {
       users: [],
       privType: 'U',
@@ -181,7 +181,7 @@ export default {
       modifyPasswordModal: false,
       addUserModal: false,
       editUserModal: false,
-      currentTab:'base',
+      currentTab: 'base',
       tmpUser: {
         userName: '',
         realName: '',
@@ -202,8 +202,8 @@ export default {
       userPermissionTypes: [],
       UserPermissions: [],
       modalLoading: false,
-      userStatus: '', //用户状态
-      changePasswordType: '', //用户更改密码时间类型
+      userStatus: '', // 用户状态
+      changePasswordType: '', // 用户更改密码时间类型
       optionsPasswordType: [],
       userNameSearch: '',
       realNameSearch: '',
@@ -218,7 +218,7 @@ export default {
           value: 'N',
           label: '停用'
         }
-      ], //查询会员状态
+      ], // 查询会员状态
       userRules: {
         userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         password: [{ required: true, message: '请输入密码', trigger: 'blur' }, { min: 6, max: 32, message: '密码最少6位，最多32位', trigger: 'blur' }],
@@ -259,7 +259,7 @@ export default {
     }
   },
   computed: {
-    disableOrEnable: function() {
+    disableOrEnable: function () {
       if (this.selectedRows.length !== 1) {
         return ''
       }
@@ -268,17 +268,17 @@ export default {
     }
   },
   methods: {
-    onSelectionChange(selection) {
+    onSelectionChange (selection) {
       this.selectedRows = selection
     },
-    async changePasswordMethod() {
+    async changePasswordMethod () {
       let data = await axios.get('/api/users/changepasswordtype')
       this.optionsPasswordType = data.data.data
     },
-    searchClickHandlder() {
+    searchClickHandlder () {
       this.$refs.userDataTable.getData()
     },
-    getUsersURL() {
+    getUsersURL () {
       return [
         '/api/users',
         {
@@ -292,7 +292,7 @@ export default {
         }
       ]
     },
-    async addClick() {
+    async addClick () {
       this.tmpUser = {
         userName: '',
         realName: '',
@@ -318,11 +318,11 @@ export default {
       this.addUserModal = true
     },
 
-    async getBranches() {
+    async getBranches () {
       let data = await axios.get('/api/branches')
       this.branches = data.data.data
     },
-    async addUserHandler() {
+    async addUserHandler () {
       try {
         await util.validateForm(this.$refs['addUserForm'])
       } catch (e) {
@@ -346,7 +346,7 @@ export default {
       this.handlerLoading = false
       util.showNotification(data)
     },
-    editClick() {
+    editClick () {
       this.tmpUser = Object.assign({ roleIds: [] }, this.tmpUser, this.selectedRows[0])
       this.tmpUser.roleIds = this.tmpUser.roles.map(val => {
         return val.roleCode
@@ -366,7 +366,7 @@ export default {
         this.modalLoading = false
       })
     },
-    async editUserHandler() {
+    async editUserHandler () {
       try {
         await util.validateForm(this.$refs['editUserForm'])
       } catch (e) {
@@ -396,10 +396,10 @@ export default {
       util.showNotification(res)
       this.editUserModal = false
     },
-    async deleteClickHandler() {
+    async deleteClickHandler () {
       let rowIds = []
 
-      this.selectedRows.forEach(function(row) {
+      this.selectedRows.forEach(function (row) {
         rowIds.push(row.userName)
       })
 
@@ -438,11 +438,11 @@ export default {
         util.showErrorNotification(e)
       }
     },
-    async noticeClickHandler() {
+    async noticeClickHandler () {
       let rowIds = [],
         rowUsers = []
 
-      this.selectedRows.forEach(function(row) {
+      this.selectedRows.forEach(function (row) {
         rowIds.push(row.userName)
         rowUsers.push(row.userName)
       })
@@ -482,7 +482,7 @@ export default {
         util.showErrorNotification(e)
       }
     },
-    async disableOrEnableClickHandler() {
+    async disableOrEnableClickHandler () {
       let userName = this.selectedRows[0].userName
 
       this.$confirm('确定' + this.disableOrEnable + '这个用户吗？', '确认' + this.disableOrEnable, {
@@ -530,14 +530,14 @@ export default {
         util.showErrorNotification(e)
       })
     },
-    modifyPasswordClick() {
+    modifyPasswordClick () {
       this.tmpUser.userName = this.selectedRows[0].userName
       this.tmpUser.password = ''
       this.tmpUser.repeatPassword = ''
 
       this.modifyPasswordModal = true
     },
-    async modifyPasswordHandler() {
+    async modifyPasswordHandler () {
       try {
         await util.validateForm(this.$refs['modifyPasswordForm'])
       } catch (e) {
@@ -557,9 +557,9 @@ export default {
       util.showNotification(data)
     }
   },
-  created() {
-    this.changePasswordMethod() //获取密码变更时间类型数据
-    this.getBranches() //机构数据
+  created () {
+    this.changePasswordMethod() // 获取密码变更时间类型数据
+    this.getBranches() // 机构数据
   },
   components: {
     'tree-select': TreeSelect,

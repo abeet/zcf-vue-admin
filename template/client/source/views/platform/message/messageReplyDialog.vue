@@ -23,51 +23,51 @@
 <script>
 import util from '../../../common/util.js'
 export default {
-  data() {
+  data () {
     return {
       confirmLoading: false,
-      tmpMessageReply:{},
+      tmpMessageReply: {},
       messageReplyRules: {
         content: [
           { required: true, message: '内容不能为空', trigger: 'blur' },
-          { min: 1, max: 2000, message: '长度在 1 到 2000 个字符', trigger: 'blur' },
-        ],
-      },
+          { min: 1, max: 2000, message: '长度在 1 到 2000 个字符', trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
     messageReplyDialog: {
-      get() {
+      get () {
         return this.messageReplyShow
       },
-      set(val) {
+      set (val) {
         this.$emit('update:messageReplyShow', val)
       }
     }
   },
   methods: {
-    dialogOpen(){
+    dialogOpen () {
       this.tmpMessageReply = {
-        toUser:this.tmpMessage.toUser,
-        subject:'回复：'+this.tmpMessage.subject,
-        content:''
+        toUser: this.tmpMessage.toUser,
+        subject: '回复：' + this.tmpMessage.subject,
+        content: ''
       }
     },
-    async confirmMessageReplyClick() {
+    async confirmMessageReplyClick () {
       try {
         await util.validateForm(this.$refs['messageReplyForm'])
       } catch (e) {
         util.showErrorMessageBox(e)
         return
       }
-      let res = await axios.post('/api/message/reply',this.tmpMessageReply)
+      let res = await axios.post('/api/message/reply', this.tmpMessageReply)
       util.showResponseMessage(res.data)
-      if(res.data.status === 1){
+      if (res.data.status === 1) {
         this.messageReplyDialog = false
       }
-    },
+    }
   },
-  props: ['messageReplyShow','tmpMessage'],
+  props: ['messageReplyShow', 'tmpMessage']
 }
 </script>
 <style>

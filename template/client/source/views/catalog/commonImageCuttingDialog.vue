@@ -43,62 +43,61 @@ import imageCuttingTextWatermark from './imageCutting/imageCuttingTextWatermark.
 export default {
   props: {
     siteID: {
-      type: [Number,String],
-      default: 0,
+      type: [Number, String],
+      default: 0
     },
     imagePath: {
       default: '',
-      required: true,
+      required: true
     },
     show: {
       type: Boolean,
       default: false,
-      required: true,
-    },
+      required: true
+    }
   },
-  data() {
+  data () {
     return {
       activeTabName: 'cut',
-      path:'',
-      prePath:''
+      path: '',
+      prePath: ''
     }
   },
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
-      },
-    },
+      }
+    }
   },
   methods: {
-    async dialogOpen() {
+    async dialogOpen () {
       let res = await axios.get('/api/commonimagecutting/init', {
-        params:{
+        params: {
           path: this.imagePath,
-          siteID: this.siteID,
+          siteID: this.siteID
         }
       })
       this.path = res.data.data.path
       this.prePath = res.data.data.prefix + res.data.data.path
     },
     confirm () {
-      this.$emit('callback',this.prePath,this.path)
+      this.$emit('callback', this.prePath, this.path)
       this.isShow = false
     },
     handleClose (val) {
       this.isShow = val
     }
   },
-  created() {},
+  created () {},
   components: {
     'image-cut': imageCuttingCut,
     'image-rotate': imageCuttingRotate,
     'image-watermark': imageCuttingWatermark,
-    'image-text-watermark': imageCuttingTextWatermark,
-  },
+    'image-text-watermark': imageCuttingTextWatermark
+  }
 }
 </script>
-

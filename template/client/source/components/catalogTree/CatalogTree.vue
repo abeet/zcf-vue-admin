@@ -14,124 +14,123 @@
 </template>
 
 <script>
-  import CatalogTreeNode from './CatalogTreeNode.vue'
-  import MenuTreeNode from './MenuTreeNode.vue'
-  import util from '../../common/util.js'
+import CatalogTreeNode from './CatalogTreeNode.vue'
+import MenuTreeNode from './MenuTreeNode.vue'
+import util from '../../common/util.js'
 
-  export default {
-    name: 'CatalogTree',
-    componentName: 'CatalogTree',
-    components: {
-      'catalog-tree-node': CatalogTreeNode,
-      'menu-tree-node': MenuTreeNode
+export default {
+  name: 'CatalogTree',
+  componentName: 'CatalogTree',
+  components: {
+    'catalog-tree-node': CatalogTreeNode,
+    'menu-tree-node': MenuTreeNode
+  },
+  props: {
+    data: {
+      type: Array,
+      required: true
     },
     props: {
-      data: {
-        type: Array,
-        required: true,
-      },
-      props: {
-        type: Object,
-        default: function () {
-          return {
-            children: 'children',
-            label: 'name',
-            key: 'ID',
-            traceback: 'innerCode' // 可用来回溯父节点的属性
-          }
+      type: Object,
+      default: function () {
+        return {
+          children: 'children',
+          label: 'name',
+          key: 'ID',
+          traceback: 'innerCode' // 可用来回溯父节点的属性
         }
-      },
-      nodeActive:{
-        type:[String,Number],
-        default:''
-      },
-      lazy: {
-        type: Function
-      },
-      level1:{
-        type:Boolean,
-        default:true
-      },
-      isMenu:{
-        type:Boolean,
-        default:false
-      },
-      clearSelect:{
-        type:Boolean,
-        default:false
       }
     },
-    data () {
-      return {
-        active:null,
-        expandLevel:10
-      }
+    nodeActive: {
+      type: [String, Number],
+      default: ''
     },
-    created () {
-      this.$on('node-click', (nodeData, node) => {
-
+    lazy: {
+      type: Function
+    },
+    level1: {
+      type: Boolean,
+      default: true
+    },
+    isMenu: {
+      type: Boolean,
+      default: false
+    },
+    clearSelect: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data () {
+    return {
+      active: null,
+      expandLevel: 10
+    }
+  },
+  created () {
+    this.$on('node-click', (nodeData, node) => {
+      let obj = {}
+      obj[this.props.key] = nodeData[this.props.key]
+      this.active = obj
+      this.$emit('current-change', nodeData, node)
+    })
+  },
+  computed: {
+    nodes () {
+      if (this.data.length) {
+        return this.data
+      }
+      return {}
+    }
+  },
+  watch: {
+    nodeActive (val) {
+      if (val) {
         let obj = {}
-        obj[this.props.key] = nodeData[this.props.key]
+        obj[this.props.key] = val
         this.active = obj
-        this.$emit('current-change', nodeData, node)
-      });
-    },
-    computed: {
-      nodes () {
-        if(this.data.length){
-          return this.data
-        }
-        return {}
-      },
-    },
-    watch:{
-      nodeActive(val){
-        if(val){
-          let obj = {}
-          obj[this.props.key] = val
-          this.active = obj
-        }
-      },
-      clearSelect(val){
-        if(val){
-          this.setCurrentNode()
-        }
       }
     },
-    methods: {
-      // {Number|Object} id或{innerCode:innerCode}， 用来指定哪个节点要展开，要展开还没有载入的节点，需要传入innerCode配置
-      setCurrentNode (idOrFilter) {
-        if(!idOrFilter){
-          return
-        }
-        if(typeof idOrFilter === 'string' || typeof idOrFilter === 'number'){
-          let obj = {}
-          obj[this.props.key] = idOrFilter
-          this.active = obj
-        }else{
-          this.active = idOrFilter
-        }
-      },
-      handleTitleClick () {
+    clearSelect (val) {
+      if (val) {
+        this.setCurrentNode()
+      }
+    }
+  },
+  methods: {
+    // {Number|Object} id或{innerCode:innerCode}， 用来指定哪个节点要展开，要展开还没有载入的节点，需要传入innerCode配置
+    setCurrentNode (idOrFilter) {
+      if (!idOrFilter) {
+        return
+      }
+      if (typeof idOrFilter === 'string' || typeof idOrFilter === 'number') {
         let obj = {}
-        obj[this.props.key] = this.nodes[this.props.key]
+        obj[this.props.key] = idOrFilter
         this.active = obj
-        this.$emit('current-change', this.nodes)
-      },
-      async handleLazy (parentNode) {
-        if(!this.lazy) {
-          return []
-        }
-
-        const childNodes = await this.lazy(parentNode)
-
-        parentNode[this.props.children] = childNodes
-
-        return true
+      } else {
+        this.active = idOrFilter
       }
     },
+    handleTitleClick () {
+      let obj = {}
+      obj[this.props.key] = this.nodes[this.props.key]
+      this.active = obj
+      this.$emit('current-change', this.nodes)
+    },
+    async handleLazy (parentNode) {
+      if (!this.lazy) {
+        return []
+      }
 
+      const childNodes = await this.lazy(parentNode)
+
+      parentNode[this.props.children] = childNodes
+
+      return true
+    }
   }
+
+}
 </script>
 
 <style scoped>

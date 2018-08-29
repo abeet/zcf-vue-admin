@@ -11,11 +11,11 @@
 import ueditor from '../../components/ueditor.vue'
 
 export default {
-  data() {
+  data () {
     return {
       editorContent: '<p>hello ueditor~~</p>',
       editorConfig: {
-        initialFrameHeight: 300,
+        initialFrameHeight: 300
       }
     }
   },
@@ -23,22 +23,22 @@ export default {
     'ueditor': ueditor
   },
   methods: {
-    ready(editor) {
+    ready (editor) {
       console.log('ready')
     },
-    reset(editor) {
+    reset (editor) {
       console.log('reset')
     },
-    focus() {
+    focus () {
       console.log('focus')
     },
-    destroy() {
+    destroy () {
       console.log('destroy')
     },
-    contentChange(val) {
-      console.log('编辑器内容有修改',val)
-      this.$nextTick(_=>{
-        console.log('editorContent.sync自动同步父子组件状态',this.editorContent)
+    contentChange (val) {
+      console.log('编辑器内容有修改', val)
+      this.$nextTick(_ => {
+        console.log('editorContent.sync自动同步父子组件状态', this.editorContent)
       })
     },
     setCont () {

@@ -67,110 +67,110 @@
 </template>
 
 <script>
-  import util from '../common/util.js'
+import util from '../common/util.js'
 
-  export default {
-    props: {
-      isOpen: {
-        type: Boolean,
-        default: false,
-      },
-      inputValue: {
-        type: String,
-        default: '',
-      },
-      nodeKey: {
-        type: [String, Number],
-        default: '',
-      },
-      items: {
-        type: Array,
-        default: function () {
-          return []
-        },
-      },
-      itemsOptions: {
-        type: Object,
-        default: function () {
-          return {key: 'ID', label: 'name', children: 'children'}
-        },
-      },
-      offsetTop: {
-        type: Number,
-        default: 0
-      },
-      offsetLeft: {
-        type: Number,
-        default: 0
+export default {
+  props: {
+    isOpen: {
+      type: Boolean,
+      default: false
+    },
+    inputValue: {
+      type: String,
+      default: ''
+    },
+    nodeKey: {
+      type: [String, Number],
+      default: ''
+    },
+    items: {
+      type: Array,
+      default: function () {
+        return []
       }
     },
-    data () {
-      return {
-        filterText: '',
-        isSearch: false,
-        width: 0,
-        height: 0
+    itemsOptions: {
+      type: Object,
+      default: function () {
+        return {key: 'ID', label: 'name', children: 'children'}
       }
     },
-    watch: {
-      filterText (val) {
-        this.$refs.catalogTree.filter(val)
-      },
-      isOpen (val) {
-        if (!val) {
-          this.filterText = ''
-        }
-      },
+    offsetTop: {
+      type: Number,
+      default: 0
     },
-    computed: {},
-    methods: {
-      treeNodeClickHandler (data) {
-        if (data[this.itemsOptions.key] >= 0) {
-          let val = {}
-          val[this.itemsOptions.label] = data[this.itemsOptions.label]
-          val[this.itemsOptions.key] = data[this.itemsOptions.key]
-          this.$emit('update:inputValue', val)
-          this.$emit('update:isOpen', false)
-          // this.isOpenTree = false
-          //选中节点后返回回调函数click-change并附带选中节点的数据对象
-          this.$emit('click-change', Object.assign({}, data))
-        }
-      },
-      filterNode (value, data) {
-        if (!value) return true
-        value = value.toLowerCase()
-        let name = data[this.itemsOptions.label].toLowerCase()
-        return (
-          name.indexOf(value) !== -1 ||
-          util.getSpell(name, true).indexOf(value) !== -1
-        )
-      },
-      renderContent: function (createElement, {node, data, store}) {
-        let params = {
-          h:createElement,
-          treeObj:{ node, data, store },
-        }
-        return util.renderTreeContent(params)
-      },
-    },
-    created () {
-    },
-    mounted () {
-      document.body.appendChild(this.$el)
-
-      this.width = this.$parent.$el.offsetWidth + 18
-      this.height = this.$parent.$el.offsetHeight || 32
-
-      util.mousewheel(this.$el, (e) => {
-        e.stopPropagation()
-      })
-
-      util.mousewheel(document, () => {
-        this.$emit('update:isOpen', false)
-      })
-    },
-    destroyed () {
-      this.$el.parentNode.removeChild(this.$el)
+    offsetLeft: {
+      type: Number,
+      default: 0
     }
+  },
+  data () {
+    return {
+      filterText: '',
+      isSearch: false,
+      width: 0,
+      height: 0
+    }
+  },
+  watch: {
+    filterText (val) {
+      this.$refs.catalogTree.filter(val)
+    },
+    isOpen (val) {
+      if (!val) {
+        this.filterText = ''
+      }
+    }
+  },
+  computed: {},
+  methods: {
+    treeNodeClickHandler (data) {
+      if (data[this.itemsOptions.key] >= 0) {
+        let val = {}
+        val[this.itemsOptions.label] = data[this.itemsOptions.label]
+        val[this.itemsOptions.key] = data[this.itemsOptions.key]
+        this.$emit('update:inputValue', val)
+        this.$emit('update:isOpen', false)
+        // this.isOpenTree = false
+        // 选中节点后返回回调函数click-change并附带选中节点的数据对象
+        this.$emit('click-change', Object.assign({}, data))
+      }
+    },
+    filterNode (value, data) {
+      if (!value) return true
+      value = value.toLowerCase()
+      let name = data[this.itemsOptions.label].toLowerCase()
+      return (
+        name.indexOf(value) !== -1 ||
+          util.getSpell(name, true).indexOf(value) !== -1
+      )
+    },
+    renderContent: function (createElement, {node, data, store}) {
+      let params = {
+        h: createElement,
+        treeObj: { node, data, store }
+      }
+      return util.renderTreeContent(params)
+    }
+  },
+  created () {
+  },
+  mounted () {
+    document.body.appendChild(this.$el)
+
+    this.width = this.$parent.$el.offsetWidth + 18
+    this.height = this.$parent.$el.offsetHeight || 32
+
+    util.mousewheel(this.$el, (e) => {
+      e.stopPropagation()
+    })
+
+    util.mousewheel(document, () => {
+      this.$emit('update:isOpen', false)
+    })
+  },
+  destroyed () {
+    this.$el.parentNode.removeChild(this.$el)
   }
+}
 </script>

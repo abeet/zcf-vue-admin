@@ -15,15 +15,15 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-      };
-    },
-    props: {
-      preferences:Object
+export default {
+  data () {
+    return {
     }
+  },
+  props: {
+    preferences: Object
   }
+}
 </script>
 
 <style scoped>

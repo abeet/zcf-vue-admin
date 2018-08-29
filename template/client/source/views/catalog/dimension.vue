@@ -51,20 +51,20 @@ export default {
     'dimens-dialog': DimensAddDialog,
     'dimens-sort-dialog': DimensSortDialog
   },
-  data() {
+  data () {
     return {
-      searchName: '' /**查询名称 */,
-      selectedRows: [] /**选中行 */,
+      searchName: '' /** 查询名称 */,
+      selectedRows: [] /** 选中行 */,
       currentDimension: {},
       isShowModal: false,
-      sortShowModal:false,/**排序弹框状态 */
+      sortShowModal: false/** 排序弹框状态 */
     }
   },
   methods: {
-    getDimensionURL() {
+    getDimensionURL () {
       return ['/api/dimens', { params: { name: encodeURI(this.searchName) } }]
     },
-    addClick() {
+    addClick () {
       this.isShowModal = true
       this.currentDimension = {
         ID: '',
@@ -74,13 +74,13 @@ export default {
         memo: ''
       }
     },
-    editClickHandler() {
+    editClickHandler () {
       this.isShowModal = true
     },
-    sortClickHandler(){
+    sortClickHandler () {
       this.sortShowModal = true
     },
-    async deleteClickHandler() {
+    async deleteClickHandler () {
       let ids = util.getSelectedIDs(this.selectedRows)
       try {
         await this.$confirm('确定删除吗？删除后无法恢复。是否继续删除？', '删除确认', {
@@ -94,15 +94,15 @@ export default {
           this.$refs.table.getData()
         }
       } catch (e) {
-        return
+
       }
     },
-    searchClickHandlder() {
+    searchClickHandlder () {
       this.$refs.table.getData()
     },
-    onSelectionChange(selection) {
+    onSelectionChange (selection) {
       this.selectedRows = selection
-      this.currentDimension = !!this.selectedRows[0] ? Object.assign({}, this.selectedRows[0]) : {}
+      this.currentDimension = this.selectedRows[0] ? Object.assign({}, this.selectedRows[0]) : {}
     }
   }
 }

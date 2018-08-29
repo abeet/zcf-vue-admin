@@ -67,119 +67,118 @@
   </div>
 </template>
 <script>
-  import util from '../../common/util.js'
-  import metaAddDialog from './metaAddDialog.vue'
-  import metaModelInfo from './metadataInfo.vue'
-  import metaModelColumn from './metaModelColumn.vue'
-  import metaModelData from './metaModelData.vue'
-  import metaModelTemplate from './metaModelTemplate.vue'
-  export default {
-    data(){
-      return {
-        metadata: [],/**元数据表格数据 */
-        selectedRows: [],/**选中的行 */
-        currentMetadata: {},/**当前元数据 */
-        metadataTypes: [],/**元数据类型 */
-        dataLoading: false,
-        search: {/**查询条件 */
-          typeId: null,
-          key: '',
-        },
-        addMetadataDlg:{/**新建或类似新建弹框变量 */
-          title:'',
-          isShowModal:false,
-          tmpMetadata:{}
-        },
-        tabActiveName:'info',/**当前分页条名称 */
-      }
-    },
-    methods:{
-      /**基本信息组件回调 */
-      metadataInfoChangedBack(data){
-        let index = this.metadata.findIndex(val => val.ID == data.ID)
-        this.metadata.splice(index, 1, data)
-        this.$refs.table.toggleRowSelection(data)
+import util from '../../common/util.js'
+import metaAddDialog from './metaAddDialog.vue'
+import metaModelInfo from './metadataInfo.vue'
+import metaModelColumn from './metaModelColumn.vue'
+import metaModelData from './metaModelData.vue'
+import metaModelTemplate from './metaModelTemplate.vue'
+export default {
+  data () {
+    return {
+      metadata: [], /** 元数据表格数据 */
+      selectedRows: [], /** 选中的行 */
+      currentMetadata: {}, /** 当前元数据 */
+      metadataTypes: [], /** 元数据类型 */
+      dataLoading: false,
+      search: {/** 查询条件 */
+        typeId: null,
+        key: ''
       },
-      /**分页条点击事件 */
-      changeTabClickHandler(tab, event){
-        this.tabActiveName = tab.name
+      addMetadataDlg: {/** 新建或类似新建弹框变量 */
+        title: '',
+        isShowModal: false,
+        tmpMetadata: {}
       },
-      /**添加元数据弹框回调 */
-      addBack(data){
-        this.metadata.splice(0, 0, data)
-      },
-      /**加载元数据类型 */
-      async loadMetadataTypes(){
-        let res = await axios.get('/metamodels/types')
-        this.metadataTypes  = res.data.data
-      },
-      /**加载元数据表格 */
-      async loadMetadata(){
-        this.dataLoading = true
-        let res = await axios.get('/metamodels', {params: {typeId:this.search.typeId,key:this.search.key}})
-        this.dataLoading = false
-        this.metadata = res.data.data
-      },
-      /**查询点击事件 */
-      searchClickHandler(){
-        this.loadMetadata()
-      },
-      onSelectionChange(selection){
-        this.selectedRows = selection
-        this.currentMetadata = this.selectedRows.length ? Object.assign({}, this.selectedRows[0]) : {}
-        // this.changeTabClickHandler({ name: 'info' })
-        if(selection.length === 0){
-          this.$refs.metaInfo.$refs.form.resetFields()
-        }
-      },
-      /**删除元数据 */
-      async deleteMetaClickHandler(){
-        let rowIds = []
-        this.selectedRows.forEach(function (row) {
-          rowIds.push(row.ID)
-        })
-        try {
-          await this.$confirm('确定删除吗？删除后无法恢复。是否继续删除？', '删除确认', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-          let res = await axios.delete(`/metamodels/${rowIds.join()}`)
-          util.showMessage(res)
-          if(res.data.status===1){
-            this.metadata = this.metadata.filter(val => !rowIds.includes(val.ID))
-            this.selectedRows = []
-          }
-        } catch(e) {
-          util.showErrorNotification(e)
-          return
-        }
-      },
-      /**类似创建元数据 */
-      cloneMetaClickHandler(){
-        this.addMetadataDlg.title = '类似创建元数据模型'
-        this.addMetadataDlg.tmpMetadata = Object.assign({}, this.currentMetadata)
-        this.addMetadataDlg.isShowModal = true
-      },
-      /**新建元数据 */
-      addMetaClickHandler(){
-        this.addMetadataDlg.title = '新建元数据模型'
-        this.addMetadataDlg.tmpMetadata = {}
-        this.addMetadataDlg.isShowModal = true
-      }
-    },
-    created(){
-      this.loadMetadata()
-      this.loadMetadataTypes()
-    },
-    components:{
-      'meta-add-dialog': metaAddDialog,
-      'meta-model-info': metaModelInfo,
-      'meta-model-column': metaModelColumn,
-      'meta-model-data': metaModelData,
-      'meta-model-template' : metaModelTemplate
+      tabActiveName: 'info'/** 当前分页条名称 */
     }
+  },
+  methods: {
+    /** 基本信息组件回调 */
+    metadataInfoChangedBack (data) {
+      let index = this.metadata.findIndex(val => val.ID == data.ID)
+      this.metadata.splice(index, 1, data)
+      this.$refs.table.toggleRowSelection(data)
+    },
+    /** 分页条点击事件 */
+    changeTabClickHandler (tab, event) {
+      this.tabActiveName = tab.name
+    },
+    /** 添加元数据弹框回调 */
+    addBack (data) {
+      this.metadata.splice(0, 0, data)
+    },
+    /** 加载元数据类型 */
+    async loadMetadataTypes () {
+      let res = await axios.get('/metamodels/types')
+      this.metadataTypes = res.data.data
+    },
+    /** 加载元数据表格 */
+    async loadMetadata () {
+      this.dataLoading = true
+      let res = await axios.get('/metamodels', {params: {typeId: this.search.typeId, key: this.search.key}})
+      this.dataLoading = false
+      this.metadata = res.data.data
+    },
+    /** 查询点击事件 */
+    searchClickHandler () {
+      this.loadMetadata()
+    },
+    onSelectionChange (selection) {
+      this.selectedRows = selection
+      this.currentMetadata = this.selectedRows.length ? Object.assign({}, this.selectedRows[0]) : {}
+      // this.changeTabClickHandler({ name: 'info' })
+      if (selection.length === 0) {
+        this.$refs.metaInfo.$refs.form.resetFields()
+      }
+    },
+    /** 删除元数据 */
+    async deleteMetaClickHandler () {
+      let rowIds = []
+      this.selectedRows.forEach(function (row) {
+        rowIds.push(row.ID)
+      })
+      try {
+        await this.$confirm('确定删除吗？删除后无法恢复。是否继续删除？', '删除确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        let res = await axios.delete(`/metamodels/${rowIds.join()}`)
+        util.showMessage(res)
+        if (res.data.status === 1) {
+          this.metadata = this.metadata.filter(val => !rowIds.includes(val.ID))
+          this.selectedRows = []
+        }
+      } catch (e) {
+        util.showErrorNotification(e)
+      }
+    },
+    /** 类似创建元数据 */
+    cloneMetaClickHandler () {
+      this.addMetadataDlg.title = '类似创建元数据模型'
+      this.addMetadataDlg.tmpMetadata = Object.assign({}, this.currentMetadata)
+      this.addMetadataDlg.isShowModal = true
+    },
+    /** 新建元数据 */
+    addMetaClickHandler () {
+      this.addMetadataDlg.title = '新建元数据模型'
+      this.addMetadataDlg.tmpMetadata = {}
+      this.addMetadataDlg.isShowModal = true
+    }
+  },
+  created () {
+    this.loadMetadata()
+    this.loadMetadataTypes()
+  },
+  components: {
+    'meta-add-dialog': metaAddDialog,
+    'meta-model-info': metaModelInfo,
+    'meta-model-column': metaModelColumn,
+    'meta-model-data': metaModelData,
+    'meta-model-template': metaModelTemplate
   }
+}
 </script>
 <style>
   .search-bar {

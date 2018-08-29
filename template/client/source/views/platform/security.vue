@@ -94,7 +94,7 @@
 import util from '../../common/util.js'
 
 export default {
-  data() {
+  data () {
     return {
       dataLoading: true,
       security: {
@@ -116,21 +116,20 @@ export default {
     }
   },
   methods: {
-    async saveClickHandler() {
+    async saveClickHandler () {
       try {
         var res = await axios.put('/api/securitys/all', { data: this.security })
         console.log(res)
         util.showResponseMessage(res.data)
       } catch (e) {
         util.showErrorNotification(e)
-        return
       }
     }
   },
-  async created() {
+  async created () {
     let data = await axios.get('/api/securitys')
     data = data.data
-    if (typeof data == 'string') {
+    if (typeof data === 'string') {
       this.security = JSON.parse(data)
     } else {
       for (let key in this.security) {

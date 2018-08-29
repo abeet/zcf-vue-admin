@@ -135,30 +135,30 @@ const schedules = [
     cyclecron: '',
     description: 'com.zving.framwork.FrameworkTask'
   }
-];
+]
 
 const optionalSchedules = [
   {id: 1, name: '可选任务一', code: 'optional1'},
   {id: 2, name: '可选任务二', code: 'optional2'},
   {id: 3, name: '可选任务三', code: 'optional3'},
-  {id: 4, name: '可选任务四', code: 'optional4'},
-];
+  {id: 4, name: '可选任务四', code: 'optional4'}
+]
 
-axiosMock.onGet('/api/schedules').reply((req) =>{
-  if(req.params && req.params.optional === 'Y'){
+axiosMock.onGet('/api/schedules').reply((req) => {
+  if (req.params && req.params.optional === 'Y') {
     return [200, {
       status: 1,
       message: '',
       data: optionalSchedules
-    }];
+    }]
   }
 
   return [200, {
     status: 1,
     message: '',
     data: schedules
-  }];
-});
+  }]
+})
 
 const types = [
   {id: 1, name: '系统任务', code: 'system'},
@@ -167,20 +167,20 @@ const types = [
 ]
 
 axiosMock.onGet('/api/schedules/types').reply((req) => {
-  if(req.params && req.params.usable === 'Y'){
+  if (req.params && req.params.usable === 'Y') {
     return [200, {
       status: 1,
       message: '',
       data: types.slice(1)
-    }];
+    }]
   }
 
   return [200, {
     status: 1,
     message: '',
     data: types
-  }];
-});
+  }]
+})
 
 axiosMock.onPost(/api\/schedules$/).reply(200, {
   status: 1,
@@ -189,10 +189,10 @@ axiosMock.onPost(/api\/schedules$/).reply(200, {
     id: Math.round(Math.random() * 10000)
     // ...
   }
-});
+})
 
-axiosMock.onPut('/api/schedules/updated').reply(200, { status: 1, message: '更新成功！'});
+axiosMock.onPut('/api/schedules/updated').reply(200, { status: 1, message: '更新成功！'})
 
-axiosMock.onDelete('/api/schedules/deleted').reply(200, { status: 1, message: '删除成功！'});
+axiosMock.onDelete('/api/schedules/deleted').reply(200, { status: 1, message: '删除成功！'})
 
-axiosMock.onPost('/api/schedules/executed').reply(200, { status: 1, message: '开始执行！'});
+axiosMock.onPost('/api/schedules/executed').reply(200, { status: 1, message: '开始执行！'})

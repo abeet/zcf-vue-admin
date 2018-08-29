@@ -51,30 +51,30 @@
   </el-dialog>
 </template>
 <script>
-import util from '../../common/util.js';
+import util from '../../common/util.js'
 export default {
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
-      },
-    },
+      }
+    }
   },
-  props: {datas:String,show:Boolean},
-  data() {
+  props: {datas: String, show: Boolean},
+  data () {
     return {
-      fieldOptions:{source:'',value:''},/**具体选项列表对象 */
-      codeTypes:[],/**系统代码数据 */
-      fieldOptionsRules:{/**form校验规则 */
+      fieldOptions: {source: '', value: ''}, /** 具体选项列表对象 */
+      codeTypes: [], /** 系统代码数据 */
+      fieldOptionsRules: {/** form校验规则 */
         value: [{required: true, message: '必填', trigger: 'blur change'}]
       }
     }
   },
   methods: {
-    beforeDialogOpen(){
+    beforeDialogOpen () {
       if (!this.datas) {
         this.fieldOptions.source = 'Code'
         this.fieldOptions.value = ''
@@ -88,29 +88,27 @@ export default {
       }
       this.loadCodeTypes()
     },
-    fieldOptionsChangeHandler() {
+    fieldOptionsChangeHandler () {
       this.fieldOptions.value = ''
     },
-    /**选项列表提交事件 */
-    async confirmClickHandler() {
+    /** 选项列表提交事件 */
+    async confirmClickHandler () {
       try {
         await util.validateForm(this.$refs['fieldOptionsForm'])
       } catch (e) {
-        util.showErrorNotification(e);
+        util.showErrorNotification(e)
         return
       }
       if (this.fieldOptions.source === 'Input') {
         this.fieldOptions.value = this.fieldOptions.value.replace(/\n/g, '<br>')
       }
-      this.$emit('callback',`${this.fieldOptions.source}:${this.fieldOptions.value}`)
-      this.$emit('update:show',false);
+      this.$emit('callback', `${this.fieldOptions.source}:${this.fieldOptions.value}`)
+      this.$emit('update:show', false)
     },
-    async loadCodeTypes(){
+    async loadCodeTypes () {
       let res = await axios.get('/metamodels/0/columns/codeTypes')
-      this.codeTypes = (res.data.data&&res.data.data.length)?res.data.data:[{codeType:'',codeName:''}]
+      this.codeTypes = (res.data.data && res.data.data.length) ? res.data.data : [{codeType: '', codeName: ''}]
     }
   }
-};
+}
 </script>
-
-

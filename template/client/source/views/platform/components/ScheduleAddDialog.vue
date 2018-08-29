@@ -57,7 +57,7 @@
 import util from '../../../common/util.js'
 
 export default {
-  data() {
+  data () {
     return {
       tmpSchedule: {
         typeCode: '',
@@ -109,7 +109,7 @@ export default {
     }
   },
   methods: {
-    initDialog(params) {
+    initDialog (params) {
       this.dialogVisible = true
       this.$refs.scheduleForm && this.$refs.scheduleForm.clearValidate()
       !util.isEmptyObject(params) && Object.assign(this.inputParams, params)
@@ -123,7 +123,7 @@ export default {
       }
     },
 
-    async loadScheduleTypes(isUsable) {
+    async loadScheduleTypes (isUsable) {
       let res = null
       if (isUsable) {
         res = await axios.get('/api/schedules/types', { params: { usable: 'Y' } }).catch(e => console.log(e))
@@ -134,13 +134,13 @@ export default {
       this.scheduleTypes = data.status == 1 ? data.data : this.scheduleTypes
     },
 
-    async typeChangeHandler(typeID) {
+    async typeChangeHandler (typeID) {
       let res = await axios.get('/api/schedules', { params: { optional: 'Y', typeID: typeID } }).catch(e => console.log(e))
       let data = res.data
       this.OptionalSchedule = data.data
     },
 
-    async confirmScheduleClickHandler() {
+    async confirmScheduleClickHandler () {
       let addForm = async () => {
         let type = this.scheduleTypes.find(val => val.code === this.tmpSchedule.typeCode)
         this.tmpSchedule.typeCodeName = type.name
@@ -153,7 +153,7 @@ export default {
         if (data.status !== 1) {
           return data
         }
-        //this.schedules = [...this.schedules, Object.assign({}, this.tmpSchedule, { ID: data.data.ID })]
+        // this.schedules = [...this.schedules, Object.assign({}, this.tmpSchedule, { ID: data.data.ID })]
 
         let emitDatas = {
           type: 'add',
@@ -170,7 +170,7 @@ export default {
           return data
         }
         // let index = this.schedules.findIndex(val => val.ID === this.tmpSchedule.ID)
-        //this.schedules = [...this.schedules.slice(0, index), Object.assign({}, this.tmpSchedule), ...this.schedules.slice(index + 1)]
+        // this.schedules = [...this.schedules.slice(0, index), Object.assign({}, this.tmpSchedule), ...this.schedules.slice(index + 1)]
         let emitDatas = {
           type: 'edit',
           id: this.tmpSchedule.ID,
@@ -201,9 +201,8 @@ export default {
       util.showNotification(res)
     }
   },
-  created() {
+  created () {
     Object.assign(this.tmpScheduleBak, this.tmpSchedule)
   }
 }
 </script>
-

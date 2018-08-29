@@ -104,91 +104,91 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-        duration: 0,
-        isLoading: true,
-        isPlay: false,
-        progress: 0,
+export default {
+  data () {
+    return {
+      duration: 0,
+      isLoading: true,
+      isPlay: false,
+      progress: 0
+    }
+  },
+  props: {
+    // 音频源
+    src: {
+      type: String,
+      required: true
+    },
+    // 标题
+    title: {
+      type: String,
+      default: ''
+    },
+    // 自动播放
+    autoPlay: {
+      type: Boolean,
+      default: false
+    },
+    // 大小
+    size: {
+      type: String,
+      default: 'small'
+    }
+  },
+  computed: {
+    formatDuration () {
+      if (this.isLoading) {
+        return ''
+      }
+
+      const minute = parseInt(this.duration / 60)
+
+      const second = this.duration % 60
+
+      return `时长：${minute}:${second}`
+    },
+    percentage () {
+      if (this.isLoading || this.duration === 0) {
+        return '0'
+      }
+
+      const p = (this.progress / this.duration) * 100
+
+      return Math.ceil(p) + '%'
+    }
+  },
+  methods: {
+    handleLoadedMetaData (e) {
+      this.duration = Math.ceil(e.target.duration)
+      this.isLoading = false
+
+      if (this.autoPlay) {
+        this.$refs['audioPlay'].play()
+        this.isPlay = true
       }
     },
-    props: {
-      // 音频源
-      src: {
-        type: String,
-        required: true,
-      },
-      // 标题
-      title: {
-        type: String,
-        default: '',
-      },
-      // 自动播放
-      autoPlay: {
-        type: Boolean,
-        default: false,
-      },
-      // 大小
-      size: {
-        type: String,
-        default: 'small',
-      },
-    },
-    computed: {
-      formatDuration () {
-        if (this.isLoading) {
-          return ''
-        }
-
-        const minute = parseInt(this.duration / 60)
-
-        const second = this.duration % 60
-
-        return `时长：${minute}:${second}`
-      },
-      percentage () {
-        if (this.isLoading || this.duration === 0) {
-          return '0'
-        }
-
-        const p = (this.progress / this.duration) * 100
-
-        return Math.ceil(p) + '%'
-      },
-    },
-    methods: {
-      handleLoadedMetaData (e) {
-        this.duration = Math.ceil(e.target.duration)
-        this.isLoading = false
-
-        if (this.autoPlay) {
-          this.$refs['audioPlay'].play()
-          this.isPlay = true
-        }
-      },
-      handleClickPlay () {
-        if (this.isPlay) {
-          this.$refs['audioPlay'].pause()
-          this.isPlay = false
-        } else {
-          this.$refs['audioPlay'].play()
-          this.isPlay = true
-        }
-      },
-      handleTimeUpdate (e) {
-        this.progress = Math.ceil(e.target.currentTime)
-      },
-      handleEnded () {
-        this.progress = 0
+    handleClickPlay () {
+      if (this.isPlay) {
+        this.$refs['audioPlay'].pause()
         this.isPlay = false
-      },
+      } else {
+        this.$refs['audioPlay'].play()
+        this.isPlay = true
+      }
     },
-    mounted () {
+    handleTimeUpdate (e) {
+      this.progress = Math.ceil(e.target.currentTime)
+    },
+    handleEnded () {
+      this.progress = 0
+      this.isPlay = false
+    }
+  },
+  mounted () {
 
-    },
-    created () {
+  },
+  created () {
 
-    },
   }
+}
 </script>

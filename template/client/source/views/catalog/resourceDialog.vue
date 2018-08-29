@@ -199,66 +199,66 @@ import catalogSelector from './components/catalogSelector.vue'
 import commonImageCuttingDialog from './commonImageCuttingDialog.vue'
 import WaterPositionPicker from './components/WaterPositionPicker.vue'
 export default {
-  data() {
+  data () {
     return {
       imageCuttingModal: false,
-      tmpFile: null, //要上传的文件
-      tmpFileList: [], //文件待上传列表
-      resourcesIDs: '', //资源id
-      catalogSelectorModal: false, //控制栏目选择框
-      resourcesDataLoading: false, //资源数据加载动画
-      imgRadio: 0, //绑定资源单选框
-      resourcesData: [], //资源数据
-      pageSizes: [10, 20, 30, 50], //分页大小控制
-      pageSize: 30, //分页当前页大小
-      pageIndex: 1, //分页当前页索引
-      total: 0, //分页中数据总量
-      keyword: '', //搜索关键词
-      treeOptions: { key: 'ID', label: 'name', children: 'children' }, //树属性选项
-      catalogTree: [], //栏目树数据
-      tmpParams: {}, //图片上传参数
-      tabActiveName: 'uploader', //面板选择控制
-      logoThumbModeOptions: [{ key: 'fit', label: '原比例缩放' }, { key: 'fill', label: '裁剪缩放' }], //logo图缩放模式数据
+      tmpFile: null, // 要上传的文件
+      tmpFileList: [], // 文件待上传列表
+      resourcesIDs: '', // 资源id
+      catalogSelectorModal: false, // 控制栏目选择框
+      resourcesDataLoading: false, // 资源数据加载动画
+      imgRadio: 0, // 绑定资源单选框
+      resourcesData: [], // 资源数据
+      pageSizes: [10, 20, 30, 50], // 分页大小控制
+      pageSize: 30, // 分页当前页大小
+      pageIndex: 1, // 分页当前页索引
+      total: 0, // 分页中数据总量
+      keyword: '', // 搜索关键词
+      treeOptions: { key: 'ID', label: 'name', children: 'children' }, // 树属性选项
+      catalogTree: [], // 栏目树数据
+      tmpParams: {}, // 图片上传参数
+      tabActiveName: 'uploader', // 面板选择控制
+      logoThumbModeOptions: [{ key: 'fit', label: '原比例缩放' }, { key: 'fill', label: '裁剪缩放' }], // logo图缩放模式数据
       tmpResourceProps: {}
     }
   },
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
       }
     }
   },
   methods: {
-    cutImage(){
-      if(!this.imgRadio){
-        this.$alert('请先选择一条记录','提示',{
-          type:'info'
+    cutImage () {
+      if (!this.imgRadio) {
+        this.$alert('请先选择一条记录', '提示', {
+          type: 'info'
         })
         return
       }
       this.imageCuttingModal = true
     },
-    imageCuttingCallback(sPath, path) {
+    imageCuttingCallback (sPath, path) {
       this.imgRadio = path
     },
-    audioStart(refName) {
+    audioStart (refName) {
       let audio = this.$refs[refName]
       audio.play()
     },
-    audioPause(refName) {
+    audioPause (refName) {
       let audio = this.$refs[refName]
       audio.pause()
     },
-    audioStop(refName) {
+    audioStop (refName) {
       let audio = this.$refs[refName]
       audio.currentTime = 0
       audio.pause()
     },
-    dialogClose() {
+    dialogClose () {
       this.imgRadio = 0
       this.tmpFileList = []
       this.tmpFile = null
@@ -267,12 +267,12 @@ export default {
       this.tabActiveName = 'uploader'
       this.tmpResourceProps = {}
     },
-    /**设置错误图片 */
-    setErrorImg(e) {
+    /** 设置错误图片 */
+    setErrorImg (e) {
       e.target.src = '/assets/images/picture404.png'
     },
-    /**自动填写名称 */
-    autoFillOldName(pathURL) {
+    /** 自动填写名称 */
+    autoFillOldName (pathURL) {
       if (
         pathURL &&
         pathURL.lastIndexOf('/') > -1 &&
@@ -285,14 +285,14 @@ export default {
         }
       }
     },
-    /**面板选择 */
-    onRoleTabsClick(val) {
+    /** 面板选择 */
+    onRoleTabsClick (val) {
       if (val.name === 'selector') {
         this.loadingCatalogTree()
       }
     },
-    /**获取栏目列表数据 */
-    async loadingCatalogTree() {
+    /** 获取栏目列表数据 */
+    async loadingCatalogTree () {
       let obj = {
         siteID: this.tmpResourceProps.siteID
       }
@@ -302,13 +302,13 @@ export default {
       this.catalogTree = res.data.data
       this.loadingResourcesData()
     },
-    /**栏目树点击节点触发事件 */
-    catalogTreeNodeClick(val) {
+    /** 栏目树点击节点触发事件 */
+    catalogTreeNodeClick (val) {
       this.tmpResourceProps.catalogID = val.ID
       this.loadingResourcesData()
     },
-    /**加载资源数据 */
-    async loadingResourcesData() {
+    /** 加载资源数据 */
+    async loadingResourcesData () {
       let obj = {
         catalogID: this.tmpResourceProps.catalogID,
         siteID: this.tmpResourceProps.siteID,
@@ -329,18 +329,18 @@ export default {
       })
       this.total = res.data.total
     },
-    /**资源库页面大小改变事件  */
-    sizeChangeHandler(val) {
+    /** 资源库页面大小改变事件  */
+    sizeChangeHandler (val) {
       this.pageSize = val
       this.loadingResourcesData()
     },
-    /**资源库页面索引改变事件 */
-    currentChangeHandler(val) {
+    /** 资源库页面索引改变事件 */
+    currentChangeHandler (val) {
       this.pageIndex = val
       this.loadingResourcesData()
     },
-    /**资源复制 */
-    copy() {
+    /** 资源复制 */
+    copy () {
       if (this.imgRadio === 0) {
         this.$alert('请选择需要复制的资源文件', '提示', {
           confirmButtom: '确定',
@@ -350,8 +350,8 @@ export default {
       }
       this.catalogSelectorModal = true
     },
-    /**资源复制选中栏目后回调 */
-    async catalogSelectorCallback(val) {
+    /** 资源复制选中栏目后回调 */
+    async catalogSelectorCallback (val) {
       if (val.ids.length === 0) {
         this.$alert('请选择需要复制到的栏目', '提示', {
           type: 'info'
@@ -364,13 +364,13 @@ export default {
       })
       util.showResponseMessage(res.data)
     },
-    /**资源库图片点击事件 */
-    imgClick(val, imgID, path) {
+    /** 资源库图片点击事件 */
+    imgClick (val, imgID, path) {
       this.imgRadio = val
       this.resourcesIDs = imgID
     },
-    /**资源选择弹框打开回调 */
-    async beforeDialogOpen() {
+    /** 资源选择弹框打开回调 */
+    async beforeDialogOpen () {
       this.tmpResourceProps = Object.assign({}, this.resourceDialogProps)
       let initResourceDialog = await axios.get('/api/catalogresources/initresourcedialog', {
         params: {
@@ -400,24 +400,23 @@ export default {
       Vue.set(this.tmpResourceProps, 'allowType', '.' + resourceUploadInit.data.data.allowType.replace(/,/g, ',.'))
       Vue.set(this.tmpResourceProps, 'prefix', resourceUploadInit.data.data.prefix)
     },
-    /**改变选中文件触发事件 */
-    selectFileChangeHandler(file, files) {
+    /** 改变选中文件触发事件 */
+    selectFileChangeHandler (file, files) {
       this.tmpFileList = [files[0]]
       this.tmpFile = files[0].raw
       if (files.length > 1) {
         this.$message.info('文件总数量限制为1')
-        return
       }
     },
-    selectFileRemoveHandler(file, files) {
+    selectFileRemoveHandler (file, files) {
       this.tmpFile = null
     },
-    /**资源库表格行点击 */
-    selecteRow(val) {
+    /** 资源库表格行点击 */
+    selecteRow (val) {
       this.imgRadio = val.path
     },
-    /**文件上传确定事件 */
-    async uploadFile() {
+    /** 文件上传确定事件 */
+    async uploadFile () {
       if (!this.tmpFile) {
         this.$alert('请选择要上传的文件', '提示', {
           type: 'warning'
@@ -444,8 +443,8 @@ export default {
         this.$emit('callback', upload.data.previewPrefix + upload.data.path, upload.data.path, upload.data.resourceID)
       }
     },
-    /**确定资源选中事件,返回callback回调函数，附带文件预览路径、文件路径、资源id参数 */
-    confirm() {
+    /** 确定资源选中事件,返回callback回调函数，附带文件预览路径、文件路径、资源id参数 */
+    confirm () {
       if (this.tabActiveName === 'uploader') {
         if (this.tmpResourceProps.sourceType === 'upload') {
           this.uploadFile()
@@ -458,14 +457,14 @@ export default {
       }
       if (this.tabActiveName === 'selector') {
         this.isShow = false
-        this.$emit('callback',this.tmpResourceProps.prefix +  this.imgRadio, this.imgRadio, this.resourcesIDs, true)
+        this.$emit('callback', this.tmpResourceProps.prefix + this.imgRadio, this.imgRadio, this.resourcesIDs, true)
       }
     },
     /**
      * dataType和dataID不为空时记录资源引用关系
      * delFlag: 是否先删除原有引用记录
      */
-    async saveRela(resourceID, delFlag) {
+    async saveRela (resourceID, delFlag) {
       let obj = {
         resourceIDs: resourceID,
         dataType: this.dataType,
@@ -474,8 +473,8 @@ export default {
       }
       let res = await axios.put(`/api/catalogresources/${resourceID}/saverela`, obj)
     },
-    /**渲染树样式 */
-    renderContent: function(createElement, { node, data, store }) {
+    /** 渲染树样式 */
+    renderContent: function (createElement, { node, data, store }) {
       let params = {
         h: createElement,
         treeObj: { node, data, store }
@@ -484,19 +483,19 @@ export default {
     }
   },
   props: {
-    title:{
-      type:String,
-      default:'图片上传'
+    title: {
+      type: String,
+      default: '图片上传'
     },
-    show:{
-      type:Boolean,
-      required:true
+    show: {
+      type: Boolean,
+      required: true
     },
-    resourceDialogProps:{
-      type:Object,
-      required:true
-    }//传递过来的对象，可包含manualAllowType,dataType,dataID,resourceType,siteID
-    //catalogID,imageWidth,imageHeight,resourceID,inputType,suffix等多个属性
+    resourceDialogProps: {
+      type: Object,
+      required: true
+    }// 传递过来的对象，可包含manualAllowType,dataType,dataID,resourceType,siteID
+    // catalogID,imageWidth,imageHeight,resourceID,inputType,suffix等多个属性
   },
   components: {
     'catalog-selector': catalogSelector,

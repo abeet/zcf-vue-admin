@@ -29,23 +29,23 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {}
   },
   computed: {
     showLookMessageDialog: {
-      get() {
+      get () {
         return this.showLookMessageShow
       },
-      set(val) {
+      set (val) {
         this.$emit('update:showLookMessageShow', val)
-      },
-    },
+      }
+    }
   },
   methods: {},
 
-  created() {},
-  props: ['showLookMessageShow', 'tmpMessageDetail', 'userType'],
+  created () {},
+  props: ['showLookMessageShow', 'tmpMessageDetail', 'userType']
 }
 </script>
 <style>

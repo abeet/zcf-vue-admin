@@ -38,15 +38,15 @@ const routes = [
     meta: { title: '栏目配置', icon: 'fa fa-list' },
     component: 'settings/index',
     children: [{
-        path: '/settings/catalog',
-        meta: { title: '栏目列表', icon: 'fa fa-list' },
-        component: 'settings/catalog'
-      },
-      {
-        path: '/settings/dimens',
-        meta: { title: '分类管理', icon: 'fa fa-sitemap' },
-        component: 'settings/dimension'
-      }
+      path: '/settings/catalog',
+      meta: { title: '栏目列表', icon: 'fa fa-list' },
+      component: 'settings/catalog'
+    },
+    {
+      path: '/settings/dimens',
+      meta: { title: '分类管理', icon: 'fa fa-sitemap' },
+      component: 'settings/dimension'
+    }
     ]
   },
   {

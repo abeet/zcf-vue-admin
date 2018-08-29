@@ -53,26 +53,26 @@ export default {
   },
 
   computed: {
-    _elFormItemSize() {
-      return (this.elFormItem || {}).elFormItemSize;
+    _elFormItemSize () {
+      return (this.elFormItem || {}).elFormItemSize
     },
-    buttonSize() {
-      return this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
+    buttonSize () {
+      return this.size || this._elFormItemSize || (this.$ELEMENT || {}).size
     },
-    disableWithPriv(){
-      if(this.disabled || (this.priv && !Privilege.hasPriv(this.priv))){
+    disableWithPriv () {
+      if (this.disabled || (this.priv && !Privilege.hasPriv(this.priv))) {
         return true
       }
       return false
     }
   },
   methods: {
-    handleClick(evt) {
-      this.$emit('click', evt);
+    handleClick (evt) {
+      this.$emit('click', evt)
     },
-    handleInnerClick(evt) {
+    handleInnerClick (evt) {
       if (this.disableWithPriv) {
-        evt.stopPropagation();
+        evt.stopPropagation()
       }
     }
   }

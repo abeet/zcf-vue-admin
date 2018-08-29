@@ -6,7 +6,7 @@
       </el-toolbar>
       <div class="menu-wrap select-disable">
         <el-menu :default-active="activeMenu" class="layout-menu" @select="onSelectMenu">
-          <el-menu-item :index="menu.path" v-for="menu in menus" :key="menu.path">
+          <el-menu-item :index="menu.path" v-for="menu in menus" :key="menu.path" v-if="menu.meta">
             <i :class="menu.meta.icon"></i>\{{menu.meta.title}}
           </el-menu-item>
         </el-menu>
@@ -26,14 +26,14 @@ if (pmenu[0] && pmenu[0].children) {
 }
 
 export default {
-  data() {
+  data () {
     return {
       menus,
       activeMenu: this.$route.path
-    };
+    }
   },
   methods: {
-    onSelectMenu(path) {
+    onSelectMenu (path) {
       let item = this.menus.find((val) => val.path === path)
 
       if (item) {
@@ -41,12 +41,12 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     if (location.hash.split('/').length == 2) {
       location.hash = this.activeMenu
     }
   },
-  beforeRouteUpdate(to, from, next) {
+  beforeRouteUpdate (to, from, next) {
     let path = to.path
     let item = this.menus.find(val => val.path === path)
 

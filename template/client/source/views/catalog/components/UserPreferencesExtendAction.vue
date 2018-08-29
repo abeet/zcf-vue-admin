@@ -71,23 +71,23 @@
 </template>
 
 <script>
-import ControlNumber from '../../platform/components/control/ControlNumber.vue';
+import ControlNumber from '../../platform/components/control/ControlNumber.vue'
 
 export default {
-  data() {
+  data () {
     return {
-    };
+    }
   },
   components: {
     'control-number': ControlNumber
   },
   methods: {
-    changeCatalogTreeLevel(val) {
-      this.preferences.catalogTreeLevel = val;
-    },
+    changeCatalogTreeLevel (val) {
+      this.preferences.catalogTreeLevel = val
+    }
   },
-  props: ['preferences'],
-};
+  props: ['preferences']
+}
 </script>
 
 <style scoped>

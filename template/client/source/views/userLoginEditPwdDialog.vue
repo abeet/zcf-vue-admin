@@ -27,25 +27,25 @@ import util from './../common/util.js'
 
 export default {
   props: { editPwdModal: Boolean, modalTitle: String, userName: String },
-  data() {
+  data () {
     return {
       tmpUser: {},
-      passwordVeriry:{
-        maxLen:18,
-        minLen:5,
+      passwordVeriry: {
+        maxLen: 18,
+        minLen: 5
       },
       userRules: {
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           {
-            validator:(rule,value,callback) =>{
-              if(value.length<this.passwordVeriry.minLen||value.length>this.passwordVeriry.maxLen){
+            validator: (rule, value, callback) => {
+              if (value.length < this.passwordVeriry.minLen || value.length > this.passwordVeriry.maxLen) {
                 callback(new Error(`必须是${this.passwordVeriry.minLen}-${this.passwordVeriry.maxLen}位的字符`))
               } else {
                 callback()
               }
             },
-            trigger: 'blur change',
+            trigger: 'blur change'
           }
         ],
         repeatPassword: [
@@ -58,25 +58,25 @@ export default {
                 callback()
               }
             },
-            trigger: 'blur',
-          },
-        ],
+            trigger: 'blur'
+          }
+        ]
       },
-      handlerLoading: false,
+      handlerLoading: false
     }
   },
   methods: {
-    dialogOpen(){
+    dialogOpen () {
       this.handlerLoading = false
       this.initPwdCheck()
     },
-    async initPwdCheck(){
-      let res = await axios.get("/api/users/initpwdcheck")
-      if(res.data.status===1){
-        this.passwordVeriry= {maxLen: res.data.maxLen,minLen: res.data.minLen}
+    async initPwdCheck () {
+      let res = await axios.get('/api/users/initpwdcheck')
+      if (res.data.status === 1) {
+        this.passwordVeriry = {maxLen: res.data.maxLen, minLen: res.data.minLen}
       }
     },
-    async modifyPasswordHandler() {
+    async modifyPasswordHandler () {
       this.handlerLoading = true
       try {
         await util.validateForm(this.$refs['modifyPasswordForm'])
@@ -87,17 +87,17 @@ export default {
       let res = await axios.put('/api/users/changeloginpassword', {
         userName: this.userName,
         oldPassword: this.tmpUser.oldPassword,
-        password: this.tmpUser.password,
+        password: this.tmpUser.password
       })
       if (res.data.status === 1 && res.data.data && res.data.data._ZVING_STATUS > 0) {
-          window.location = 'index.html'
+        window.location = 'index.html'
       } else {
-          util.showErrorMessageBox(res.data.data._ZVING_MESSAGE)
-          window.location = 'login.html'
+        util.showErrorMessageBox(res.data.data._ZVING_MESSAGE)
+        window.location = 'login.html'
       }
       this.editPwdModal = false
       this.handlerLoading = false
-    },
-  },
+    }
+  }
 }
 </script>

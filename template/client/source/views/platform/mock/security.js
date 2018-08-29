@@ -16,9 +16,9 @@ axiosMock.onGet('/api/securitys').reply(200, {
   },
   status: 1,
   message: ''
-});
+})
 
 axiosMock.onPut('/api/securitys/all').reply(200, {
   status: 1,
   message: '保存成功！'
-});
+})

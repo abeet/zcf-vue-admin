@@ -128,37 +128,37 @@
 import util from '../../common/util.js'
 import langEditDialog from '../member/langEditDialog.vue'
 export default {
-    components: {
+  components: {
     'lang-edit-dlg': langEditDialog
   },
-  data() {
+  data () {
     return {
       langDialog: {
         isShowModal: false,
         ID: '',
         languages: '',
-        targetValue: '',
+        targetValue: ''
       },
       codes: [],
       selectedRows: [],
       editCodeMode: 1, // 1： 添加， 2：编辑
       tmpCode: {},
-      searchCodeType: '', /**查询关键字 */
+      searchCodeType: '', /** 查询关键字 */
       codeRules: {
         codeType: [
           { required: true, message: '请输入类别', trigger: 'blur' },
           {
-              pattern: /^[\w\.\-_$]{0,40}$/,
-              message: '请输入字母、数字、下划线、点且长度不超过40个字符',
-              trigger: 'blur,change',
+            pattern: /^[\w\.\-_$]{0,40}$/,
+            message: '请输入字母、数字、下划线、点且长度不超过40个字符',
+            trigger: 'blur,change'
           }
         ],
         codeName: [
           { required: true, message: '请输入名称', trigger: 'blur' },
           {
-              pattern: /^[\.-\w-\u4e00-\u9fa5]{0,2000}$/,
-              message: '请输入汉字、字母、数字、点且长度不超过2000个字符',
-              trigger: 'blur,change',
+            pattern: /^[\.-\w-\u4e00-\u9fa5]{0,2000}$/,
+            message: '请输入汉字、字母、数字、点且长度不超过2000个字符',
+            trigger: 'blur,change'
           }
         ]
       },
@@ -174,17 +174,17 @@ export default {
         codeName: [
           { required: true, message: '请输入名称', trigger: 'blur' },
           {
-              pattern: /^[\.-\w-\u4e00-\u9fa5]{0,2000}$/,
-              message: '请输入汉字、字母、数字、点且长度不超过2000个字符',
-              trigger: 'blur,change',
+            pattern: /^[\.-\w-\u4e00-\u9fa5]{0,2000}$/,
+            message: '请输入汉字、字母、数字、点且长度不超过2000个字符',
+            trigger: 'blur,change'
           }
         ],
         codeValue: [
           { required: true, message: '请输入值', trigger: 'blur' },
           {
-              pattern: /^[\.-\w-\u4e00-\u9fa5]{0,40}$/,
-              message: '请输入汉字、字母、数字、点且长度不超过40个字符',
-              trigger: 'blur,change',
+            pattern: /^[\.-\w-\u4e00-\u9fa5]{0,40}$/,
+            message: '请输入汉字、字母、数字、点且长度不超过40个字符',
+            trigger: 'blur,change'
           }
         ]
       },
@@ -192,24 +192,24 @@ export default {
     }
   },
   methods: {
-    getI18nBack(data){
+    getI18nBack (data) {
       this.tmpCode.name_I18N = data.data
     },
-     /**打开多语言编辑框 */
-    langBtnClickHandler(ID, value, languages) {
+    /** 打开多语言编辑框 */
+    langBtnClickHandler (ID, value, languages) {
       this.langDialog.isShowModal = true
       this.langDialog.ID = ID
       this.langDialog.languages = languages
       this.langDialog.targetValue = value
     },
-    onSelectionChange(selection) {
+    onSelectionChange (selection) {
       this.selectedRows = selection
     },
-    searchClickHandler() {
+    searchClickHandler () {
       this.$refs.table.getData()
     },
-    /**获取表格数据 */
-    getData() {
+    /** 获取表格数据 */
+    getData () {
       return [
         '/api/codes',
         {
@@ -219,8 +219,8 @@ export default {
         }
       ]
     },
-    /**某一列被点击时触发事件 */
-    async cellClickHandler(row) {
+    /** 某一列被点击时触发事件 */
+    async cellClickHandler (row) {
       if (!row || !row.codeType) {
         return
       }
@@ -230,7 +230,7 @@ export default {
       this.codeItems = res.data.data
       this.codeItemsLoading = false
     },
-    addClick() {
+    addClick () {
       this.editCodeMode = 1
       this.tmpCode = {
         codeType: '',
@@ -240,12 +240,12 @@ export default {
       }
       this.editCodeDialog = true
     },
-    editClick() {
+    editClick () {
       this.editCodeMode = 2
       this.tmpCode = Object.assign({}, this.selectedRows[0])
       this.editCodeDialog = true
     },
-    async confirmClickHandler() {
+    async confirmClickHandler () {
       let addForm = async () => {
         let res = await axios.post('/api/codes', this.tmpCode)
         if (res.data.status === 1) {
@@ -281,7 +281,7 @@ export default {
         await editForm()
       }
     },
-    async deleteClickHandler() {
+    async deleteClickHandler () {
       let isEditable = !this.selectedRows.find(val => val.isFixed)
       if (!isEditable) {
         this.$alert('固定配置项不能被删除哦！', '不能被删除', {
@@ -300,7 +300,7 @@ export default {
         return
       }
       let codeTypes = []
-      this.selectedRows.forEach(function(row) {
+      this.selectedRows.forEach(function (row) {
         codeTypes.push(row.codeType)
       })
       let res = await axios.delete(`/api/codes/${codeTypes.join()}`)
@@ -311,17 +311,17 @@ export default {
         util.showErrorMessageBox(res.data.message)
       }
     },
-    async showCodeItemsClick() {
+    async showCodeItemsClick () {
       this.codeItemsDialog = true
       this.codeItemsLoading = true
       let res = await axios.get(`/api/codes/${this.selectedRows[0].codeType}/items`)
       this.codeItems = res.data.data
       this.codeItemsLoading = false
     },
-    onCodeItemSelectionChange(selection) {
+    onCodeItemSelectionChange (selection) {
       this.codeItemSelectedRows = selection
     },
-    addCodeItemClick() {
+    addCodeItemClick () {
       this.tmpCodeItem = {
         codeType: this.selectedRows[0].codeType,
         isFixed: false,
@@ -332,13 +332,13 @@ export default {
       this.editCodeItemMode = 1
       this.editCodeItemDialog = true
     },
-    editCodeItemClick() {
+    editCodeItemClick () {
       this.tmpCodeItem = Object.assign({}, this.codeItemSelectedRows[0])
       this.tmpCodeItem.oldvalue = this.tmpCodeItem.codeValue
       this.editCodeItemMode = 2
       this.editCodeItemDialog = true
     },
-    async confirmCodeItemClickHandler() {
+    async confirmCodeItemClickHandler () {
       let addForm = async () => {
         let res = await axios.post(`/api/codes/${this.tmpCodeItem.codeType}/items`, this.tmpCodeItem)
         if (res.data.status === 1) {
@@ -346,7 +346,7 @@ export default {
           this.editCodeItemDialog = false
           this.showCodeItemsClick()
         } else {
-           util.showErrorMessageBox(res.data.message)
+          util.showErrorMessageBox(res.data.message)
         }
       }
       let editForm = async () => {
@@ -372,7 +372,7 @@ export default {
         await editForm()
       }
     },
-    async deleteCodeItemClickHandler() {
+    async deleteCodeItemClickHandler () {
       try {
         await this.$confirm('确定删除吗？删除后无法恢复。是否继续删除？', '删除确认', {
           confirmButtonText: '确定',
@@ -384,7 +384,7 @@ export default {
         return
       }
       let codeValues = []
-      this.codeItemSelectedRows.forEach(function(row) {
+      this.codeItemSelectedRows.forEach(function (row) {
         codeValues.push(row.codeValue)
       })
       let res = await axios.delete(`/api/codes/${this.codeItemSelectedRows[0].codeType}/items/${codeValues.join()}`)
@@ -397,7 +397,7 @@ export default {
       }
     }
   },
-  created() {}
+  created () {}
 }
 </script>
 

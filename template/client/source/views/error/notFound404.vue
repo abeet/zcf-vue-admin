@@ -3,11 +3,11 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-        hash:location.hash.substring(1)
-      }
+export default {
+  data () {
+    return {
+      hash: location.hash.substring(1)
     }
   }
+}
 </script>

@@ -3,19 +3,19 @@
 </template>
 
 <script>
-  export default {
-    methods: {
-      inputHandler(val){
-        this.$emit('input', val);
-      }
-    },
-    props: [
-      'value',
-      'config'
-    ],
-    created(){
+export default {
+  methods: {
+    inputHandler (val) {
+      this.$emit('input', val)
     }
-  };
+  },
+  props: [
+    'value',
+    'config'
+  ],
+  created () {
+  }
+}
 </script>
 
 <style>

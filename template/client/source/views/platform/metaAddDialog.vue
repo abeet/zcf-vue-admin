@@ -68,20 +68,20 @@ export default {
   props: { data: Object, show: Boolean, types: Array, title: String },
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
       }
     }
   },
-  data() {
+  data () {
     return {
       confirmLoading: false,
-      tmpMetadata: {} /**form表单数据 */,
+      tmpMetadata: {} /** form表单数据 */,
       metadataRules: {
-        /**表单验证规则 */
+        /** 表单验证规则 */
         ownerType: [
           {
             trigger: 'change',
@@ -99,16 +99,16 @@ export default {
     }
   },
   methods: {
-    /**弹框打开前回调 */
-    beforeDialogOpen() {
+    /** 弹框打开前回调 */
+    beforeDialogOpen () {
       if (this.data.ID) {
-        /**类似创建 */
+        /** 类似创建 */
         this.tmpMetadata = this.data
       } else {
         this.tmpMetadata = { name: '', code: '', ownerType: '', memo: '' }
       }
     },
-    async confirmClickHandler() {
+    async confirmClickHandler () {
       this.confirmLoading = true
       try {
         await util.validateForm(this.$refs['form'])
@@ -122,11 +122,8 @@ export default {
       } catch (e) {
         util.showErrorNotification(e)
         this.confirmLoading = false
-        return
       }
     }
   }
 }
 </script>
-
-

@@ -8,31 +8,31 @@
 </style>
 
 <script>
-  export default {
-    data() {
-      return {
-        type: 'date'
-      };
-    },
-    methods: {
-      inputHandler(val){
-        this.$emit('input', val.toString());
-      },
-      startDateChange(val){
-        this.$emit('input', val.toString());
-      }
-    },
-    watch: {
-      config(val){
-        this.type = val.type || 'date';
-      }
-    },
-    props: [
-      'value',
-      'config'
-    ],
-    created() {
-      this.type = this.config.type || 'date';
+export default {
+  data () {
+    return {
+      type: 'date'
     }
-  };
+  },
+  methods: {
+    inputHandler (val) {
+      this.$emit('input', val.toString())
+    },
+    startDateChange (val) {
+      this.$emit('input', val.toString())
+    }
+  },
+  watch: {
+    config (val) {
+      this.type = val.type || 'date'
+    }
+  },
+  props: [
+    'value',
+    'config'
+  ],
+  created () {
+    this.type = this.config.type || 'date'
+  }
+}
 </script>

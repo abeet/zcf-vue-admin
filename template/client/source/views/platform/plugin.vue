@@ -140,7 +140,7 @@ import TreeGrid from '../../components/TreeGrid.vue'
 import util from '../../common/util.js'
 
 export default {
-  data() {
+  data () {
     return {
       pluginTree: [
         {
@@ -177,7 +177,7 @@ export default {
     }
   },
   methods: {
-    async pluginStatusChange(status) {
+    async pluginStatusChange (status) {
       let params = {
         ID: this.info.ID,
         status: status
@@ -189,14 +189,14 @@ export default {
       }
       util.showResponseMessage(res.data)
     },
-    renderContent(createElement, { node, data, store }) {
+    renderContent (createElement, { node, data, store }) {
       let className = !data.ID ? 'fa fa-television' : 'fa fa-puzzle-piece'
       let icon = createElement('i', { attrs: { class: className } })
       let label = createElement('span', ' ' + node.label)
       return createElement('span', [icon, label])
     },
 
-    handleNodeClick(item) {
+    handleNodeClick (item) {
       if (item.ID === 0) {
         this.info = {}
         this.dependPlugin = []
@@ -207,14 +207,14 @@ export default {
         return
       }
 
-      this.info = item||{}
-      this.dependPlugin = item.requiredPlugins||[]
-      this.beDependPlugin = item.deRequiredPlugins||[]
+      this.info = item || {}
+      this.dependPlugin = item.requiredPlugins || []
+      this.beDependPlugin = item.deRequiredPlugins || []
       this.extendData = item.extends || {}
       this.extendMenus = item.menus || []
       this.pluginFiles = item.pluginFiles || []
     },
-    renderTreeContent(h, { node }) {
+    renderTreeContent (h, { node }) {
       if (node.data.type === 'directory') {
         return h('span', { class: ['folder-node'], style: { verticalAlign: 'sub' } }, [
           h(
@@ -254,7 +254,7 @@ export default {
     }
   },
 
-  async created() {
+  async created () {
     let data = await axios.get('/api/plugins')
     data = data.data
     this.pluginTree[0].children = data.data

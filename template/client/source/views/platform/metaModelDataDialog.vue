@@ -60,39 +60,39 @@ import FromItem from './components/control/FormItem.vue'
 export default {
   computed: {
     isShow: {
-      get() {
+      get () {
         return this.show
       },
-      set(val) {
+      set (val) {
         this.$emit('update:show', val)
-      },
-    },
+      }
+    }
   },
-  props: {title:String,show:Boolean,datas:Object,modelId:[Number,String]},
-  data() {
+  props: {title: String, show: Boolean, datas: Object, modelId: [Number, String]},
+  data () {
     return {
-      tmpPkData:{},/**form表单数据 */
-      oldPKValue:0,/**编辑时的PKValue */
-      fieldGroup:[],/**分组数据 */
-      fields:[],/**字段数据 */
-      confirmLoading:false,
+      tmpPkData: {}, /** form表单数据 */
+      oldPKValue: 0, /** 编辑时的PKValue */
+      fieldGroup: [], /** 分组数据 */
+      fields: [], /** 字段数据 */
+      confirmLoading: false
     }
   },
   methods: {
-    /**提交添加或编辑事件 */
-    async confirmPkDataClickHandler(){
+    /** 提交添加或编辑事件 */
+    async confirmPkDataClickHandler () {
       this.confirmLoading = true
       try {
         await util.validateForm(this.$refs['pkDataForm'])
         let res = ''
-        if(this.oldPKValue){
+        if (this.oldPKValue) {
           res = await axios.put(`/metamodels/${this.modelId}/datas/${this.oldPKValue}`, this.tmpPkData)
-        }else{
+        } else {
           res = await axios.post(`/metamodels/${this.modelId}/datas`, this.tmpPkData)
         }
         this.confirmLoading = false
         util.showMessage(res)
-        if(res.data.status===1){
+        if (res.data.status === 1) {
           // let pkData = {}
           // for (let k in this.tmpPkData) {
           //   if (k.startsWith('metavalue_')) {
@@ -102,36 +102,35 @@ export default {
           //   }
           // }
           this.$emit('callback')
-          this.$emit('update:show',false)
+          this.$emit('update:show', false)
         }
       } catch (e) {
         util.showErrorNotification(e)
         this.confirmLoading = false
-        return
       }
     },
-    beforeDialogOpen(){
+    beforeDialogOpen () {
       this.tmpPkData = this.datas
-      this.oldPKValue = !this.datas.PKValue?0:this.datas.PKValue
+      this.oldPKValue = !this.datas.PKValue ? 0 : this.datas.PKValue
       this.loadColumnGroup()
       this.loadFields()
     },
-    /**加载元数据字段分组 */
-    async loadColumnGroup() {
+    /** 加载元数据字段分组 */
+    async loadColumnGroup () {
       let res = await axios.get(`/metamodels/${this.modelId}/groups`)
-      this.fieldGroup = (res.data.data&&res.data.data.length)?res.data.data:[]
+      this.fieldGroup = (res.data.data && res.data.data.length) ? res.data.data : []
     },
-    async loadFields(){
+    async loadFields () {
       let res = await axios.get(`/metamodels/${this.modelId}/columns`)
-      this.fields = (res.data.data&&res.data.data.length)?res.data.data:[]
+      this.fields = (res.data.data && res.data.data.length) ? res.data.data : []
     },
-    /**获取某个分组字段 */
-    getGroupFields(groupID){
+    /** 获取某个分组字段 */
+    getGroupFields (groupID) {
       let tmpFields = this.fields.concat()
       return tmpFields.filter(val => val.groupID === groupID)
     },
-    /**获取控件类型 */
-    getControlType(field){
+    /** 获取控件类型 */
+    getControlType (field) {
       if (field.controlType === 'Text' && (field.dataType === 'Long' || field.dataType === 'Double')) {
         return 'control-number'
       }
@@ -163,10 +162,10 @@ export default {
           return ''
       }
     },
-    /**获取控件配置 */
+    /** 获取控件配置 */
     getControlConfig (field) {
       let config = {
-        dataType: field.dataType,
+        dataType: field.dataType
       }
 
       if (field.listOptions) {
@@ -176,11 +175,11 @@ export default {
       if (field.controlType === 'DateTime') {
         config.dataType = 'DateTime'
       }
-      if(['ImageUpload','FileUpload','AudioUpload','VideoUpload'].includes(field.controlType)){
-        config.resourceType = field.controlType.substring(0,field.controlType.length-6)
+      if (['ImageUpload', 'FileUpload', 'AudioUpload', 'VideoUpload'].includes(field.controlType)) {
+        config.resourceType = field.controlType.substring(0, field.controlType.length - 6)
       }
       return config
-    },
+    }
   },
   components: {
     'control-password': ControlPassword,
@@ -191,9 +190,9 @@ export default {
     'control-number': ControlNumber,
     'control-checkbox': ControlCheckbox,
     'control-date-picker': ControlDatePicker,
-    'control-date-upload' : ControlUpload,
-    'z-from-item': FromItem,
-  },
+    'control-date-upload': ControlUpload,
+    'z-from-item': FromItem
+  }
 }
 </script>
 <style scoped>

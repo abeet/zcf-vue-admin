@@ -38,7 +38,7 @@ import util from '../../common/util.js'
 import ScheduleAddDialog from './components/ScheduleAddDialog.vue'
 
 export default {
-  data() {
+  data () {
     return {
       selectedRows: [],
       schedules: [],
@@ -46,7 +46,7 @@ export default {
     }
   },
   methods: {
-    afterSuccess(data) {
+    afterSuccess (data) {
       if (data.type == 'add') {
         this.schedules = [...this.schedules, data.data]
       } else if (data.type == 'edit') {
@@ -56,11 +56,11 @@ export default {
       }
     },
 
-    onSelectionChange(selection) {
+    onSelectionChange (selection) {
       this.selectedRows = selection
     },
 
-    addOrEdit(type) {
+    addOrEdit (type) {
       let params = {
         addOrEdit: type,
         data: this.selectedRows.length > 0 ? this.selectedRows[0] : {}
@@ -68,7 +68,7 @@ export default {
       this.$refs.scheduleDialog.initDialog(params)
     },
 
-    async deleteClickHandler() {
+    async deleteClickHandler () {
       try {
         await this.$confirm('确定删除吗，删除后无法恢复。是否继续删除？', '删除确认', {
           confirmButtonText: '确定',
@@ -92,7 +92,7 @@ export default {
       util.showNotification(data)
     },
 
-    async executionClickHandler() {
+    async executionClickHandler () {
       try {
         let res = await axios.post('/api/schedules/executed', this.selectedRows[0])
         util.showResponseMessage(res.data)
@@ -101,7 +101,7 @@ export default {
       }
     },
 
-    async loadSchedulesData() {
+    async loadSchedulesData () {
       this.dataLoading = true
       let res = await axios.get('/api/schedules').catch(e => console.log(e))
       let data = res.data
@@ -109,7 +109,7 @@ export default {
       this.dataLoading = false
     }
   },
-  created() {
+  created () {
     this.loadSchedulesData()
   },
   components: {
@@ -117,4 +117,3 @@ export default {
   }
 }
 </script>
-

@@ -222,190 +222,188 @@
 </template>
 
 <script>
-  import util from '../../../common/util.js'
-  import imageCuttingContainer from './imageCuttingContainer.vue'
-  import { imageLoad, readImageFile, cutBoxOperate, watermarkImage, uploadBase64Image } from './imageCuttingUtil'
+import util from '../../../common/util.js'
+import imageCuttingContainer from './imageCuttingContainer.vue'
+import { imageLoad, readImageFile, cutBoxOperate, watermarkImage, uploadBase64Image } from './imageCuttingUtil'
 
-  let operateInfo = {
-    type: '',
-  }
+let operateInfo = {
+  type: ''
+}
 
-  export default {
-    data () {
-      return {
-        isLoading: false,
-        realWidth: 0,
-        realHeight: 0,
-        previewWrap: {
-          width: 0,
-          height: 0,
-        },
-        confirmLoading: false,
-        watermark: '',
-        watermarkOpacity: 1,
-        watermarkBox: {
-          width: 40,
-          height: 40,
-          top: 0,
-          left: 0,
-        }
+export default {
+  data () {
+    return {
+      isLoading: false,
+      realWidth: 0,
+      realHeight: 0,
+      previewWrap: {
+        width: 0,
+        height: 0
+      },
+      confirmLoading: false,
+      watermark: '',
+      watermarkOpacity: 1,
+      watermarkBox: {
+        width: 40,
+        height: 40,
+        top: 0,
+        left: 0
       }
-    },
-    props: {
-      imagePath: {
-        type: String,
-        default: '',
-        required: true
-      },
-      activeTab: {
-        type: String,
-        default: ''
-      },
-      siteID:{
-        type: [String,Number],
-        required:true
-      },
-      path:{
-        type:String,
-        default:'',
-        required:true
-      }
-    },
-    watch: {
-      activeTab (val) {
-        if (val === 'watermark') {
-          this.init()
-        }
-      },
-      imagePath(){
-        if (this.activeTab === 'rotate') {
-          this.init()
-        }
-      }
-    },
-    computed: {
-      previewImageTop () {
-        if (this.realHeight >= this.previewWrap.height) return 0
-
-        return (this.previewWrap.height - this.realHeight) / 2
-      },
-      previewImageLeft () {
-        if (this.realWidth >= this.previewWrap.width) return 0
-
-        return (this.previewWrap.width - this.realWidth) / 2
-      }
-    },
-    methods: {
-      async init () {
-        this.isLoading = true
-        this.watermark = ''
-        this.watermarkOpacity = 1
-        let img
-        try {
-          img = await imageLoad(this.imagePath)
-        } catch (e) {
-          return
-        }
-
-        this.realWidth = img.width
-        this.realHeight = img.height
-
-        Object.assign(this.previewWrap, {
-          width: this.$refs['previewWrap'].offsetWidth,
-          height: this.$refs['previewWrap'].offsetHeight
-        })
-
-        console.log(this.realWidth, this.realHeight, this.previewWrap)
-
-        this.isLoading = false
-      },
-      async handleFileChange (e) {
-        if(e.target.files.length !== 1) {
-          return
-        }
-
-        const file = e.target.files[0];
-
-        this.watermark = await readImageFile(file)
-
-        const img = await imageLoad(this.watermark);
-
-        const scale = (img.width / this.realWidth) > (img.height / this.realHeight) ? Math.ceil(img.width / this.realWidth) : Math.ceil(img.height / this.realHeight)
-
-        Object.assign(this.watermarkBox, {
-          width: img.width / scale,
-          height: img.height / scale,
-          top: 0,
-          left: 0
-        })
-
-      },
-      handleClearWatermark (e) {
-        this.watermark = ''
-      },
-      handleBoxStart (type, e) {
-        operateInfo ={
-          type: type,
-          startPosition: { x: e.pageX, y: e.pageY },
-          originalCutBox: _.cloneDeep(this.watermarkBox),
-          container: {
-            width: this.realWidth,
-            height: this.realHeight
-          }
-        }
-      },
-      handleBoxMove (e) {
-        if(!operateInfo.type || operateInfo.type !== 'move' ){
-          return;
-        }
-
-        this.watermarkBox = cutBoxOperate(operateInfo, {
-          pageX: e.pageX,
-          pageY: e.pageY
-        }, true, true)
-      },
-      handleBoxEnd () {
-        operateInfo = {
-          type: ''
-        }
-      },
-      async handleConfirm () {
-        this.confirmLoading = true
-
-        if (!this.watermark) {
-          this.confirmLoading = false
-          util.showError('请先上传水印图片！')
-          return
-        }
-
-        const newImg = await watermarkImage(this.$refs['watermarkCanvas'], {
-          width: this.watermarkBox.width,
-          height: this.watermarkBox.height,
-          top: this.watermarkBox.top,
-          left: this.watermarkBox.left,
-          opacity: this.watermarkOpacity,
-          watermark: this.watermark
-        }, this.imagePath)
-
-        console.log(newImg)
-
-        const res = await uploadBase64Image(newImg, this.path,this.siteID)
-        // TODO: 上传完成后的处理
-        util.showResponseMessage(res.data)
-        if(res.data.status === 1){
-          this.$emit('update:imagePath',res.data.previewPath)
-          this.$emit('update:path',res.data.path)
-          this.init()
-        }
-
-        this.confirmLoading = false;
-
-      },
-    },
-    created () {
-    },
-    components: {
-      'cutting-container': imageCuttingContainer
     }
+  },
+  props: {
+    imagePath: {
+      type: String,
+      default: '',
+      required: true
+    },
+    activeTab: {
+      type: String,
+      default: ''
+    },
+    siteID: {
+      type: [String, Number],
+      required: true
+    },
+    path: {
+      type: String,
+      default: '',
+      required: true
+    }
+  },
+  watch: {
+    activeTab (val) {
+      if (val === 'watermark') {
+        this.init()
+      }
+    },
+    imagePath () {
+      if (this.activeTab === 'rotate') {
+        this.init()
+      }
+    }
+  },
+  computed: {
+    previewImageTop () {
+      if (this.realHeight >= this.previewWrap.height) return 0
+
+      return (this.previewWrap.height - this.realHeight) / 2
+    },
+    previewImageLeft () {
+      if (this.realWidth >= this.previewWrap.width) return 0
+
+      return (this.previewWrap.width - this.realWidth) / 2
+    }
+  },
+  methods: {
+    async init () {
+      this.isLoading = true
+      this.watermark = ''
+      this.watermarkOpacity = 1
+      let img
+      try {
+        img = await imageLoad(this.imagePath)
+      } catch (e) {
+        return
+      }
+
+      this.realWidth = img.width
+      this.realHeight = img.height
+
+      Object.assign(this.previewWrap, {
+        width: this.$refs['previewWrap'].offsetWidth,
+        height: this.$refs['previewWrap'].offsetHeight
+      })
+
+      console.log(this.realWidth, this.realHeight, this.previewWrap)
+
+      this.isLoading = false
+    },
+    async handleFileChange (e) {
+      if (e.target.files.length !== 1) {
+        return
+      }
+
+      const file = e.target.files[0]
+
+      this.watermark = await readImageFile(file)
+
+      const img = await imageLoad(this.watermark)
+
+      const scale = (img.width / this.realWidth) > (img.height / this.realHeight) ? Math.ceil(img.width / this.realWidth) : Math.ceil(img.height / this.realHeight)
+
+      Object.assign(this.watermarkBox, {
+        width: img.width / scale,
+        height: img.height / scale,
+        top: 0,
+        left: 0
+      })
+    },
+    handleClearWatermark (e) {
+      this.watermark = ''
+    },
+    handleBoxStart (type, e) {
+      operateInfo = {
+        type: type,
+        startPosition: { x: e.pageX, y: e.pageY },
+        originalCutBox: _.cloneDeep(this.watermarkBox),
+        container: {
+          width: this.realWidth,
+          height: this.realHeight
+        }
+      }
+    },
+    handleBoxMove (e) {
+      if (!operateInfo.type || operateInfo.type !== 'move') {
+        return
+      }
+
+      this.watermarkBox = cutBoxOperate(operateInfo, {
+        pageX: e.pageX,
+        pageY: e.pageY
+      }, true, true)
+    },
+    handleBoxEnd () {
+      operateInfo = {
+        type: ''
+      }
+    },
+    async handleConfirm () {
+      this.confirmLoading = true
+
+      if (!this.watermark) {
+        this.confirmLoading = false
+        util.showError('请先上传水印图片！')
+        return
+      }
+
+      const newImg = await watermarkImage(this.$refs['watermarkCanvas'], {
+        width: this.watermarkBox.width,
+        height: this.watermarkBox.height,
+        top: this.watermarkBox.top,
+        left: this.watermarkBox.left,
+        opacity: this.watermarkOpacity,
+        watermark: this.watermark
+      }, this.imagePath)
+
+      console.log(newImg)
+
+      const res = await uploadBase64Image(newImg, this.path, this.siteID)
+      // TODO: 上传完成后的处理
+      util.showResponseMessage(res.data)
+      if (res.data.status === 1) {
+        this.$emit('update:imagePath', res.data.previewPath)
+        this.$emit('update:path', res.data.path)
+        this.init()
+      }
+
+      this.confirmLoading = false
+    }
+  },
+  created () {
+  },
+  components: {
+    'cutting-container': imageCuttingContainer
   }
+}
 </script>

@@ -125,15 +125,15 @@ import CatalogImport from './components/CatalogImportDialog.vue'
 import CatalogAdd from './components/CatalogAddDialog.vue'
 import LogoPath from './components/LogoPath.vue'
 export default {
-  components:{
+  components: {
     'catalog-structure': CatalogExportStructure,
     'catalog-import': CatalogImport,
     'catalog-add': CatalogAdd,
     'logo-path': LogoPath
   },
-  data(){
+  data () {
     return {
-      catalogTree:[],
+      catalogTree: [],
       defaultProps: {
         label: 'name',
         'isLeaf': 'isLeaf'
@@ -142,28 +142,28 @@ export default {
       currentTreeNode: null,
       dimensionID: '',
       dimensions: [],
-      treeDataLoading:false,
-      catalogInfo:{},
-      submitLoading:false,
-      dataLoading:false,
+      treeDataLoading: false,
+      catalogInfo: {},
+      submitLoading: false,
+      dataLoading: false,
       resourceDialogProps: {},
-      contentTypes:[],
-      types:[],
-      exportShowModal: false,/**栏目导出弹框 */
-      importShowModal: false,/**栏目导人弹框*/
-      addCatalogForm:{},/**添加栏目弹框 */
+      contentTypes: [],
+      types: [],
+      exportShowModal: false, /** 栏目导出弹框 */
+      importShowModal: false, /** 栏目导人弹框 */
+      addCatalogForm: {}/** 添加栏目弹框 */
     }
   },
-  created() {
+  created () {
     this.getDimensions()
     this.loadContentType()
     // this.loadCatalogType()
   },
-  methods:{
+  methods: {
 
-    async addCatalogCallback(res){
+    async addCatalogCallback (res) {
       res.isLeaf = true
-      if(this.currentTreeNode === null) {
+      if (this.currentTreeNode === null) {
         this.currentTreeNode = this.$refs.catalogTree.root.childNodes[0]
       }
       this.currentTreeNode.doCreateChildren([res])
@@ -174,13 +174,13 @@ export default {
       this.currentTreeNode.expand()
       // this.catalogInfo = res
     },
-    renderContent(createElement, { node, data, store }) {
+    renderContent (createElement, { node, data, store }) {
       let className = data.ID <= 0 ? 'fa fa-desktop' : 'fa fa-folder'
       let icon = createElement('i', { attrs: { class: className } })
       let label = createElement('span', ' ' + node.label)
       return createElement('span', [icon, label])
     },
-    async handleNodeClick(curData, e, curNode) {
+    async handleNodeClick (curData, e, curNode) {
       if (curData.ID == 0) {
         this.catalogInfo = {}
         this.$refs['catalog-form'].resetFields()
@@ -192,7 +192,7 @@ export default {
       let res = await axios.get(`/api/catalogs/${curData.ID}`)
       this.dataLoading = false
       this.catalogInfo = res.data.data
-      //logo对象
+      // logo对象
       this.resourceDialogProps = {
         dataType: 'CatalogLogo',
         dataID: this.catalogInfo.ID,
@@ -205,18 +205,18 @@ export default {
         inputType: 'radio'
       }
     },
-    reloadTreeNodeData(){
-      if(this.currentTreeNode === null) {
+    reloadTreeNodeData () {
+      if (this.currentTreeNode === null) {
         this.currentTreeNode = this.$refs.catalogTree.root.childNodes[0]
       }
-      if(this.currentTreeData){
+      if (this.currentTreeData) {
         this.currentTreeNode.loaded = false
         this.currentTreeNode.loadData()
       }
     },
     async loadTreeNodeData (node, resolve) {
       let params = { dimensionID: this.dimensionID }
-      if ( node.data && (node.data.ID || node.data.ID === 0)) {
+      if (node.data && (node.data.ID || node.data.ID === 0)) {
         params.parentID = node.data.ID
       } else {
         params.isRoot = 'Y'
@@ -224,10 +224,10 @@ export default {
       let res = await axios.get('/api/catalog/admintree', { params })
       let catalogData = res.data.data
       resolve(catalogData)
-      if ( node.data && node.data.ID === 0) {
+      if (node.data && node.data.ID === 0) {
         this.$nextTick(function () {
           let subNodes = this.$refs.catalogTree.root.childNodes[0].childNodes
-          for(let i = 0; i< subNodes.length; i++) {
+          for (let i = 0; i < subNodes.length; i++) {
             let pNode = subNodes[i]
             if (pNode.data && pNode.data.children && pNode.data.children.length > 0) {
               pNode.doCreateChildren(pNode.data.children)
@@ -236,32 +236,31 @@ export default {
             }
           }
         })
-
       }
     },
-    changeDimensionHandler(value) {
+    changeDimensionHandler (value) {
       this.dimensionID = value
       this.currentTreeNode = null
       this.reloadTreeNodeData()
     },
-    async loadContentType() {
+    async loadContentType () {
       let res = await axios.get('/contentcore/contenttypes')
       this.contentTypes = res.data.data
     },
-    async getDimensions(){
+    async getDimensions () {
       let res = await axios.get('/api/dimensions')
       this.dimensions = res.data.data
       this.dimensionID = this.dimensions[0].ID
       this.reloadTreeNodeData()
     },
-    exportClickHandler(){
+    exportClickHandler () {
       this.exportShowModal = true
     },
-    importClickHandler(){
+    importClickHandler () {
       this.importShowModal = true
     },
-    async deleteClickHandler (){
-      if(!this.catalogInfo.ID) {
+    async deleteClickHandler () {
+      if (!this.catalogInfo.ID) {
         return
       }
       try {
@@ -272,7 +271,7 @@ export default {
         })
         let res = await axios.delete(`/api/catalogs/${this.catalogInfo.ID}`)
         if (res.data.status === 2) {
-          await util.showProgress(res.data.taskID, `正在删除[`+this.catalogInfo.name+`]栏目`)
+          await util.showProgress(res.data.taskID, `正在删除[` + this.catalogInfo.name + `]栏目`)
           this.catalogInfo = {}
           this.$refs['catalog-form'].resetFields()
           this.currentTreeNode.parent.removeChild(this.currentTreeNode)
@@ -280,34 +279,31 @@ export default {
           util.showResponseMessage(res)
         }
       } catch (e) {
-        return
+
       }
     },
-    addClickHandler(){
+    addClickHandler () {
       this.addCatalogForm = {
-        isShowModal:true,
-        parent:{
-          ID: this.catalogInfo.ID||0,
-          name: this.catalogInfo.name||'根栏目',
-          alias: this.catalogInfo.alias||'',
-          contentType: this.catalogInfo.contentType||'',
-          type: this.catalogInfo.type||'Default'
+        isShowModal: true,
+        parent: {
+          ID: this.catalogInfo.ID || 0,
+          name: this.catalogInfo.name || '根栏目',
+          alias: this.catalogInfo.alias || '',
+          contentType: this.catalogInfo.contentType || '',
+          type: this.catalogInfo.type || 'Default'
         }
       }
     },
-    async saveClickHandler(){
+    async saveClickHandler () {
       this.submitLoading = true
       await util.validateForm(this.$refs['catalog-form'])
       let res = await axios.put(`/api/catalogs/${this.catalogInfo.ID}`, this.catalogInfo)
       this.submitLoading = false
       util.showResponseMessage(res.data)
-      if(res.data.status === 1) {
+      if (res.data.status === 1) {
         this.currentTreeData = Object.assign(this.currentTreeData, this.catalogInfo)
       }
     }
   }
 }
 </script>
-
-
-

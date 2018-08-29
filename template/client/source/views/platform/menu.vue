@@ -45,128 +45,126 @@ import TreeGrid from '../../components/TreeGrid.vue'
 import util from '../../common/util.js'
 
 export default {
-  data() {
+  data () {
     return {
       name: '',
       searchPlugins: {
-        pluginID: '',
+        pluginID: ''
       },
       plugins: [],
       columns: [
         {
           text: '菜单名称',
-          render: function(row) {
+          render: function (row) {
             return '<i class="' + row.icon + '">&nbsp;' + row.name + '</i>'
           }
         },
         {
           text: '是否启用',
-          render: function(row) {
+          render: function (row) {
             if (row.isEnable) {
               return '<i class="fa fa-check icon-success"></i>'
             } else {
               return '<i class="fa fa-times icon-danger"></i>'
             }
-          },
+          }
         },
         {
           text: 'ID',
-          dataIndex: 'id',
+          dataIndex: 'id'
         },
         {
           text: 'URL',
-          dataIndex: 'URL',
+          dataIndex: 'URL'
         },
         {
           text: '来源插件',
-          dataIndex: 'source',
-        },
+          dataIndex: 'source'
+        }
       ],
       dataSource: [],
       selectedRows: [],
       dataLoading: false,
       sortModal: false,
       confirmLoading: false,
-      sortOffset: 1,
+      sortOffset: 1
     }
   },
   methods: {
-    onSelectionChange(selection) {
+    onSelectionChange (selection) {
       this.selectedRows = selection
       if (this.selectedRows.length === 1) {
         this.name = this.selectedRows[0].name
       }
     },
-    //排序
-    sortClickHandler() {
+    // 排序
+    sortClickHandler () {
       this.sortOffset = 1
       this.sortModal = true
     },
-    //排序确定
-    async confirmSortClickHandler() {
+    // 排序确定
+    async confirmSortClickHandler () {
       if (this.sortOffset === 0) {
         this.$confirm('菜单未移动顺序', '系统提示', {
           confirmButtonText: '确定',
           showCancelButton: false,
-          type: 'warning',
+          type: 'warning'
         })
         return
       }
       this.confirmLoading = true
       try {
         let opts = {
-          id:this.selectedRows[0].id,
-          offset:this.sortOffset
+          id: this.selectedRows[0].id,
+          offset: this.sortOffset
         }
-        let  res = await axios.put('/api/menus/sortmenu', opts)
+        let res = await axios.put('/api/menus/sortmenu', opts)
         this.confirmLoading = false
         util.showMessage(res)
-        if(res.data.status===1){
+        if (res.data.status === 1) {
           this.sortModal = false
           this.menuList()
         }
       } catch (e) {
         util.showErrorNotification(e)
-        return
       }
     },
-    //启用/禁用
-    async disableOrEnableClickHandler(status) {
+    // 启用/禁用
+    async disableOrEnableClickHandler (status) {
       let ids = []
-      this.selectedRows.forEach(function(row) {
+      this.selectedRows.forEach(function (row) {
         ids.push(row.id)
       })
       if (ids.join().indexOf('Platform.Menu') != -1) {
         this.$confirm('菜单管理不可禁用！', '系统提示', {
           confirmButtonText: '确定',
           showCancelButton: false,
-          type: 'warning',
+          type: 'warning'
         })
         return
       }
       try {
-        await this.$confirm(`确定${status==='true'?'启用':'禁用'}吗？`, `确认`, {
+        await this.$confirm(`确定${status === 'true' ? '启用' : '禁用'}吗？`, `确认`, {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning',
+          type: 'warning'
         })
-        let res = await axios.put('/api/menus/status', {ids:ids.join(),status})
+        let res = await axios.put('/api/menus/status', {ids: ids.join(), status})
         util.showMessage(res)
-        if(res.data.status===1){
+        if (res.data.status === 1) {
           this.menuList()
         }
       } catch (e) {
         util.showErrorNotification(e)
-        return
       }
     },
-    //重置
-    async resetClickHandler() {
+    // 重置
+    async resetClickHandler () {
       try {
         await this.$confirm('确定重置吗，重置后失去所有自定义设置？', '重置确认', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning',
+          type: 'warning'
         })
       } catch (e) {
         util.showErrorNotification(e)
@@ -175,35 +173,34 @@ export default {
       try {
         let res = await axios.put('/api/menus/reset', {params: {reset: true}})
         util.showMessage(res)
-        if(res.data.status===1){
+        if (res.data.status === 1) {
           this.menuList()
         }
       } catch (e) {
         util.showErrorNotification(e)
-        return
       }
     },
-    //菜单列表数据加载
-    async menuList() {
+    // 菜单列表数据加载
+    async menuList () {
       this.dataLoading = true
       let res = await axios.get('/api/menus', { params: { pluginID: this.searchPlugins.pluginID} })
       this.dataSource = res.data.data
       this.dataLoading = false
     },
-    //查看指定插件下的菜单
-    searchPluginsChange() {
+    // 查看指定插件下的菜单
+    searchPluginsChange () {
       this.menuList()
-    },
+    }
   },
   components: {
-    TreeGrid,
+    TreeGrid
   },
-  async created() {
+  async created () {
     this.menuList()
-    //查看指定插件下的菜单数据加载
+    // 查看指定插件下的菜单数据加载
     let res = await axios.get('/api/menus/getpluginlist')
     this.plugins = res.data.data
-  },
+  }
 }
 </script>
 

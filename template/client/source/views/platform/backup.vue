@@ -63,139 +63,134 @@
 </template>
 
 <script>
-  import util from '../../common/util.js'
-  export default {
-    data() {
-      return {
-        backupFiles: [],
-        selectedRows: [],
-        dataLoading: true,
-        tmpBackupFile: {
-          isShowModal: false,
-          activeName: 'info',
-          info: {},
-          table: []
-        },
-        tableDataLoading: false
-      }
+import util from '../../common/util.js'
+export default {
+  data () {
+    return {
+      backupFiles: [],
+      selectedRows: [],
+      dataLoading: true,
+      tmpBackupFile: {
+        isShowModal: false,
+        activeName: 'info',
+        info: {},
+        table: []
+      },
+      tableDataLoading: false
+    }
+  },
+  methods: {
+    onSelectionChange (selection) {
+      this.selectedRows = selection
     },
-    methods: {
-      onSelectionChange(selection) {
-        this.selectedRows = selection
-      },
-      async backupClickHandler() {
-        try {
-          await this.$confirm('确认备份数据库吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-        } catch (e) {
-          util.showErrorNotification(e)
-          return
-        }
-        let res = await axios.post('/api/backups')
-        if (res.data.status == 1) {
-          let resp = await axios.get(`/api/framework/longtimetasks/${res.data.taskID}`)
-          try {
-            await util.showProgress(res.data.taskID, resp.data.data.currentInfo)
-            this.initBackups();
-          } catch (e) {
-            util.showErrorNotification(e)
-            return
-          }
-        }
-      },
-      async recoveryClickHandler() {
-        try {
-          await this.$confirm('确认恢复数据库吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-        } catch (e) {
-          this.$message({
-            type: 'info',
-            message: '已取消恢复'
-          })
-          return
-        }
-        let res = await axios.put('/api/backups/restored', { file: this.selectedRows[0].file })
-        if (res.data.status == 1) {
-          let resp = await axios.get(`/api/framework/longtimetasks/${res.data.taskID}`)
-          try {
-            await util.showProgress(res.data.taskID, resp.data.data.currentInfo)
-            this.initBackups();
-          } catch (e) {
-            util.showErrorNotification(e)
-            return
-          }
-        }
-      },
-      async deleteClickHandler() {
-        await this.$confirm('确定删除吗，删除后无法恢复。是否继续删除？', '删除确认', {
+    async backupClickHandler () {
+      try {
+        await this.$confirm('确认备份数据库吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
-        let ids = []
-        this.selectedRows.forEach(function (obj) {
-          ids.push(obj.file)
-        })
+      } catch (e) {
+        util.showErrorNotification(e)
+        return
+      }
+      let res = await axios.post('/api/backups')
+      if (res.data.status == 1) {
+        let resp = await axios.get(`/api/framework/longtimetasks/${res.data.taskID}`)
         try {
-          /*经过测试发现RESTful风格的接口不支持ids中带英文点（.），比如：/api/backups/full_20180112173004.zbf，这中间有个英文点，
-          导致接口无法找到（404错误）。故设置参数位为空，使用params传递ids*/
-          let res = await axios.delete(`/api/backups/`, { params: { ids: ids.join() } })
-          util.showMessage(res)
-          if (res.data.status === 1) {
-            this.backupFiles = this.backupFiles.filter(val => !ids.includes(val.file))
-            this.selectedRows = []
-          }
+          await util.showProgress(res.data.taskID, resp.data.data.currentInfo)
+          this.initBackups()
         } catch (e) {
-          util.showNotification(e)
-          return
+          util.showErrorNotification(e)
         }
-      },
-      async seeClickHandler() {
-        try {
-          let res = await axios.get('/api/backups/infos', { params: { file: this.selectedRows[0].file } })
-          this.tmpBackupFile.info = res.data
-          this.tmpBackupFile.activeName = 'info'
-          this.tmpBackupFile.table = []
-          this.tmpBackupFile.isShowModal = true
-        } catch (e) {
-          util.showNotification(e)
-          return
-        }
-      },
-      async tabClickHandler(tab) {
-        if (this.tmpBackupFile.activeName === 'tables' && !this.tmpBackupFile.table.length) {
-          this.tableDataLoading = true
-          try {
-            let res = await axios.get('/api/backups/tables', { params: { file: this.tmpBackupFile.info.file } })
-            this.tmpBackupFile.table = res.data.data
-            this.tableDataLoading = false
-          } catch (e) {
-            util.showNotification(e)
-            return
-          }
-        }
-      },
-      downloadClickHandler(row) {
-        if (!row.hasFileDownloadPriv) {
-          this.$alert('没有下载权限！')
-          return
-        }
-        window.location.href = `${axios.defaults.baseURL}/api/backups/download/file?fileName=${row.file}`
-      },
-      async initBackups() {
-        let res = await axios.get('/api/backups')
-        this.backupFiles = res.data.data
       }
     },
-    created() {
-      this.initBackups();
-      this.dataLoading = false
+    async recoveryClickHandler () {
+      try {
+        await this.$confirm('确认恢复数据库吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+      } catch (e) {
+        this.$message({
+          type: 'info',
+          message: '已取消恢复'
+        })
+        return
+      }
+      let res = await axios.put('/api/backups/restored', { file: this.selectedRows[0].file })
+      if (res.data.status == 1) {
+        let resp = await axios.get(`/api/framework/longtimetasks/${res.data.taskID}`)
+        try {
+          await util.showProgress(res.data.taskID, resp.data.data.currentInfo)
+          this.initBackups()
+        } catch (e) {
+          util.showErrorNotification(e)
+        }
+      }
+    },
+    async deleteClickHandler () {
+      await this.$confirm('确定删除吗，删除后无法恢复。是否继续删除？', '删除确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+      let ids = []
+      this.selectedRows.forEach(function (obj) {
+        ids.push(obj.file)
+      })
+      try {
+        /* 经过测试发现RESTful风格的接口不支持ids中带英文点（.），比如：/api/backups/full_20180112173004.zbf，这中间有个英文点，
+          导致接口无法找到（404错误）。故设置参数位为空，使用params传递ids */
+        let res = await axios.delete(`/api/backups/`, { params: { ids: ids.join() } })
+        util.showMessage(res)
+        if (res.data.status === 1) {
+          this.backupFiles = this.backupFiles.filter(val => !ids.includes(val.file))
+          this.selectedRows = []
+        }
+      } catch (e) {
+        util.showNotification(e)
+      }
+    },
+    async seeClickHandler () {
+      try {
+        let res = await axios.get('/api/backups/infos', { params: { file: this.selectedRows[0].file } })
+        this.tmpBackupFile.info = res.data
+        this.tmpBackupFile.activeName = 'info'
+        this.tmpBackupFile.table = []
+        this.tmpBackupFile.isShowModal = true
+      } catch (e) {
+        util.showNotification(e)
+      }
+    },
+    async tabClickHandler (tab) {
+      if (this.tmpBackupFile.activeName === 'tables' && !this.tmpBackupFile.table.length) {
+        this.tableDataLoading = true
+        try {
+          let res = await axios.get('/api/backups/tables', { params: { file: this.tmpBackupFile.info.file } })
+          this.tmpBackupFile.table = res.data.data
+          this.tableDataLoading = false
+        } catch (e) {
+          util.showNotification(e)
+        }
+      }
+    },
+    downloadClickHandler (row) {
+      if (!row.hasFileDownloadPriv) {
+        this.$alert('没有下载权限！')
+        return
+      }
+      window.location.href = `${axios.defaults.baseURL}/api/backups/download/file?fileName=${row.file}`
+    },
+    async initBackups () {
+      let res = await axios.get('/api/backups')
+      this.backupFiles = res.data.data
     }
+  },
+  created () {
+    this.initBackups()
+    this.dataLoading = false
   }
+}
 </script>
