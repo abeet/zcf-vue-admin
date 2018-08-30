@@ -21,10 +21,12 @@
 1. 前端取消axios-mock-adapter拦截，调试后端接口。
 
 ## 注意事项
-1. JS风格使用`JavaScript Standard Style`，建议使用VSCode作为js/vue的编辑器，并安装以下插件`EditorConfig for VSCode` , `Prettier-Standard - JavaScript formatter` , `JavaScript Standard Style` , `stylefmt` , `Vetur`。
+1. JS风格使用`JavaScript Standard Style`，建议使用VSCode作为js/vue的编辑器，并安装以下插件`EditorConfig for VSCode` , `Prettier-Standard - JavaScript formatter` , `ESLint` , `stylefmt` , `Vetur`。
   并且vscode的配置里要加下面的命令，防止格式化时自动加分号。   
   `  "prettier.singleQuote": true,`  
   `  "prettier.semi": false,`  
+1. `.eslintrc`里要配置使用standard风格：
+  `{"extends": "stndard"}`
 1. 在开发界面时使用ElementUI提供的栅格系统（24列），对界面进行响应式布局，以便移动端访问。
 1. ZCMS3.0的界面布局参考ZCMS2.4扁平风格，因为使用第三方控件库，所以不要求界面完全相同，但要布局类似（主要是控件的位置，和控件间的留白）。
 1. 不要使用ElementUI提供的图标组件，使用Font Awesome 图标。
