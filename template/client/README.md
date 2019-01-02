@@ -1,6 +1,6 @@
 # {{ name }}
 ### 概述
-{{ description }}  
+{{ description }}   
 前端使用用Vue及ElementUI框架，后端实现RESTful规范的接口与前端进行交互。  
 前端工程要配合后端工程提供的接口来使用。
 
@@ -13,11 +13,13 @@
 - [Webpack](https://github.com/webpack/webpack)
 - [gulp](https://gulpjs.com/)
 
+
 ## 开发流程：
 1. 克隆本脚手架前端工程、后端工程，配置数据库，导入示例数据。
 1. 根据项目实际需求，配置路由和菜单，准备各路由所对应的vue文件，vue文件内容为空白，待分配给项目成员实现。
-1. 实现vue文件的界面部分，暂时使用axios-mock-adapter来拦截ajax请求，返回mock数据，注意mock数据的字段和数据库表设计有关。
-1. 后端实现RESTful接口，并维护接口文档（在doc目录下维护raml格式接口文档或使用 http://apizza.cc 在线文档服务）
+1. 在mock目录下准备mock数据，设计好数据结构（控件需要的数据结构）和字段名（最好同数据库中表结构字段名，用 java.beans.Introspector.decapitalize 方法处理一下）
+1. 实现vue文件的界面部分，使用axios-mock-adapter来拦截ajax请求，返回mock数据。
+1. 后端实现RESTful接口，并维护接口文档（在doc目录下维护Swagger格式接口文档或使用 http://apizza.cc 在线文档服务）
 1. 前端取消axios-mock-adapter拦截，调试后端接口。
 
 ## 注意事项
@@ -40,6 +42,16 @@
 目录结构类似 https://github.com/kenberkeley/vue-demo/tree/master/src 但有简化、调整。
 
 ```
+static
+├─lib                      第三方库，供页面用<script>引入，不会编译，直接复制到发布目录
+│      vue.min.js
+│      vue-router.min.js
+│      axios.min.js
+│      ......
+├─assets                   资源目录，不会编译，直接复制到发布目录
+│  ├─css                   公共样式及第三方样式库，页面用<link>引入
+│  ├─fonts                 图标字体
+│  └─images                图片
 source
 │  index.html              主入口静态页
 │  app.js                  主入口js
@@ -58,15 +70,6 @@ source
 ├─components               公共组件
 │      toolbar.vue
 │      ......
-├─lib                      第三方库，供页面用<script>引入，不会编译，直接复制到发布目录
-│      vue.min.js
-│      vue-router.min.js
-│      axios.min.js
-│      ......
-├─assets                   资源目录，不会编译，直接复制到发布目录
-│  ├─css                   公共样式及第三方样式库，页面用<link>引入
-│  ├─fonts                 图标字体
-│  └─images                图片
 └─views                    所有页面视图
    │   app.vue                app主视图组件
    │
@@ -136,7 +139,5 @@ Font Awesome 图标
 ~~http://fontawesome.io/icons/~~  
 https://www.thinkcmf.com/font/font_awesome/icons.html   
   
-RAML 1.0 文档  
-https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md  
-  
-  
+Swagger 文档  
+https://swagger.io/docs/specification/basic-structure/  

@@ -87,36 +87,51 @@ gulp.task('dev', function () {
     }
   )
 })
-// 在build模式，仅打包，不监听
-gulp.task('build', function () {
-  process.env.NODE_ENV = process.env.NODE_ENV || 'prod'
-  runSequence(
-    'clean',
-    'copyAssets',
-    'buildHtml',
-    function () {
-      webpackConfig.watch = false
-      webpackConfig.devtool = undefined
-      webpackConfig.plugins.push(new webpack.DefinePlugin({
-        NODE_ENV: 'prod'
-      }), new BundleAnalyzerPlugin())
-      webpack(webpackConfig, function (err, stats) {
-        if (err) {
-          throw new gutil.PluginError('webpack', err)
+function build(faster, analyzer) {
+  return function(){
+    process.env.NODE_ENV = process.env.NODE_ENV || 'prod'
+    runSequence(
+      'clean',
+      'copyAssets',
+      'buildHtml',
+      function () {
+        webpackConfig.watch = false
+        webpackConfig.devtool = undefined
+        webpackConfig.plugins.push(new webpack.DefinePlugin({
+          NODE_ENV: 'prod'
+        }))
+        if(analyzer){
+          webpackConfig.plugins.push(new BundleAnalyzerPlugin())
         }
-        gutil.log(
-          'webpack',
-          stats.toString({
-            colors: true,
-            chunks: false,
-            hash: false,
-            version: false
-          })
-        )
-      })
-    }
-  )
-})
+        if(faster){
+          webpackConfig.optimization = webpackConfig.optimization || {}
+          webpackConfig.optimization.minimizer = []
+        }
+        webpack(webpackConfig, function (err, stats) {
+          if (err) {
+            throw new gutil.PluginError('webpack', err)
+          }
+          gutil.log(
+            'webpack',
+            stats.toString({
+              colors: true,
+              chunks: false,
+              hash: false,
+              version: false
+            })
+          )
+        })
+      }
+    )
+  }
+}
+// 在build模式，仅打包，不监听
+gulp.task('build', build())
+// 在build模式，仅打包，不监听，不压缩js，更快一点
+gulp.task('buildfaster', build(true))
+// 在analyzer模式，仅打包，不监听
+gulp.task('analyzer', build(null, true))
+
 gulp.task('webserver', function () {
   browserSync.init(dist, {
     startPath: '/', // 服务器运行时打开的页面

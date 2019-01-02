@@ -1,8 +1,8 @@
 const path = require('path')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
-console.log('env.BABEL_ENV:', process.env.BABEL_ENV)
-const env = process.env.BABEL_ENV ? process.env.BABEL_ENV : 'dev'
+console.log('env.NODE_ENV:', process.env.NODE_ENV)
+const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'dev'
 module.exports = {
   mode: env ? (env === 'prod' ? 'production' : 'development') : 'development',
   entry: {
@@ -34,26 +34,38 @@ module.exports = {
         loader: 'vue-loader'
       }, {
         test: /\.js$/,
-        exclude: [path.resolve('src/lib')],
-        // `node_modules` 中的文件排除在 Babel 转译范围以外，所以还要再配置 include
-        include: [
-          path.resolve('src'),
-          path.resolve('node_modules/vue'),
-          path.resolve('node_modules/element-ui')
-        ],
         use: {
           loader: 'babel-loader?cacheDirectory=true',
-          options: getBabelConfig(env)
+          options: createBabelOptions(env)
         }
       }, {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
       }, {
-        test: /\.(png|jpg|gif|svg)$/,
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         use: [{
           loader: 'url-loader',
           options: {
             limit: 2048, // 2K左右
+            name: 'assets/images/[name].[ext]'
+          }
+        }]
+      }, {
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 2048, // 2K左右
+            name: 'assets/media/[name].[ext]'
+          }
+        }]
+      }, {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 2048, // 2K左右
+            name: 'assets/fonts/[name].[ext]'
           }
         }]
       }
@@ -64,7 +76,7 @@ module.exports = {
   ]
 }
 
-function getBabelConfig(env) {
+function createBabelOptions(env) {
   env = env || 'dev'
 
   const babelrc = {
@@ -84,8 +96,7 @@ function getBabelConfig(env) {
     babelrc.presets[0][1].targets.browsers = ['ie >= 9']
     babelrc.plugins = [
       'transform-class-properties',
-      'transform-object-rest-spread',
-      'transform-runtime'
+      'transform-object-rest-spread'
     ]
   }
   return babelrc
