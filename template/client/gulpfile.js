@@ -8,7 +8,6 @@ const gutil = require('gulp-util')
 const watch = require('gulp-watch')
 const webpack = require('webpack')
 const del = require('del')
-const runSequence = require('run-sequence')
 const browserSync = require('browser-sync').create()
 const bsReload = browserSync.reload
 const replace = require('gulp-replace')
@@ -38,99 +37,91 @@ gulp.task('copyAssets', function () {
 })
 
 // 在dev模式，监听js、根目录、assets目录下文件的更改，重新载入浏览器中的页面
-gulp.task('dev', function () {
+gulp.task('dev', gulp.series('copyAssets', 'copyHtml', function (done) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'dev'
-  runSequence(
-    'copyAssets',
-    'copyHtml',
-    function () {
-      browserSync.init(dist, {
-        startPath: '/', // 服务器运行时打开的页面
-        server: {
-          baseDir: [dist]
-        },
-        reloadDebounce: 1000, // 重载事件后1秒后才允许下次重载
-        watchOptions: {
-          ignoreInitial: true,
-          ignored: ['node_modules', 'WEB-INF']
-        }
-      })
+  browserSync.init(dist, {
+    startPath: '/', // 服务器运行时打开的页面
+    server: {
+      baseDir: [dist]
+    },
+    reloadDebounce: 1000, // 重载事件后1秒后才允许下次重载
+    watchOptions: {
+      ignoreInitial: true,
+      ignored: ['node_modules', 'WEB-INF']
+    }
+  })
 
-      webpackConfig.watch = true
-      webpackConfig.devtool = 'cheap-source-map'
-      webpackConfig.plugins.push(new webpack.DefinePlugin({
-        NODE_ENV: JSON.stringify('dev')
-      }))
-      webpack(webpackConfig).watch(200, function (err, stats) {
-        if (err) {
-          throw new gutil.PluginError('webpack', err)
-        }
-        gutil.log('webpack', stats.toString({
+  webpackConfig.watch = true
+  webpackConfig.devtool = 'cheap-source-map'
+  webpackConfig.plugins.push(new webpack.DefinePlugin({
+    NODE_ENV: JSON.stringify('dev')
+  }))
+  webpack(webpackConfig).watch(200, function (err, stats) {
+    if (err) {
+      throw new gutil.PluginError('webpack', err)
+    }
+    gutil.log('webpack', stats.toString({
+      colors: true,
+      chunks: false,
+      hash: false,
+      version: false
+    }))
+    bsReload()
+  })
+
+  watch([srcFiles.htmlInRoot], evt => {
+    bsReload()
+  })
+  watch([srcFiles.lib, srcFiles.assets, '!**/*.tmp', '!**/*._t_'], evt => {
+    var path = evt.path
+    gulp
+      .src(path, { base: './source' })
+      .pipe(gulp.dest(dist))
+      .pipe(bsReload)
+  })
+}))
+gulp.task('clean', function () {
+  // 删除dist目录下的某些被编译出的文件
+  return del(['./dist', '!./dist/node_modules/*', '!./dist/WEB-INF/*'])
+})
+function build(faster, analyzer) {
+  return function(done){
+    process.env.NODE_ENV = process.env.NODE_ENV || 'prod'
+    webpackConfig.watch = false
+    webpackConfig.devtool = undefined
+    webpackConfig.plugins.push(new webpack.DefinePlugin({
+      NODE_ENV: 'prod'
+    }))
+    if(analyzer){
+      webpackConfig.plugins.push(new BundleAnalyzerPlugin())
+    }
+    if(faster){
+      webpackConfig.optimization = webpackConfig.optimization || {}
+      webpackConfig.optimization.minimizer = []
+    }
+    webpack(webpackConfig, function (err, stats) {
+      if (err) {
+        throw new gutil.PluginError('webpack', err)
+      }
+      gutil.log(
+        'webpack',
+        stats.toString({
           colors: true,
           chunks: false,
           hash: false,
           version: false
-        }))
-        runSequence('buildHtml', bsReload)
-      })
-
-      watch([srcFiles.htmlInRoot], evt => {
-        runSequence('buildHtml', bsReload)
-      })
-      watch([srcFiles.lib, srcFiles.assets, '!**/*.tmp', '!**/*._t_'], evt => {
-        var path = evt.path
-        gulp
-          .src(path, { base: './source' })
-          .pipe(gulp.dest(dist))
-          .pipe(bsReload)
-      })
-    }
-  )
-})
-function build(faster, analyzer) {
-  return function(){
-    process.env.NODE_ENV = process.env.NODE_ENV || 'prod'
-    runSequence(
-      'clean',
-      'copyAssets',
-      'buildHtml',
-      function () {
-        webpackConfig.watch = false
-        webpackConfig.devtool = undefined
-        webpackConfig.plugins.push(new webpack.DefinePlugin({
-          NODE_ENV: 'prod'
-        }))
-        if(analyzer){
-          webpackConfig.plugins.push(new BundleAnalyzerPlugin())
-        }
-        if(faster){
-          webpackConfig.optimization = webpackConfig.optimization || {}
-          webpackConfig.optimization.minimizer = []
-        }
-        webpack(webpackConfig, function (err, stats) {
-          if (err) {
-            throw new gutil.PluginError('webpack', err)
-          }
-          gutil.log(
-            'webpack',
-            stats.toString({
-              colors: true,
-              chunks: false,
-              hash: false,
-              version: false
-            })
-          )
         })
-      }
-    )
+      )
+      done()
+    })
   }
 }
 // 在build模式，仅打包，不监听
-gulp.task('build', build())
+gulp.task('build', gulp.series('clean', 'copyAssets', 'buildHtml', build()))
 // 在build模式，仅打包，不监听，不压缩js，更快一点
-gulp.task('buildfaster', build(true))
+gulp.task('buildfaster', gulp.series('clean', 'copyAssets', 'buildHtml', build(true)))
 // 在analyzer模式，仅打包，不监听
-gulp.task('analyzer', build(null, true))
+gulp.task('analyzer', gulp.series('clean', 'copyAssets', 'buildHtml', build(null, true)))
 
 gulp.task('webserver', function () {
   browserSync.init(dist, {
@@ -143,8 +134,4 @@ gulp.task('webserver', function () {
     ghostMode: false, // 点击，滚动和表单不要镜像到其他设备里
     codeSync: false // 不要发送任何文件改变事件给浏览器
   })
-})
-gulp.task('clean', function () {
-  // 删除dist目录下的某些被编译出的文件
-  return del(['./dist', '!./dist/node_modules/*', '!./dist/WEB-INF/*'])
 })
